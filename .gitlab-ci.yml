@@ -44,5 +44,5 @@ test:cargo:
 
 deploy:
   stage: deploy
-  script: echo "Define your deployment script!"
+  script: cargo run
   environment: production
