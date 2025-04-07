@@ -44,5 +44,5 @@ test:cargo:
 
 deploy:
   stage: deploy
-  script: cargo run
+  script: cargo build
   environment: production
