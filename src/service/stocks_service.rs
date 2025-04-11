@@ -1,8 +1,9 @@
 use yahoo_finance_api::{Quote, YahooConnector};
 use chrono::{DateTime, Local};
 use serde::Serialize;
+use futures::future::join_all;
 
-//TODO: Clean up code, add comments
+//TODO: Clean up code, add comments, move errs
 
 #[derive(Serialize)]
 pub struct LatestQuote {
@@ -54,4 +55,23 @@ pub async fn fetch_quote_from_timerange(symbol: &str, range: &str) -> Result<Quo
         range: range.to_string(),
         quotes: fetched_quotes,
     })
+}
+
+pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<LatestQuote>, String> {
+    if symbols.len() > 10 {
+        return Err("Too many symbols provided. Maximum allowed is 10.".to_string());
+    }
+
+    let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(symbol));
+    let results = join_all(fetches).await;
+
+    let mut quotes = Vec::new();
+    for result in results {
+        match result {
+            Ok(quote) => quotes.push(quote),
+            Err(e) => return Err(format!("Failed to fetch one or more quotes: {}", e)),
+        }
+    }
+
+    Ok(quotes)
 }
