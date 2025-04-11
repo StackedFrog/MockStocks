@@ -10,6 +10,7 @@ dependencies = [
  "chrono",
  "futures",
  "serde",
+ "time",
  "tokio",
  "yahoo_finance_api",
 ]
