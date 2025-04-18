@@ -1,34 +1,34 @@
 use crate::model::Pool;
 use std::fs;
 
-// call all 3 functions
-pub async fn call_everything(pool : Pool) {
-    let path = "sql/init_db.sql";
-    let path = "sql/delete_db.sql";
-    let path = "sql/init_db.sql";
-    create_db_structure(pool, ).await;
 
+pub async fn init_database(pool : &Pool) {
+    let init_file = "sql/init_db.sql";
+    let clear_file = "sql/clear_db.sql";
+    let populate_file = "sql/populate_db.sql";
+    execute_sql_file(pool, clear_file).await;
+    execute_sql_file(pool, init_file).await;
+    execute_sql_file(pool, populate_file).await;
 }
 
-// get deletion sql script and send to db
+// read file content to string
+fn read_file(filename : &str) -> String {
+    fs::read_to_string(filename).expect("Could not read file")
+}
 
+// get sql script and send to db
+async fn execute_sql_file(pool : &Pool, filename : &str) {
+    let file_content = read_file(filename);
 
-// get creation sql script and send to db
-async fn create_db_structure(pool : Pool, path : String) {
-    let path = "sql/init_db.sql";
-    let content = fs::read_to_string(path)
-        .expect("Could not read file");
+    // split content string into SQL statements
+    let statements : Vec<&str>= file_content.split(';').collect();
 
-    let statements : Vec<&str>= content.split(';').collect();
-
-    for s in statements {
-        sqlx::query(&s).execute(&pool).await
-        .expect("could not create db structure");
+    // execute each statement
+    for mut s in statements {
+        s = s.trim();
+        sqlx::query(&s).execute(pool).await
+        .expect("could not run SQL script");
         println!("Successful statement execution woo");
+        println!("{s}")
     }
-    println!("{content}");
 }
-
-
-
-// get insertion sql script and send to db

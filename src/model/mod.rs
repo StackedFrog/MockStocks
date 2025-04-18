@@ -1,5 +1,6 @@
 use sqlx::{postgres::PgPoolOptions, Postgres};
 pub type Pool = sqlx::Pool<Postgres>;
+pub mod usersModel;
 pub struct Db {
     pub pool: Pool
 }
