@@ -7,8 +7,11 @@ pub async fn init_database(pool : &Pool) {
     let clear_file = "sql/clear_db.sql";
     let populate_file = "sql/populate_db.sql";
     execute_sql_file(pool, clear_file).await;
+    println!("Database cleared");
     execute_sql_file(pool, init_file).await;
+    println!("Database initialised");
     execute_sql_file(pool, populate_file).await;
+    println!("Database populated");
 }
 
 // read file content to string
@@ -28,7 +31,5 @@ async fn execute_sql_file(pool : &Pool, filename : &str) {
         s = s.trim();
         sqlx::query(&s).execute(pool).await
         .expect("could not run SQL script");
-        println!("Successful statement execution woo");
-        println!("{s}")
     }
 }

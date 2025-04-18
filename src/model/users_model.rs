@@ -1,0 +1,117 @@
+use crate::model::Pool;
+use uuid::Uuid;
+use crate::model::error::{Error, Result};
+
+#[derive(sqlx::FromRow, Debug)]
+pub struct User {
+    user_id: Uuid,
+    username: String,
+    password: String,
+    role: UserType
+}
+
+pub struct NewUser {
+    username: String,
+    password: String,
+    role: UserType
+}
+
+pub struct LoginUser {
+    username: String,
+    password: String,
+}
+
+#[derive(Debug, sqlx::Type)]
+#[sqlx(type_name = "user_type")]
+pub enum UserType {
+    #[sqlx(rename = "admin")]
+    Admin,
+    #[sqlx(rename = "user")]
+    User
+}
+
+pub async fn get_all_users(pool : &Pool) -> Result<Vec<User>> {
+    let query = "SELECT * FROM Users";
+    let users : Vec<User> = sqlx::query_as(query)
+        .fetch_all(pool)
+        .await
+        .map_err(|_e| Error::UsersNotFound)?;
+
+    return Ok(users);
+}
+
+// get user by id
+pub async fn get_user_by_id(pool : &Pool, id : Uuid) -> Result<User> {
+    let query = "SELECT * FROM Users WHERE user_id = ?";
+    let user : User = sqlx::query_as(query)
+        .bind(id)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::UserIDNotFound)?;
+
+    return Ok(user);
+}
+
+// get user by username
+pub async fn get_user_by_username(pool : &Pool, username : String) -> Result<User> {
+    let query = "SELECT * FROM Users WHERE username = ?";
+    let user : User = sqlx::query_as(query)
+        .bind(username)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::UsernameNotFound)?;
+
+    return Ok(user);
+}
+
+//add user
+pub async fn add_user(pool : &Pool, user : NewUser) -> Result<Uuid> {
+    let query = "INSERT INTO Users (username, password, role) VALUES (?, ?, ?)";
+    let user: User = sqlx::query_as(query)
+        .bind(user.username)
+        .bind(user.password)
+        .bind(user.role)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::UserNotAdded)?;
+
+    return Ok(user.user_id);
+}
+
+// update user password
+pub async fn update_password(pool : &Pool, id : Uuid, new_password : String) -> Result<()> {
+    let query = "UPDATE Users SET password = ? WHERE user_id = ?";
+    sqlx::query(query)
+        .bind(new_password)
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::PasswordNotUpdated)?;
+
+    return Ok(());
+}
+
+// update role
+pub async fn update_role(pool : &Pool, id : Uuid, new_role : UserType) -> Result<()> {
+    let query = "UPDATE Users SET role = ? WHERE user_id = ?";
+    sqlx::query(query)
+        .bind(new_role)
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::RoleNotUpdated)?;
+
+    return Ok(());
+}
+
+//delete user
+pub async fn delete_user(pool : &Pool, id : Uuid) -> Result<()> {
+    let query = "DELETE FROM Users WHERE user_id = ?";
+    sqlx::query(query)
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::UserNotDeleted)?;
+
+    return Ok(());
+}
