@@ -1,5 +1,8 @@
 
 
 pub mod mw_auth;
-pub mod error;
 pub mod router_static;
+pub mod routes_login;
+mod error;
+
+pub use self::error::{Error, Result};

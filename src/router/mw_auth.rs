@@ -1,5 +1,5 @@
 use axum::{extract::{FromRequestParts, Request}, http::request::Parts, middleware::Next, response::Response};
-use axum_cookie::CookieManager;
+use tower_cookies::{Cookie, Cookies};
 use crate::ctx::Ctx;
 use crate::router::error::Error;
 use crate::router::error::Result;
@@ -16,7 +16,7 @@ pub async fn mw_auth_required(
 }
 
 pub async fn mw_ctx_resolver(
-    cookies: CookieManager,
+    cookies: Cookies,
     mut req: Request,
     next: Next
 ) -> Result<Response>{
@@ -24,14 +24,16 @@ pub async fn mw_ctx_resolver(
     let ctx_result = ctx_resolver(&cookies).await;
 
     if ctx_result.is_err() && !matches!(ctx_result, Err(Error::TokenNotFound)){
-        cookies.remove("AUTH_TOKEN");
+        cookies.remove(Cookie::build("AUTH_TOKEN").build());
     }
+
+
 
     req.extensions_mut().insert(ctx_result);
     Ok(next.run(req).await)
 }
 
-async fn ctx_resolver(cookie: &CookieManager) -> Result<Ctx> {
+async fn ctx_resolver(cookie: &Cookies) -> Result<Ctx> {
 
     let auth_token = cookie.get("AUTH_TOKEN")
         .map(|t| t.value().to_string())
