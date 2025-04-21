@@ -1,14 +1,14 @@
-use axum::{extract::State, routing::post, Json, Router};
-use tower_cookies::Cookies;
+use axum::{extract::State, routing::{get, post}, Json, Router};
+use tower_cookies::{Cookie, Cookies};
 use serde::Deserialize;
-use crate::{crypt, ModelManger};
+use crate::{crypt, ModelManager};
 use super::{Error, Result};
 
-pub fn routes(mm : ModelManger) -> Router {
+pub fn routes(mm : ModelManager) -> Router {
     Router::new()
-        .route("/api/login", post(login_handler))
-        .route("/api/registar", post(registar_handler))
-        .route("/api/logoff", post(logoff_handler))
+        .route("/login", post(login_handler))
+        .route("/registar", post(registar_handler))
+        .route("/logout", post(logoff_handler))
         .with_state(mm)
 }
 
@@ -20,7 +20,7 @@ struct LoginPayload{
 }
 
 async fn login_handler(
-    State(mm): State<ModelManger>,
+    State(mm): State<ModelManager>,
     cookies: Cookies,
     Json(payload): Json<LoginPayload>
 ) -> Result<()>{
@@ -36,13 +36,12 @@ async fn login_handler(
 
 
 async fn registar_handler(
-    State(mm): State<ModelManger>,
+    State(mm): State<ModelManager>,
     cookies: Cookies,
     Json(payload): Json<LoginPayload>
 )-> Result<()>{
 
     let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd).map_err(|_| Error::FailedToEncryptPwd)?;
-
 
     // check use name uniquness
 
@@ -53,9 +52,14 @@ async fn registar_handler(
 
 
 async fn logoff_handler(
-    cookies: Cookies
-)-> Result<()> {
-    // remove token from cookie
+    cookies: Cookies,
+    Json(payload): Json<LoginPayload>
+)-> Result<String> {
 
-    Ok(())
+    println!("in logoff");
+    println!("{:?}", payload);
+    // remove token from cookie
+    cookies.add(Cookie::new("test_cookie", "helloword"));
+
+    Ok(payload.pwd)
 }

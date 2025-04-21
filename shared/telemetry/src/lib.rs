@@ -8,14 +8,14 @@ use opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge;
 pub fn init_telemetry(){
     registry()
         .with(init_tracer())
-        .with(init_logger().with_filter(get_Filter()))
-        .with(term_Layer::default().with_filter(get_Filter()))
+        .with(init_logger().with_filter(get_filter()))
+        .with(term_Layer::default().with_filter(get_filter()))
         .init();
 }
 
 pub fn init_dev_telemetry(){
     registry()
-        .with(term_Layer::default().with_filter(get_Filter()))
+        .with(term_Layer::default().with_filter(get_filter()))
         .init();
 }
 
@@ -28,7 +28,7 @@ fn init_logger() -> OpenTelemetryTracingBridge<SdkLoggerProvider, SdkLogger>{
 
     let provider = SdkLoggerProvider::builder()
         .with_batch_exporter(exporter)
-        .with_resource(get_Recourse())
+        .with_resource(get_recourse())
         .build();
 
     OpenTelemetryTracingBridge::new(&provider)
@@ -43,7 +43,7 @@ fn init_tracer() -> OpenTelemetryLayer<Registry, Tracer>{
 
     let provider = SdkTracerProvider::builder()
         .with_batch_exporter(exporter)
-        .with_resource(get_Recourse())
+        .with_resource(get_recourse())
         .with_sampler(Sampler::AlwaysOn)
         .build();
 
@@ -56,7 +56,7 @@ fn init_metrics(){
     todo!("creat metrics provider")
 }
 
-fn get_Filter() -> EnvFilter {
+fn get_filter() -> EnvFilter {
     EnvFilter::new("trace")
         .add_directive("hyper=off".parse().unwrap())
         .add_directive("tonic=off".parse().unwrap())
@@ -66,7 +66,7 @@ fn get_Filter() -> EnvFilter {
 }
 
 
-fn get_Recourse() -> Resource{
+fn get_recourse() -> Resource{
     Resource::builder().with_service_name("Stock app").build()
 
 }
