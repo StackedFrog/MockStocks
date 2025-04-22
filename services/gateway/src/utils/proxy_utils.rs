@@ -1,8 +1,7 @@
 use axum::{body::Body, extract::Request, http::response::Builder, response::Response};
 use http_body_util::BodyExt;
 use reqwest::{Client, RequestBuilder};
-
-use crate::ctx::Ctx;
+use shared_utils::ctx::Ctx;
 
 use super::{Error, Result};
 

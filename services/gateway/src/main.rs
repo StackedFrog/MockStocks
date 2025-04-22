@@ -5,7 +5,6 @@ use tower_http::trace::TraceLayer;
 
 mod router;
 mod utils;
-mod ctx;
 
 #[derive(Clone)]
 struct AppState{

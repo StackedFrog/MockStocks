@@ -1,8 +1,7 @@
 use axum::{extract::Request, middleware::Next, response::Response};
 use hyper::HeaderMap;
-use crate::ctx::Ctx;
-use crate::router::error::Error;
-use crate::router::error::Result;
+use super::error::{Error, Result};
+use shared_utils::ctx::Ctx;
 
 
 pub async fn mw_ctx_resolver(
@@ -18,7 +17,6 @@ pub async fn mw_ctx_resolver(
 }
 
 async fn ctx_resolver(header: &HeaderMap) -> Result<Ctx> {
-
     // let token = header.get("AUTHORIZATION").ok_or(Error::Variant1)?;
 
     let Some(auth_header) = header.get("AUTHORIZATION") else{
