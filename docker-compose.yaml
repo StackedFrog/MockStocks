@@ -1,7 +1,11 @@
 services:
-    lgtm:
-        image: grafana/otel-lgtm
+    # lgtm:
+    #     image: grafana/otel-lgtm
+    #     ports:
+    #     - 3000:3000
+    #     - 4317:4317
+    #     - 4318:4318
+     redis:
+        image: redis
         ports:
-        - 3000:3000
-        - 4317:4317
-        - 4318:4318
+        - 6379:6379

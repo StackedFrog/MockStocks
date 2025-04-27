@@ -1,0 +1,11 @@
+FROM rust:1.85
+
+RUN cargo install watchexec-cli
+
+WORKDIR /app
+
+COPY . .
+
+WORKDIR /app/services/gateway
+
+CMD ["watchexec", "-r", "--", "cargo", "run", "gateway"]
