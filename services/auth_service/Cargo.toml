@@ -1,5 +1,6 @@
 [package]
 name = "auth_service"
+default-run = "auth_service"
 version = "0.1.0"
 edition = "2024"
 
@@ -12,3 +13,5 @@ tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing"] }
 tower-cookies = "0.11.0"
 argon2 = { version = "0.5.3", features = ["std"] }
 serde = { version = "1.0.219", features = ["derive"] }
+redis = { version = "0.29.5", features = ["tokio-comp"] }
+telemetry = {path = "../../shared/telemetry"}
