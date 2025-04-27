@@ -8,7 +8,7 @@ pub fn validate_pwd(
     pwd: String
 ) -> Result<()> {
 
-    let pwd_hash = PasswordHash::new(&pwd).unwrap();
+    let pwd_hash = PasswordHash::new(&pwd).map_err(|_| Error::PwdWrongFormat)?;
     Argon2::default().verify_password(pwd_clear.as_bytes(), &pwd_hash)
         .map_err(|_| Error::PwdNotMatching)?;
     Ok(())

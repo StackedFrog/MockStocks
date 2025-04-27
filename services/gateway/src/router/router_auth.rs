@@ -17,12 +17,11 @@ pub async fn auth_proxy(
     Path(path) : Path<String>,
     req : Request<Body>
 ) -> Result<Response>{
-    println!("in prox");
     let client = state.http_client.clone();
 
     // replace wirh parser
 
-    let auth_url = "http://localhost:4002";
+    let auth_url = "http://auth:4002";
     let target_url = format!("{}/{}", auth_url, path);
 
     let service_request = ServiceRequestBuilder::new(req, target_url, &client)

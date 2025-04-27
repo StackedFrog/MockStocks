@@ -1,28 +1,25 @@
 use axum::Router;
+use model::ModelManager;
 use tower_cookies::CookieManagerLayer;
-
-
+use tower_http::trace::TraceLayer;
 
 mod router;
 mod crypt;
-
-
-
-#[derive(Clone)]
-pub struct ModelManager{}
-
+mod model;
+mod utils;
+mod error;
 
 #[tokio::main]
 async fn main() {
 
-    // utils::telemetry::init_dev_telemetry
+    telemetry::init_dev_telemetry();
 
-    let mm = ModelManager{};
+    let mm = ModelManager::new().await;
 
     let app = Router::new()
-         .merge(router::routes_login::routes(mm))
-         .layer(CookieManagerLayer::new());
-        // .layer(TraceLayer::new_for_http());
+        .merge(router::routes_login::routes(mm))
+        .layer(CookieManagerLayer::new())
+        .layer(TraceLayer::new_for_http());
 
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4002")

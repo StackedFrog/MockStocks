@@ -5,4 +5,5 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     PwdNotMatching,
     PwdFailedHash,
+    PwdWrongFormat,
 }

@@ -74,8 +74,8 @@ impl ServiceResponseBuilder{
     }
 
     pub fn with_cookie(mut self) -> Self{
-       if let Some(cookie) = self.response.headers().get("cookie"){
-            self.builder = self.builder.header("cookie", cookie.clone());
+       if let Some(cookie) = self.response.headers().get("set-cookie"){
+            self.builder = self.builder.header("set-cookie", cookie.clone());
         }
        self
     }

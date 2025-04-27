@@ -33,8 +33,8 @@ async fn main() {
     let app = Router::new()
         .merge(api_router)
         .merge(router_auth::routes(state))
-        .fallback_service(router_static::serve_static());
-        // .layer(TraceLayer::new_for_http());
+        .fallback_service(router_static::serve_static())
+        .layer(TraceLayer::new_for_http());
 
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4001")

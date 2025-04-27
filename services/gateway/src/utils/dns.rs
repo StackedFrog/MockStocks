@@ -11,7 +11,7 @@ pub trait DNS<'a> {
 impl <'a> DNS <'a> for &str{
     fn to_domain(self)-> Result<&'a Self>{
         match self {
-            "auth" => Ok(&"http://localhost:4002"),
+            "auth" => Ok(&"http://auth:4002"),
             _ => Err(Error::CanNotParesServiceName)
         }
     }
