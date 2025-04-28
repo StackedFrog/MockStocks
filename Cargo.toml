@@ -5,7 +5,8 @@ members = [
 	"services/gateway",
 	"shared/_dev_utils",
 	"shared/telemetry",
-	"shared/shared_utils"]
+	"shared/shared_utils",
+        "services/stocks_api_service"]
 
 [workspace.dependencies]
 axum = "0.8.3"
@@ -15,7 +16,7 @@ tower = { version = "0.5.2", features = ["tracing"] }
 
 # tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing"] }
 # tower-cookies = "0.11.0"
-# serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.219", features = ["derive"] }
 # tracing = "0.1.41"
 # tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 #

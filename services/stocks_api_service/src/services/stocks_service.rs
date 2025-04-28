@@ -107,3 +107,4 @@ pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Resu
         quotes: fetched_quotes,
     })
 } 
+
