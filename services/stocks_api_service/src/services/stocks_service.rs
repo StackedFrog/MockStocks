@@ -27,6 +27,13 @@ pub struct HistoricQuotes {
     pub quotes: Vec<Quote>,
 }
 
+#[derive(Serialize)]
+pub struct TickerSearchResult {
+    pub symbol: String,
+    pub name: String,
+    pub exchange: String,
+}
+
 pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote, String> {
     let provider = YahooConnector::new().map_err(|err| format!("Error creating connector: {:?}", err))?;
 
@@ -106,5 +113,24 @@ pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Resu
         end: end.to_string(),
         quotes: fetched_quotes,
     })
-} 
+}
 
+pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>, String> {
+    let provider = YahooConnector::new().map_err(|err| format!("Error creating connector: {:?}", err))?;
+
+    let response = provider
+        .search_ticker(search_term)
+        .await
+        .map_err(|err| format!("Error searching ticker: {:?}", err))?;
+
+    let results = response.quotes
+        .into_iter()
+        .map(|quote| TickerSearchResult {
+            symbol: quote.symbol,
+            name: quote.long_name,
+            exchange: quote.exchange,
+        })
+        .collect();
+
+    Ok(results)
+}
