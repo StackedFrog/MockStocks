@@ -28,8 +28,12 @@ image: "rust:latest"
 # Use cargo to test the project
 test:cargo:
   script:
-    - rustc --version && cargo --version  # Print version info for debugging
+    - rustc --version && cargo --version
+    - cargo run &
+    - SERVER_PID=$!
+    - sleep 5
     - cargo test --workspace --verbose
+    - kill $SERVER_PID || true
 
 # Optional: Use a third party library to generate gitlab junit reports
 # test:junit-report:
