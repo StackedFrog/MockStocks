@@ -1,7 +1,7 @@
 use axum::{extract::Query, http::StatusCode, response::IntoResponse, response::Json, routing::get, Router};
 use serde::Deserialize;
 
-use crate::services::stocks_service::{fetch_latest_quote, fetch_quote_from_timerange, fetch_latest_quotes_parallel, fetch_historic_quotes, fetch_ticker};
+use crate::services::stocks_service::{fetch_latest_quote, fetch_quote_from_timerange, fetch_latest_quotes_parallel, fetch_historic_quotes, fetch_ticker, fetch_trending_quotes};
 
 //TODO: implement proper error handling
 
@@ -12,6 +12,7 @@ pub fn routes() -> Router {
         .route("/stocks", get(get_multiple_stock_prices))
         .route("/history", get(get_historic_stock))
         .route("/ticker", get(get_tickers))
+        .route("/trending", get(get_trending_quotes))
 }
 
 #[derive(Deserialize)]
@@ -69,6 +70,13 @@ async fn get_historic_stock(Query(params): Query<HistoricStockQuery>) -> impl In
 async fn get_tickers(Query(params): Query<TickerSearchQuery>) -> impl IntoResponse {
     match fetch_ticker(&params.string).await {
         Ok(results) => (StatusCode::OK, Json(results)).into_response(),
+        Err(e) => (StatusCode::BAD_REQUEST, Json(e)).into_response(),
+    }
+}
+
+async fn get_trending_quotes() -> impl IntoResponse {
+    match fetch_trending_quotes().await {
+        Ok(quotes) => (StatusCode::OK, Json(quotes)).into_response(),
         Err(e) => (StatusCode::BAD_REQUEST, Json(e)).into_response(),
     }
 }
