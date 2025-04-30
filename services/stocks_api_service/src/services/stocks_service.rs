@@ -4,7 +4,7 @@ use chrono::{DateTime, Local};
 use serde::Serialize;
 use serde_json::Value;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
-use futures::future::{join_all, try_join_all};
+use futures::future::try_join_all;
 use reqwest;
 use moka::sync::Cache;
 use once_cell::sync::Lazy;
@@ -85,17 +85,9 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
     }
 
     let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(symbol));
-    let results = join_all(fetches).await;
+    let results = try_join_all(fetches).await.map_err(|err| format!("Error fetching multiple quotes: {:?}", err))?;
 
-    let mut quotes = Vec::new();
-    for result in results {
-        match result {
-            Ok(quote) => quotes.push(quote),
-            Err(e) => return Err(format!("Failed to fetch one or more quotes: {}", e)),
-        }
-    }
-
-    Ok(quotes)
+    Ok(results)
 }
 
 pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes, String> {
@@ -160,8 +152,8 @@ pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>, String> {
     let mut headers = HeaderMap::new();
     headers.insert(USER_AGENT, HeaderValue::from_static(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-         AppleWebKit/537.36 (KHTML, like Gecko) \
-         Chrome/123.0.0.0 Safari/537.36"));
+            AppleWebKit/537.36 (KHTML, like Gecko) \
+            Chrome/123.0.0.0 Safari/537.36"));
     headers.insert(ACCEPT, HeaderValue::from_static("application/json"));
     headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
     headers.insert(CONNECTION, HeaderValue::from_static("keep-alive"));
@@ -183,8 +175,7 @@ pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>, String> {
         .filter_map(|q| q["symbol"].as_str())
         .collect::<Vec<&str>>();
 
-    let quote_futures = symbols.into_iter().map(|symbol| fetch_latest_quote(symbol));
-    let quotes = try_join_all(quote_futures).await?;
+    let quotes = fetch_latest_quotes_parallel(&symbols[0..9].to_vec()).await?;
 
     TRENDING_CACHE.insert((), quotes.clone());
 
