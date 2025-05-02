@@ -2,6 +2,7 @@ use axum::{body::Body, extract::Request, http::response::Builder, response::Resp
 use http_body_util::BodyExt;
 use reqwest::{Client, RequestBuilder};
 use shared_utils::ctx::Ctx;
+use telemetry::tracing_propegation;
 
 use super::{Error, Result};
 
@@ -44,6 +45,12 @@ impl ServiceRequestBuilder{
         if let Some(ctx) = self.request.extensions().get::<Ctx>(){
             self.request_builder = self.request_builder.header("x-user-id", ctx.user_id());
         }
+        self
+    }
+
+    pub fn with_tracing_context(mut self) -> Self{
+        let headers = tracing_propegation::inject_tracing_context();
+        self.request_builder = self.request_builder.headers(headers);
         self
     }
 
