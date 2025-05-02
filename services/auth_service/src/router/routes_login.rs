@@ -1,6 +1,7 @@
 use axum::{extract::State, routing::{get, post}, Json, Router};
 use tower_cookies::{ Cookie, Cookies};
 use serde::{Deserialize, Serialize};
+use tracing::{event, instrument, Level};
 use crate::{crypt, model::redis_token, utils::cookie_util::set_refresh_token_cookie, ModelManager};
 use super::{Error, Result};
 
@@ -13,6 +14,7 @@ pub fn routes(mm : ModelManager) -> Router {
         .with_state(mm)
 }
 
+#[derive(Clone, Debug)]
 pub struct TokenClaims{
     sub: String,
     jti: String,
@@ -55,9 +57,9 @@ async fn login_handler(
 
     // crypt::pwd::validate_pwd(payload.pwd, pwd)?;
 
-
+    let refresh_token = "refresh_token".to_string();
     let token_claims = TokenClaims{
-        sub: "name".to_string(),
+        sub: refresh_token.to_string(),
         jti: "uuid".to_string(),
         exp: 500,
         iat: 400
@@ -65,11 +67,10 @@ async fn login_handler(
 
     // create access and refresh tokens
 
-    let refresh_token = "refresh_token".to_string();
     let access_token = "access_token".to_string();
 
-    redis_token::save_refresh_token(token_claims, &refresh_token, mm.client).await?;
-
+    redis_token::save_refresh_token(token_claims.clone(), &refresh_token, mm.client.clone()).await?;
+    println!("toekn: {:?}",redis_token::get_refresh_token(token_claims, mm.client).await?);
     set_refresh_token_cookie(cookies, refresh_token);
 
     Ok(Json(TokenPayload{token: access_token}))
@@ -83,7 +84,6 @@ async fn registar_handler(
 )-> Result<Json<TokenPayload>>{
 
     let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd)?;
-
 
     // check use name uniquness
 
@@ -108,35 +108,38 @@ async fn registar_handler(
     Ok(Json(TokenPayload { token : access_token}))
 }
 
+#[instrument(err(Debug))]
 async fn access_token_handler(
     State(mm): State<ModelManager>,
     cookies:Cookies
-)-> Result<Json<TokenPayload>>{
+) -> Result<Json<TokenPayload>>{
 
     let refresh_token_old = cookies.get("refreshToken").ok_or(Error::MissingRefreshToken)?;
 
-    // validate token
-    // get claims
+    let old_val = refresh_token_old.value();
+
+    let refresh_token = "refresh_token2".to_string();
+
+
+    event!(Level::ERROR, "this is an event");
+
     let token_claims = TokenClaims{
-        sub: "name".to_string(),
+        sub: refresh_token.to_string(),
         jti: "uuid".to_string(),
         exp: 500,
         iat: 400
     };
 
     let token_claims_old = TokenClaims{
-        sub: "name".to_string(),
+        sub: old_val.to_string(),
         jti: "uuid".to_string(),
         exp: 500,
         iat: 400
     };
 
-    // let old_token = redis_token::get_refresh_token(token_claims, mm.client.clone()).await.map_err(|_| Error::FailedToEncryptPwd)?;
-    let refresh_token = "refresh_token2".to_string();
-
     redis_token::rotate_token(
-        token_claims,
         token_claims_old,
+        token_claims,
         refresh_token.clone(),
         mm.client
     ).await?;
@@ -163,15 +166,9 @@ async fn logoff_handler(
         iat: 400
     };
 
-
     cookies.remove(refresh_token);
 
     redis_token::remove_refresh_token(token_claims, mm.client).await?;
-
-    println!("in logoff");
-    println!("{:?}", payload);
-    // remove token from cookie
-    // cookies.add(Cookie::new("test_cookie", "helloword"));
 
     Ok(payload.pwd)
 }
