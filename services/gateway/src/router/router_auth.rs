@@ -1,10 +1,8 @@
 use axum::{body::Body, extract::{Path, Request, State}, response::Response, routing::{any, get, post}, Router};
+use tracing::instrument;
 use crate::{utils::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder}, AppState};
 
 use super::{Error, Result};
-
-
-
 
 pub fn routes(state: AppState) -> Router{
     Router::new()
@@ -12,6 +10,7 @@ pub fn routes(state: AppState) -> Router{
         .with_state(state)
 }
 
+// #[instrument]
 pub async fn auth_proxy(
     state: State<AppState>,
     Path(path) : Path<String>,
@@ -27,13 +26,12 @@ pub async fn auth_proxy(
     let service_request = ServiceRequestBuilder::new(req, target_url, &client)
         .with_content_type()
         .with_cookie()
+        .with_tracing_context()
         .with_body()
         .await
         .build();
 
-
     let service_res = service_request.send().await.map_err(|_| Error::ServiceNotAvailable)?;
-
 
     let response = ServiceResponseBuilder::new(service_res)
         .with_content_type()

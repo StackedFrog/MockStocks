@@ -8,6 +8,7 @@ edition = "2024"
 axum.workspace = true
 tokio.workspace = true
 tower.workspace = true
+tracing.workspace = true
 tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing"] }
 tower-cookies = "0.11.0"
 reqwest = "0.12.15"

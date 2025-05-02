@@ -4,12 +4,12 @@ default-run = "auth_service"
 version = "0.1.0"
 edition = "2024"
 
-
 [dependencies]
-axum.workspace = true  # = "0.8.3"
-tokio.workspace = true # = { version = "1.44.2", features = ["rt-multi-thread"] }
-tower.workspace = true # = { version = "0.5.2", features = ["tracing"] }
-tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing"] }
+axum.workspace = true
+tokio.workspace = true
+tower.workspace = true
+tracing.workspace = true
+tower-http = { version = "0.6.2", features = ["trace", "tracing"] }
 tower-cookies = "0.11.0"
 argon2 = { version = "0.5.3", features = ["std"] }
 serde = { version = "1.0.219", features = ["derive"] }
