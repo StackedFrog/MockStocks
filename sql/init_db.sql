@@ -13,13 +13,13 @@ CREATE TABLE Transactions (
     date DATE NOT NULL,
     symbol VARCHAR(10) NOT NULL, -- code name of company
     transaction_type VARCHAR(10) NOT NULL, -- purchase/sale
-    quantity DECIMAL NOT NULL -- amount of shares
+    quantity NUMERIC NOT NULL -- amount of shares
 );
 
 CREATE TABLE Holdings (
     user_id UUID NOT NULL REFERENCES Users(user_id),
     symbol VARCHAR(10) NOT NULL, -- company code name or 'cash'
-    quantity DECIMAL NOT NULL,
+    quantity NUMERIC NOT NULL,
     last_updated DATE NOT NULL,
     PRIMARY KEY (user_id, symbol) -- composite key since user + symbol should be unique
 );
