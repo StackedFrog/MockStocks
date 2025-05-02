@@ -1,10 +1,14 @@
-[package]
-name = "StackedStocks"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "3"
+members = [
+	"services/auth_service",
+	"services/gateway",
+	"shared/_dev_utils",
+	"shared/telemetry",
+	"shared/shared_utils"]
 
-[dependencies]
+[workspace.dependencies]
 axum = "0.8.3"
-sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio", "uuid"] }
-tokio = { version = "1.44.2", features = ["rt-multi-thread", "tokio-macros"] }
-uuid = "1.16.0"
+tokio = { version = "1.44.2", features = ["rt-multi-thread"] }
+tower = { version = "0.5.2", features = ["tracing"] }
+tracing = { version = "0.1.41", features = ["std", "attributes"] }

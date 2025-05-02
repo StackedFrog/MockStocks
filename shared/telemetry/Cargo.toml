@@ -1,0 +1,17 @@
+[package]
+name = "telemetry"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tower.workspace = true
+axum.workspace = true
+tracing.workspace = true
+opentelemetry = { version = "0.29.1", features = ["trace", "logs"] }
+opentelemetry_sdk = { version = "0.29.0", features = ["logs"] }
+opentelemetry-otlp = "0.29.0"
+opentelemetry-http = "0.29.0"
+opentelemetry-stdout = "0.29.0"
+opentelemetry-appender-tracing = "0.29.1"
+tracing-opentelemetry = "0.30.0"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter", "fmt", "registry", "json"] }
