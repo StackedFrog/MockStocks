@@ -1,16 +1,14 @@
 use axum::{middleware::from_fn, Router};
 use reqwest::Client;
 use router::{router_api, router_auth, router_static};
-use tower_http::trace::TraceLayer;
-
+use telemetry::telemetry;
+use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
 mod router;
 mod utils;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct AppState{
-
     http_client: Client
-
 }
 
 impl AppState{
@@ -19,11 +17,10 @@ impl AppState{
     }
 }
 
-
 #[tokio::main]
 async fn main() {
 
-    telemetry::init_dev_telemetry();
+    telemetry::init_telemetry("Gateway");
 
     let state = AppState::new();
 
@@ -34,8 +31,10 @@ async fn main() {
         .merge(api_router)
         .merge(router_auth::routes(state))
         .fallback_service(router_static::serve_static())
-        .layer(TraceLayer::new_for_http());
-
+        .layer(TraceLayer::new_for_http()
+            .make_span_with(DefaultMakeSpan::new().include_headers(true))
+            .on_response(DefaultOnResponse::new().include_headers(true))
+        );
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4001")
         .await.unwrap();
