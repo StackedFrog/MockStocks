@@ -1,6 +1,7 @@
 use sqlx::{postgres::PgPoolOptions, Postgres};
 pub type Pool = sqlx::Pool<Postgres>;
 pub mod users_model;
+pub mod holdings_model;
 pub mod error;
 pub struct Db {
     pub pool: Pool

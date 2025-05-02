@@ -17,7 +17,5 @@ impl IntoResponse for Error{
     fn into_response(self) -> axum::response::Response {
 
         StatusCode::INTERNAL_SERVER_ERROR.into_response()
-
     }
-
 }
