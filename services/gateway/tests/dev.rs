@@ -1,7 +1,8 @@
 use anyhow::Result;
+use hyper::header;
+use reqwest::cookie;
 use serde_json::json;
-
-
+use tower_cookies::cookie::CookieBuilder;
 
 #[tokio::test]
 async fn test_server()-> Result<()> {
@@ -15,14 +16,26 @@ async fn test_server()-> Result<()> {
     res.print().await?;
 
 
-    let res2 = cli.do_post("/auth/refresh",
-        json!({"user_name":"sven", "pwd":"pwd"})
-    ).await?;
+    // let cookie = cli.cookie_value("refreshToken").unwrap().clone();
 
-    res2.print().await?;
+    // let res2 = cli.do_post("/auth/refresh",
+    //     json!({"user_name":"sven", "pwd":"pwd"})
+    // ).await?;
+    //
+    // res2.print().await?;
+
+    // println!("Cookie: {:?}", cookie);
 
 
+    let client = cli.reqwest_client();
+
+    let res3 =  client.post("http://localhost:4001/auth/refresh")
+        .header(header::COOKIE, "refreshToken=tttt")
+        .send()
+        .await
+        .unwrap();
+
+    println!("Res Body: {:?}", res3.text().await.unwrap());
 
     Ok(())
-
 }
