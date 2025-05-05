@@ -1,4 +1,5 @@
 use axum::Router;
+use telemetry::telemetry;
 
 mod router;
 mod services;
@@ -6,7 +7,7 @@ mod services;
 #[tokio::main]
 async fn main() {
 
-    telemetry::init_dev_telemetry();
+    telemetry::init_telemetry("Stocks_Api_Servie");
 
 
     let app = Router::new()
