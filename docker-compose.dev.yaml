@@ -1,57 +1,70 @@
 services:
-     redis:
-        image: redis
-        env_file: ".env"
-        expose:
-           - "6379"
-        networks:
-           - backend
-        command: redis-server --requirepass ${REDIS_PASSWORD}
-        healthcheck:
-           test: ["CMD", "redis-cli", "ping"]
-           interval: 5s
-           timeout: 2s
-           retries: 5
-     auth:
-        build:
-           context: .
-           dockerfile: services/auth_service/Dockerfile.dev
-        env_file: ".env"
-        volumes:
-           - .:/app
-           - /app/target
-        expose:
-           - "4002"
-        environment:
-           OTEL_EXPORTER_OTLP_ENDPOINT: "http://lgtm:4318/"
-        networks:
-           - backend
-        depends_on:
-           redis:
-              condition: service_healthy
-     gateway:
-        build:
-           context: .
-           dockerfile: services/gateway/Dockerfile.dev
-        volumes:
-           - .:/app
-           - /app/target
-        ports:
-           - "4001:4001"
-        environment:
-           OTEL_EXPORTER_OTLP_ENDPOINT: "http://lgtm:4318/"
-        networks:
-           - backend
-     lgtm:
-        image: grafana/otel-lgtm
-        expose:
-           - "4317"
-           - "4318"
-        ports:
-           - "3000:3000"
-        networks:
-           - backend
+  redis:
+    image: redis
+    env_file: ".env"
+    expose:
+      - "6379"
+    networks:
+      - backend
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth_service/Dockerfile.dev
+    env_file: ".env"
+    volumes:
+      - .:/app
+      - /app/target
+    expose:
+      - "4002"
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile.dev
+    env_file: ".env"
+    volumes:
+      - .:/app
+      - /app/target
+    ports:
+      - "4001:4001"
+    networks:
+      - backend
+
+  lgtm:
+    image: grafana/otel-lgtm
+    expose:
+      - "4317"
+      - "4318"
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+
+  stocks_api_service:
+    build:
+      context: .
+      dockerfile: services/stocks_api_service/Dockerfile.dev
+    env_file: ".env"
+    volumes:
+      - .:/app
+      - /app/target
+    expose:
+      - "4003"
+    networks:
+      - backend
 
 networks:
-     backend:
-        driver: bridge
+  backend:
+    driver: bridge
