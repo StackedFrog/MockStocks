@@ -1,4 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse};
+use tracing::error;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -11,8 +12,14 @@ pub enum Error {
     BadTokenFormat,
 }
 
+
+
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
-        StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        let err = format!("Error: {:?}", self);
+
+        error!(err);
+
+        (StatusCode::INTERNAL_SERVER_ERROR, err).into_response()
     }
 }

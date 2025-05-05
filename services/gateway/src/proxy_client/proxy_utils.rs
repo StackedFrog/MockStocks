@@ -3,6 +3,7 @@ use http_body_util::BodyExt;
 use reqwest::{Client, RequestBuilder};
 use shared_utils::ctx::Ctx;
 use telemetry::tracing_propegation;
+use tracing::info;
 
 use super::{Error, Result};
 
@@ -42,7 +43,7 @@ impl ServiceRequestBuilder {
 
     pub fn with_user_id(mut self) -> Self {
         if let Some(ctx) = self.request.extensions().get::<Ctx>() {
-            self.request_builder = self.request_builder.header("x-user-id", ctx.user_id());
+            self.request_builder = self.request_builder.header("x-user-id", ctx.user_id().clone());
         }
         self
     }
