@@ -12,11 +12,5 @@ members = [
 axum = "0.8.3"
 tokio = { version = "1.44.2", features = ["rt-multi-thread"] }
 tower = { version = "0.5.2", features = ["tracing"] }
-
-
-# tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing"] }
-# tower-cookies = "0.11.0"
 serde = { version = "1.0.219", features = ["derive"] }
-# tracing = "0.1.41"
-# tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-#
+tracing = { version = "0.1.41", features = ["std", "attributes"] }

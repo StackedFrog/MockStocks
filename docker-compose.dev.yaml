@@ -20,6 +20,8 @@ services:
       - /app/target
     expose:
       - "4002"
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://lgtm:4318/"
     networks:
       - backend
     depends_on:
@@ -35,6 +37,18 @@ services:
       - /app/target
     ports:
       - "4001:4001"
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://lgtm:4318/"
+    networks:
+      - backend
+
+  lgtm:
+    image: grafana/otel-lgtm
+    expose:
+      - "4317"
+      - "4318"
+    ports:
+      - "3000:3000"
     networks:
       - backend
 

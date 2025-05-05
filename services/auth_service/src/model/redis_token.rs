@@ -8,7 +8,7 @@ pub async fn save_refresh_token(
     mut con: MultiplexedConnection
 ) -> Result<()>{
     let redis_key = token_claims.to_redis_key();
-    let _:() = con.set_ex(redis_key, token, token_claims.exp).await.map_err(|_| Error::FailedToSaveToken)?;
+    let _: String = con.set_ex(redis_key, token, token_claims.exp).await.map_err(|_| Error::FailedToSaveToken)?;
     Ok(())
 }
 
@@ -34,12 +34,10 @@ pub async fn rotate_token(
     new_refresh: String,
     mut con: MultiplexedConnection
 ) -> Result<()>{
-
-    redis::pipe().atomic()
-        .del(old_refresh_claims.to_redis_key())
-        .ignore()
+    let (_, _): (String, String) = redis::pipe().atomic()
+        .get_del(old_refresh_claims.to_redis_key())
         .set_ex(new_refresh_claims.to_redis_key(), new_refresh, new_refresh_claims.exp)
-        .exec_async(&mut con)
+        .query_async(&mut con)
         .await.map_err(|_|Error::TokenRotationFailed)?;
     Ok(())
 }

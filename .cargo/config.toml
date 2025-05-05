@@ -1,3 +1,4 @@
 [alias]
 auth = "run -p auth_service"
 gateway = "run -p gateway"
+tests = "test -- --nocapture"

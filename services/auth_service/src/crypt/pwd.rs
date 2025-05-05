@@ -7,7 +7,6 @@ pub fn validate_pwd(
     pwd_clear: String,
     pwd: String
 ) -> Result<()> {
-
     let pwd_hash = PasswordHash::new(&pwd).map_err(|_| Error::PwdWrongFormat)?;
     Argon2::default().verify_password(pwd_clear.as_bytes(), &pwd_hash)
         .map_err(|_| Error::PwdNotMatching)?;
@@ -24,7 +23,7 @@ pub fn encrypt_pwd(
 fn _encrypt_pwd(
     pwd_clear: String,
     salt: SaltString
-)-> Result<String>{
+) -> Result<String>{
     let argon = Argon2::default();
     let pwd_hash = argon.hash_password(pwd_clear.as_bytes(), &salt)
         .map_err(|_| Error::PwdFailedHash)?.to_string();

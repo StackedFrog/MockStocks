@@ -1,12 +1,9 @@
+use redis::aio::MultiplexedConnection;
 pub mod redis_token;
 mod error;
-use redis::{aio::MultiplexedConnection};
-
 pub use self::error::{Error, Result};
 
-
-
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ModelManager{
     pub client : MultiplexedConnection
 }
@@ -17,5 +14,4 @@ impl ModelManager{
         let con = client.get_multiplexed_tokio_connection().await.unwrap();
         Self{client: con}
     }
-
 }
