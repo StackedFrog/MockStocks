@@ -12,8 +12,6 @@ pub enum Error {
     BadTokenFormat,
 }
 
-
-
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let err = format!("Error: {:?}", self);

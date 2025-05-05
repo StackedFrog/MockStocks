@@ -43,7 +43,9 @@ impl ServiceRequestBuilder {
 
     pub fn with_user_id(mut self) -> Self {
         if let Some(ctx) = self.request.extensions().get::<Ctx>() {
-            self.request_builder = self.request_builder.header("x-user-id", ctx.user_id().clone());
+            self.request_builder = self
+                .request_builder
+                .header("x-user-id", ctx.user_id().clone());
         }
         self
     }

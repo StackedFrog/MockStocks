@@ -10,7 +10,7 @@ impl<'a> DNS<'a> for &str {
         match self {
             "auth" => Ok(&"http://auth:4002"),
             "stocks_api" => Ok(&"http://stocks_api_service:4003"),
-            _ => Err(Error::CanNotParesServiceName)
+            _ => Err(Error::CanNotParesServiceName),
         }
     }
 }

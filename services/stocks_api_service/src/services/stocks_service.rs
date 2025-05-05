@@ -1,15 +1,15 @@
-use yahoo_finance_api::{Quote, YahooConnector};
-use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, ACCEPT, ACCEPT_LANGUAGE, CONNECTION};
+use super::{Error, Result};
 use chrono::{DateTime, Local};
-use serde::Serialize;
-use serde_json::Value;
-use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use futures::future::try_join_all;
-use reqwest;
 use moka::sync::Cache;
 use once_cell::sync::Lazy;
+use reqwest;
+use reqwest::header::{ACCEPT, ACCEPT_LANGUAGE, CONNECTION, HeaderMap, HeaderValue, USER_AGENT};
+use serde::Serialize;
+use serde_json::Value;
 use std::time::Duration;
-use super::{Error, Result};
+use time::{OffsetDateTime, format_description::well_known::Rfc3339};
+use yahoo_finance_api::{Quote, YahooConnector};
 
 #[derive(Serialize, Clone)]
 pub struct LatestQuote {
@@ -52,7 +52,8 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
         .last_quote()
         .map_err(|_| Error::FailedToExtractQuote)?;
 
-    let local_date: DateTime<Local> = DateTime::from(DateTime::from_timestamp(quote.timestamp as i64, 0).unwrap()); 
+    let local_date: DateTime<Local> =
+        DateTime::from(DateTime::from_timestamp(quote.timestamp as i64, 0).unwrap());
 
     Ok(LatestQuote {
         symbol: symbol.to_string(),
@@ -83,12 +84,11 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
         return Err(Error::TooManySymbols);
     }
 
-    let fetches = symbols.iter().
-        map(|&symbol| fetch_latest_quote(symbol));
+    let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(symbol));
 
-    let results = try_join_all(fetches).
-        await.
-        map_err(|_| Error::FailedtoFetchMultipleQuotes)?;
+    let results = try_join_all(fetches)
+        .await
+        .map_err(|_| Error::FailedtoFetchMultipleQuotes)?;
 
     Ok(results)
 }
@@ -96,20 +96,18 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
 pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes> {
     let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
-    let start_offset = OffsetDateTime::parse(start, &Rfc3339)
-        .map_err(|_| Error::FailedToParseDateTime)?;
-    let end_offset = OffsetDateTime::parse(end, &Rfc3339)
-        .map_err(|_| Error::FailedToParseDateTime)?;
+    let start_offset =
+        OffsetDateTime::parse(start, &Rfc3339).map_err(|_| Error::FailedToParseDateTime)?;
+    let end_offset =
+        OffsetDateTime::parse(end, &Rfc3339).map_err(|_| Error::FailedToParseDateTime)?;
     let response = provider
         .get_quote_history(symbol, start_offset, end_offset)
         .await
         .map_err(|_| Error::FailedToFetch)?;
 
-    let fetched_quotes = response
-        .quotes()
-        .map_err(|_| Error::FailedToExtractQuote)?;
+    let fetched_quotes = response.quotes().map_err(|_| Error::FailedToExtractQuote)?;
 
-    Ok(HistoricQuotes{
+    Ok(HistoricQuotes {
         symbol: symbol.to_string(),
         start: start.to_string(),
         end: end.to_string(),
@@ -125,14 +123,15 @@ pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>> 
         .await
         .map_err(|_| Error::FailedToSearchForTicker)?;
 
-    let results = response.quotes
+    let results = response
+        .quotes
         .into_iter()
         .map(|quote| TickerSearchResult {
             symbol: quote.symbol,
             name: quote.long_name,
             exchange: quote.exchange,
         })
-    .collect();
+        .collect();
 
     Ok(results)
 }
@@ -153,10 +152,14 @@ pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>> {
     let trending_url = "https://query1.finance.yahoo.com/v1/finance/trending/US";
 
     let mut headers = HeaderMap::new();
-    headers.insert(USER_AGENT, HeaderValue::from_static(
+    headers.insert(
+        USER_AGENT,
+        HeaderValue::from_static(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
             AppleWebKit/537.36 (KHTML, like Gecko) \
-            Chrome/123.0.0.0 Safari/537.36"));
+            Chrome/123.0.0.0 Safari/537.36",
+        ),
+    );
     headers.insert(ACCEPT, HeaderValue::from_static("application/json"));
     headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
     headers.insert(CONNECTION, HeaderValue::from_static("keep-alive"));

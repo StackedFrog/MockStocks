@@ -1,6 +1,9 @@
-use axum::{http::StatusCode, response::{Response, IntoResponse}, Json};
+use axum::{
+    Json,
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 use serde_json::json;
-
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -12,9 +15,8 @@ pub enum Error {
     TooManySymbols,
     FailedtoFetchMultipleQuotes,
     FailedToParseDateTime,
-    FailedToSearchForTicker
+    FailedToSearchForTicker,
 }
-
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {

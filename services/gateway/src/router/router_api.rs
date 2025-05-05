@@ -4,7 +4,11 @@ use crate::{
     utils::dns::DNS,
 };
 use axum::{
-    body::Body, extract::{Path, Request, State}, response::Response, routing::any, Router
+    Router,
+    body::Body,
+    extract::{Path, Request, State},
+    response::Response,
+    routing::any,
 };
 
 use super::{Error, Result};
