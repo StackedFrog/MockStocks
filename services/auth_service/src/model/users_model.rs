@@ -1,13 +1,15 @@
+use core::hash;
+
 use crate::model::Pool;
 use uuid::Uuid;
 use crate::model::error::{Error, Result};
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct User {
-    user_id: Uuid,
-    username: String,
-    password: String,
-    role: UserType
+    pub user_id: Uuid,
+    pub username: String,
+    pub password: String,
+    pub role: UserType
 }
 
 pub struct NewUser {
@@ -16,9 +18,10 @@ pub struct NewUser {
     role: UserType
 }
 
-pub struct LoginUser {
-    username: String,
-    password: String,
+impl NewUser {
+    pub fn new_basic_user(username : String, pwd_hash : String) -> Self {
+        Self {username, password: pwd_hash, role: UserType::User}
+    }
 }
 
 #[derive(Debug, sqlx::Type)]

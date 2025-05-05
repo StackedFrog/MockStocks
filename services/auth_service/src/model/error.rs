@@ -5,5 +5,12 @@ pub enum Error {
     FailedToSaveToken,
     TokenNotFound,
     FailedToDeleteToken,
-    TokenRotationFailed
+    TokenRotationFailed,
+    UsersNotFound,
+    UserIDNotFound,
+    UsernameNotFound,
+    UserNotAdded,
+    PasswordNotUpdated,
+    RoleNotUpdated,
+    UserNotDeleted
 }

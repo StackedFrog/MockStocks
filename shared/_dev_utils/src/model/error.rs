@@ -4,13 +4,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Clone)]
 pub enum Error {
-    UsersNotFound,
-    UserIDNotFound,
-    UsernameNotFound,
-    UserNotAdded,
-    PasswordNotUpdated,
-    RoleNotUpdated,
-    UserNotDeleted
+    
 }
 
 impl IntoResponse for Error{

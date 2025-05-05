@@ -2,16 +2,22 @@ use axum::{extract::State, routing::{get, post}, Json, Router};
 use tower_cookies::{ Cookie, Cookies};
 use serde::{Deserialize, Serialize};
 use tracing::{event, instrument, Level};
-use crate::{crypt, model::redis_token, utils::cookie_util::set_refresh_token_cookie, ModelManager};
+use crate::{crypt, model::{redis_token, users_model::{add_user, get_user_by_username, NewUser, User}}, utils::cookie_util::set_refresh_token_cookie, ModelManager};
 use super::{Error, Result};
 
 pub fn routes(mm : ModelManager) -> Router {
     Router::new()
         .route("/login", post(login_handler))
-        .route("/registar", post(registar_handler))
+        .route("/register", post(register_handler))
         .route("/logout", post(logoff_handler))
         .route("/refresh", post(access_token_handler))
         .with_state(mm)
+}
+
+#[derive(Deserialize)]
+pub struct UserPayload {
+    pub username: String,
+    pub password: String,
 }
 
 #[derive(Clone, Debug)]
@@ -34,12 +40,6 @@ impl TokenClaims{
     }
 }
 
-#[derive(Debug, Deserialize)]
-struct LoginPayload{
-   user_name: String,
-   pwd: String
-}
-
 #[derive(Serialize)]
 struct TokenPayload{
     token: String
@@ -48,14 +48,14 @@ struct TokenPayload{
 async fn login_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>
+    Json(payload): Json<UserPayload>
 ) -> Result<Json<TokenPayload>>{
 
     // get user from model by name
-    let user_name = "username".to_string();
-    let pwd = "pwd".to_string();
+    let user = get_user_by_username(&mm.pool, payload.username).await?;
 
-    // crypt::pwd::validate_pwd(payload.pwd, pwd)?;
+    // validate plaintext with hashed password
+    crypt::pwd::validate_pwd(payload.password, user.password)?;
 
     let refresh_token = "refresh_token".to_string();
     let token_claims = TokenClaims{
@@ -77,17 +77,20 @@ async fn login_handler(
 }
 
 
-async fn registar_handler(
+async fn register_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>
+    Json(payload): Json<UserPayload>
 )-> Result<Json<TokenPayload>>{
 
-    let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd)?;
+    let pwd_hash = crypt::pwd::encrypt_pwd(payload.password)?;
+
+    let new_user = NewUser::new_basic_user(payload.username, pwd_hash);
 
     // check use name uniquness
 
     // insert new user
+    let user_id = add_user(&mm.pool, new_user).await?;
 
     let token_claims = TokenClaims{
         sub: "name".to_string(),
@@ -154,7 +157,7 @@ async fn access_token_handler(
 async fn logoff_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>
+    Json(payload): Json<UserPayload>
 )-> Result<String> {
 
     let refresh_token = cookies.get("refreshToken").ok_or(Error::MissingRefreshToken)?.into_owned();
@@ -170,5 +173,5 @@ async fn logoff_handler(
 
     redis_token::remove_refresh_token(token_claims, mm.client).await?;
 
-    Ok(payload.pwd)
+    Ok(payload.password)
 }
