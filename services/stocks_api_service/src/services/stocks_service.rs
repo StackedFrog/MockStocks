@@ -9,8 +9,7 @@ use reqwest;
 use moka::sync::Cache;
 use once_cell::sync::Lazy;
 use std::time::Duration;
-
-//TODO: Clean up code, add comments, move errs
+use super::{Error, Result};
 
 #[derive(Serialize, Clone)]
 pub struct LatestQuote {
@@ -41,17 +40,17 @@ pub struct TickerSearchResult {
     pub exchange: String,
 }
 
-pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote, String> {
-    let provider = YahooConnector::new().map_err(|err| format!("Error creating connector: {:?}", err))?;
+pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
+    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
         .get_latest_quotes(symbol, "1d")
         .await
-        .map_err(|err| format!("Error fetching stock data: {:?}", err))?;
+        .map_err(|_| Error::FailedToFetch)?;
 
     let quote = response
         .last_quote()
-        .map_err(|err| format!("Error extracting quote: {:?}", err))?;
+        .map_err(|_| Error::FailedToExtractQuote)?;
 
     let local_date: DateTime<Local> = DateTime::from(DateTime::from_timestamp(quote.timestamp as i64, 0).unwrap()); 
 
@@ -62,13 +61,13 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote, String> {
     })
 }
 
-pub async fn fetch_quote_from_timerange(symbol: &str, range: &str) -> Result<QuoteFromRange, String> {
-    let provider = YahooConnector::new().map_err(|err| format!("Error creating connector: {:?}", err))?;
+pub async fn fetch_quote_from_timerange(symbol: &str, range: &str) -> Result<QuoteFromRange> {
+    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
         .get_quote_range(symbol, "1d", range)
         .await
-        .map_err(|err| format!("Error fetching stock data: {:?}", err))?;
+        .map_err(|_| Error::FailedToFetch)?;
 
     let fetched_quotes = response.quotes().unwrap();
 
@@ -79,32 +78,36 @@ pub async fn fetch_quote_from_timerange(symbol: &str, range: &str) -> Result<Quo
     })
 }
 
-pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<LatestQuote>, String> {
+pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<LatestQuote>> {
     if symbols.len() > 10 {
-        return Err("Too many symbols provided. Maximum allowed is 10.".to_string());
+        return Err(Error::TooManySymbols);
     }
 
-    let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(symbol));
-    let results = try_join_all(fetches).await.map_err(|err| format!("Error fetching multiple quotes: {:?}", err))?;
+    let fetches = symbols.iter().
+        map(|&symbol| fetch_latest_quote(symbol));
+
+    let results = try_join_all(fetches).
+        await.
+        map_err(|_| Error::FailedtoFetchMultipleQuotes)?;
 
     Ok(results)
 }
 
-pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes, String> {
-    let provider = YahooConnector::new().map_err(|err| format!("Error creating connector: {:?}", err))?;
+pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes> {
+    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let start_offset = OffsetDateTime::parse(start, &Rfc3339)
-        .map_err(|e| format!("Failed to parse start datetime: {}", e))?;
+        .map_err(|_| Error::FailedToParseDateTime)?;
     let end_offset = OffsetDateTime::parse(end, &Rfc3339)
-        .map_err(|e| format!("Failed to parse start datetime: {}", e))?;
+        .map_err(|_| Error::FailedToParseDateTime)?;
     let response = provider
         .get_quote_history(symbol, start_offset, end_offset)
         .await
-        .map_err(|err| format!("Error fetching stock data: {:?}", err))?;
+        .map_err(|_| Error::FailedToFetch)?;
 
     let fetched_quotes = response
         .quotes()
-        .map_err(|err| format!("Error extracting quotes: {:?}", err))?;
+        .map_err(|_| Error::FailedToExtractQuote)?;
 
     Ok(HistoricQuotes{
         symbol: symbol.to_string(),
@@ -114,13 +117,13 @@ pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Resu
     })
 }
 
-pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>, String> {
-    let provider = YahooConnector::new().map_err(|err| format!("Error creating connector: {:?}", err))?;
+pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>> {
+    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
         .search_ticker(search_term)
         .await
-        .map_err(|err| format!("Error searching ticker: {:?}", err))?;
+        .map_err(|_| Error::FailedToSearchForTicker)?;
 
     let results = response.quotes
         .into_iter()
@@ -141,7 +144,7 @@ static TRENDING_CACHE: Lazy<Cache<(), Vec<LatestQuote>>> = Lazy::new(|| {
         .build()
 });
 
-pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>, String> {
+pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>> {
     if let Some(cached) = TRENDING_CACHE.get(&()) {
         return Ok(cached);
     }
@@ -163,10 +166,10 @@ pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>, String> {
         .headers(headers)
         .send()
         .await
-        .map_err(|e| format!("Failed to fetch trending stocks: {}", e))?
+        .map_err(|_| Error::FailedToFetch)?
         .json::<Value>()
         .await
-        .map_err(|e| format!("Failed to parse trending stocks: {}", e))?;
+        .map_err(|_| Error::FailedToExtractQuote)?;
 
     let symbols = response["finance"]["result"][0]["quotes"]
         .as_array()
