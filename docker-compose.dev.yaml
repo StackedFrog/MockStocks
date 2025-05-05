@@ -1,10 +1,12 @@
 services:
   redis:
     image: redis
+    env_file: ".env"
     expose:
       - "6379"
     networks:
       - backend
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -15,13 +17,12 @@ services:
     build:
       context: .
       dockerfile: services/auth_service/Dockerfile.dev
+    env_file: ".env"
     volumes:
       - .:/app
       - /app/target
     expose:
       - "4002"
-    environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://lgtm:4318/"
     networks:
       - backend
     depends_on:
@@ -32,13 +33,12 @@ services:
     build:
       context: .
       dockerfile: services/gateway/Dockerfile.dev
+    env_file: ".env"
     volumes:
       - .:/app
       - /app/target
     ports:
       - "4001:4001"
-    environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://lgtm:4318/"
     networks:
       - backend
 
@@ -56,11 +56,12 @@ services:
     build:
       context: .
       dockerfile: services/stocks_api_service/Dockerfile.dev
+    env_file: ".env"
     volumes:
       - .:/app
       - /app/target
-    ports:
-      - "4003:4003"
+    expose:
+      - "4003"
     networks:
       - backend
 

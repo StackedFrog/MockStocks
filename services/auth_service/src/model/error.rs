@@ -5,5 +5,5 @@ pub enum Error {
     FailedToSaveToken,
     TokenNotFound,
     FailedToDeleteToken,
-    TokenRotationFailed
+    TokenRotationFailed,
 }
