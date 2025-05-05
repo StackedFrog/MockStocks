@@ -25,34 +25,27 @@ pub fn routes() -> Router {
 /// Query parameters for `/stock` and `/stocks` endpoints.
 #[derive(Deserialize)]
 struct StockQuery {
-    /// Stock symbol (e.g., AAPL). For `/stocks`, comma-separated symbols.
     symbol: String,
 }
 
 /// Query parameters for `/range` endpoint.
 #[derive(Deserialize)]
 struct RangeQuery {
-    /// Stock symbol (e.g., AAPL).
     symbol: String,
-    /// Date range (e.g., "1mo", "6mo", "1y").
     range: String,
 }
 
 /// Query parameters for `/history` endpoint.
 #[derive(Deserialize)]
 struct HistoricStockQuery {
-    /// Stock symbol (e.g., AAPL).
     symbol: String,
-    /// Start date (RFC3339 format).
     start: String,
-    /// End date (RFC3339 format).
     end: String,
 }
 
 /// Query parameters for `/ticker` endpoint.
 #[derive(Deserialize)]
 struct TickerSearchQuery {
-    /// Search string for ticker (company name or keyword).
     string: String,
 }
 
