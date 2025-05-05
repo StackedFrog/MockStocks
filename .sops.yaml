@@ -1,0 +1,4 @@
+creation_rules:
+  - pgp: 9D79786B52D04804FA74623D678F8C0411C5D45E
+    encrypted_regex: '^(DB_.*|.*_SECRET|.*_PASSWORD)$'
+    path_reges: '.*\.env$'
