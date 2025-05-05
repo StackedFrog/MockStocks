@@ -10,43 +10,45 @@ services:
       interval: 5s
       timeout: 2s
       retries: 5
-    auth:
-      build:
-        context: .
-        dockerfile: services/auth_service/Dockerfile.dev
-        volumes:
-          - .:/app
-          - /app/target
-        expose:
-          - "4002"
-        networks:
-          - backend
-        depends_on:
-          redis:
-            condition: service_healthy
-    gateway:
-      build:
-        context: .
-        dockerfile: services/gateway/Dockerfile.dev
-        volumes:
-          - .:/app
-          - /app/target
-        ports:
-          - "4001:4001"
-        networks:
-          - backend
 
-    stocks_api_service:
-      build:
-        context: .
-        dockerfile: services/stocks_api_service/Dockerfile.dev
-        volumes:
-          - .:/app
-          - /app/target
-        ports:
-          - "4003:4003"
-        networks:
-          - backend
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth_service/Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/target
+    expose:
+      - "4002"
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/target
+    ports:
+      - "4001:4001"
+    networks:
+      - backend
+
+  stocks_api_service:
+    build:
+      context: .
+      dockerfile: services/stocks_api_service/Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/target
+    ports:
+      - "4003:4003"
+    networks:
+      - backend
 
 networks:
   backend:
