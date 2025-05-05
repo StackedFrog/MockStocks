@@ -3,6 +3,7 @@ import NavBar from './components/NavBar'
 import LangingPage from './pages/LangingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import TradingPage from './pages/TradingPage.jsx'
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<LangingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/trade" element={<TradingPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
