@@ -1,7 +1,5 @@
 use crate::model;
 
-
-pub enum Error{
+pub enum Error {
     Model(model::Error),
 }
-

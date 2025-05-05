@@ -4,11 +4,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    ServiceDoesNotExist,
-    ServiceNotAvailable,
-    CanNotParseServiceResponse,
-    TokenMissing,
-    BadTokenFormat,
+    CanNotParesResponseBody,
 }
 
 impl IntoResponse for Error {
