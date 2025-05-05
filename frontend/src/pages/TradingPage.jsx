@@ -1,24 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TradingChart } from '../components/TradingChart.jsx'
 
+
 function TradingPage() {
-const initialData = [
-    { time: '2018-12-22', value: 32.51 },
-    { time: '2018-12-23', value: 31.11 },
-    { time: '2018-12-24', value: 27.02 },
-    { time: '2018-12-25', value: 27.32 },
-    { time: '2018-12-26', value: 25.17 },
-    { time: '2018-12-27', value: 28.89 },
-    { time: '2018-12-28', value: 25.46 },
-    { time: '2018-12-29', value: 23.92 },
-    { time: '2018-12-30', value: 22.68 },
-    { time: '2018-12-31', value: 22.67 },
-]
-  return (
-  <>
-    <TradingChart data={initialData}></TradingChart>
-  </>
-  )
+  const [trades, setTrades] = useState([]);
+  const API_KEY = import.meta.env.VITE_API_KEY
+
+  //DISPLAYING DATA INTO CHART IS STILL BUGY
+  const fetchFinnhubData = async () => {
+    const socket = new WebSocket(`wss://ws.finnhub.io?token=${API_KEY}`);
+
+    // Connection opened -> Subscribe
+    socket.addEventListener('open', function (event) {
+        socket.send(JSON.stringify({'type':'subscribe', 'symbol': 'AAPL'}))
+    });
+
+    // Listen for messages
+  socket.addEventListener('message', (event) => {
+    try {
+      const response = JSON.parse(event.data);
+      setTrades(prevTrades => [
+        ...prevTrades,
+        ...response.data.map(candle => ({ time: Date.now() / 1000, value: candle.p }))
+      ]);
+      console.log("Parsed data:", response.data);
+    } catch (error) {
+      console.error("Failed to parse WebSocket message:", error);
+    }
+  });
+
+    // cleanup WebSocket
+    return () => {
+      socket.send(JSON.stringify({ type: 'unsubscribe', symbol: 'AAPL' }));
+      socket.close();
+    }
+  }
+  useEffect(()=>{fetchFinnhubData()}, [])
+
+return (
+  <div className="bg-[#141414] min-h-screen p-4">
+    <TradingChart data={trades} />
+  </div>
+);
 }
 
 export default TradingPage

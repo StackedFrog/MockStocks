@@ -5,7 +5,7 @@ export const TradingChart = props => {
     const {
         data,
         colors: {
-            backgroundColor = 'black',
+            backgroundColor = 'rgb(15,15,15)',
             lineColor = '#2962FF',
             textColor = 'white',
             areaTopColor = '#2962FF',
