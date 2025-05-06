@@ -1,9 +1,9 @@
-import { AreaSeries, createChart, ColorType } from 'lightweight-charts';
+import { CandlestickSeries, createChart, ColorType } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 
-export const TradingChart = props => {
+export const TradingChart = (props) => {
     const {
-        data,
+        data, 
         colors: {
             backgroundColor = 'rgb(15,15,15)',
             lineColor = '#2962FF',
@@ -15,39 +15,44 @@ export const TradingChart = props => {
 
     const chartContainerRef = useRef();
 
-    useEffect(
-        () => {
-            const handleResize = () => {
-                chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-            };
+    useEffect(() => {
+        const handleResize = () => {
+            chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+        };
 
-            const chart = createChart(chartContainerRef.current, {
-                layout: {
-                    background: { type: ColorType.Solid, color: backgroundColor },
-                    textColor,
-                },
-                width: chartContainerRef.current.clientWidth,
-                height: 300,
-            });
-            chart.timeScale().fitContent();
+        // Initialize the chart
+        const chart = createChart(chartContainerRef.current, {
+            layout: {
+                background: { type: ColorType.Solid, color: backgroundColor },
+                textColor,
+            },
+            width: chartContainerRef.current.clientWidth,
+            height: 300,
+        });
+        chart.timeScale().fitContent();
 
-            const newSeries = chart.addSeries(AreaSeries, { lineColor, topColor: areaTopColor, bottomColor: areaBottomColor });
-            newSeries.setData(data);
+        // Add a Candlestick series
+        const candlestickSeries = chart.addSeries(CandlestickSeries, {
+            upColor: '#4fff44', // Color for up candles (bullish)
+            borderUpColor: '#4fff44',
+            wickUpColor: '#4fff44',
+            downColor: '#ff4976', // Color for down candles (bearish)
+            borderDownColor: '#ff4976',
+            wickDownColor: '#ff4976',
+        });
 
-            window.addEventListener('resize', handleResize);
+        // Set the data for the candlestick chart
+        candlestickSeries.setData(data);
 
-            return () => {
-                window.removeEventListener('resize', handleResize);
+        // Resize event listener
+        window.addEventListener('resize', handleResize);
 
-                chart.remove();
-            };
-        },
-        [data, backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]
-    );
+        // Cleanup
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            chart.remove();
+        };
+    }, [data, backgroundColor, textColor, lineColor, areaTopColor, areaBottomColor]);
 
-    return (
-        <div
-            ref={chartContainerRef}
-        />
-    );
+    return <div ref={chartContainerRef} />;
 };
