@@ -1,5 +1,7 @@
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
+use chrono::Utc;
+use uuid::Uuid;
 
 use super::{Error, Result};
 
@@ -14,11 +16,12 @@ pub struct Claims {
 
 impl Claims {
     pub fn new(id: String) -> Self{
-        // define token creation
-        // generate jti w uuid 
-        // exp -> from config
-        // iat -> current time when method is called 
-        // put into claim, return  
+        Claims {
+            sub: id,
+            jti: Uuid::new_v4().to_string(),
+            exp: 0, // from config later
+            iat: Utc::now()
+        }
     }
 }
 
