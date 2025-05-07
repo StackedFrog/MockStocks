@@ -17,11 +17,11 @@ pub struct Claims {
 }
 
 impl Claims {
-    pub fn new(id: String) -> Self {
+    pub fn new(id: String, exp: u64) -> Self {
         Claims {
             sub: id,
             jti: Uuid::new_v4().to_string(),
-            exp: get_current_timestamp() + 500, // from config later
+            exp: get_current_timestamp() + exp, // from config later
             iat: get_current_timestamp(),
         }
     }
@@ -41,6 +41,9 @@ pub fn validate_signature(token: &str) -> Result<TokenData<Claims>> {
     .map_err(|_| Error::FailedToValidateToken) // lambda, returns claims or error
     // if cannot decode, throw error (fail to validate, mapped into error types)
 }
+
+
+
 
 pub fn create_token(claims: &Claims) -> Result<String> {
     let secret = "secret";

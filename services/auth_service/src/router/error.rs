@@ -1,4 +1,4 @@
-use crate::{crypt, model};
+use crate::{crypt, jwt, model};
 use axum::{http::StatusCode, response::IntoResponse};
 use std::fmt::Debug;
 use tracing::error;
@@ -9,6 +9,7 @@ pub enum Error {
     MissingRefreshToken,
     Model(model::Error),
     Crypt(crypt::Error),
+    Jwt(jwt::Error)
 }
 
 impl From<model::Error> for Error {
@@ -23,11 +24,18 @@ impl From<crypt::Error> for Error {
     }
 }
 
+impl From<jwt::Error> for Error {
+    fn from(val: jwt::Error) -> Self {
+        Error::Jwt(val)
+    }
+}
+
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let err = match &self {
             Error::Model(error) => format!("Error: {:?}", error),
             Error::Crypt(error) => format!("Error: {:?}", error),
+            Error::Jwt(error) => format!("Error: {:?}", error),
             error => format!("Error: {:?}", error),
         };
 

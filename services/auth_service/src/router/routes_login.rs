@@ -1,16 +1,12 @@
 use super::{Error, Result};
 use crate::{
-    ModelManager,
     crypt::{
         self,
         token::{self, Claims},
-    },
-    model::redis_token,
-    oAuth::{
+    }, jwt, model::redis_token, oAuth::{
         oAuth_url::oauth_url,
-        oauth_autherized::{self, AuthRequest, UserData, google_autherized},
-    },
-    utils::cookie_util::set_refresh_token_cookie,
+        oauth_autherized::{self, google_autherized, AuthRequest, UserData},
+    }, utils::cookie_util::set_refresh_token_cookie, ModelManager
 };
 use axum::{
     Json, Router,
@@ -30,12 +26,6 @@ pub fn routes(mm: ModelManager) -> Router {
         .route("/google", post(google_oauth))
         .route("/authorized", get(login_autherized))
         .with_state(mm)
-}
-
-pub struct TokenClaimsAccessToken {
-    sub: String,
-    pub exp: u64,
-    iat: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -62,20 +52,14 @@ async fn login_handler(
 
     let user_id = "test_id".to_string();
 
-    let claims = Claims::new(user_id);
-
-    let token = token::create_token(&claims)?;
+    let (refresh_token, access_token) = jwt::creat_token_pair(user_id, mm).await?;
 
     // create access and refresh TokenClaims
 
-    redis_token::save_refresh_token(&claims, &token, mm.client.clone()).await?;
-
-    set_refresh_token_cookie(cookies, token);
-
-    let access_token = "access_token".to_string();
+    set_refresh_token_cookie(cookies, refresh_token.token);
 
     Ok(Json(TokenPayload {
-        token: access_token,
+        token: access_token.token,
     }))
 }
 
@@ -89,24 +73,18 @@ async fn registar_handler(
     // check use name uniquness
 
     // insert new user
-    //
 
     let user_id = "test_id".to_string();
 
-    let claims = Claims::new(user_id);
-
-    let token = token::create_token(&claims)?;
+    let (refresh_token, access_token) = jwt::creat_token_pair(user_id, mm).await?;
 
     // create access and refresh tokens
 
-    redis_token::save_refresh_token(&claims, &token, mm.client).await?;
+    set_refresh_token_cookie(cookies, refresh_token.token);
 
-    set_refresh_token_cookie(cookies, token);
-
-    let access_token = "access_token".to_string();
 
     Ok(Json(TokenPayload {
-        token: access_token,
+        token: access_token.token,
     }))
 }
 
@@ -119,21 +97,13 @@ async fn access_token_handler(
         .ok_or(Error::MissingRefreshToken)?;
 
     let refresh_token = refresh_token_cookie.value();
-
     let claims = token::validate_signature(refresh_token)?;
+    let (refresh_token_new, access_token) = jwt::rotate_tokens(claims, mm).await?;
 
-    let claims_new = Claims::new(claims.claims.sub.clone());
-
-    let refresh_token_new = token::create_token(&claims_new)?;
-
-    redis_token::rotate_token(&claims.claims, &claims_new, &refresh_token_new, mm.client).await?;
-
-    set_refresh_token_cookie(cookies, refresh_token_new);
-
-    let access_token = "access_token2".to_string();
+    set_refresh_token_cookie(cookies, refresh_token_new.token);
 
     Ok(Json(TokenPayload {
-        token: access_token,
+        token: access_token.token,
     }))
 }
 
@@ -147,11 +117,9 @@ async fn logoff_handler(
         .ok_or(Error::MissingRefreshToken)?;
 
     let refresh_token = refresh_token_cookie.value();
-
     let claims = token::validate_signature(refresh_token)?;
 
     cookies.remove(Cookie::from("refreshToken"));
-
     redis_token::remove_refresh_token(&claims.claims, mm.client).await?;
 
     Ok(payload.pwd)

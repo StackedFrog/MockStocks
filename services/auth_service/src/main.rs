@@ -12,6 +12,7 @@ mod model;
 mod oAuth;
 mod router;
 mod utils;
+mod jwt;
 
 #[tokio::main]
 async fn main() {
