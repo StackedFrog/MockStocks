@@ -2,7 +2,7 @@ use axum::{extract::State, routing::{get, post}, Json, Router};
 use tower_cookies::{ Cookie, Cookies};
 use serde::{Deserialize, Serialize};
 use tracing::{event, instrument, Level};
-use crate::{crypt, model::{redis_token, users_model::{add_user, get_user_by_username, NewUser, User}}, utils::cookie_util::set_refresh_token_cookie, ModelManager};
+use crate::{crypt, model::{redis_token, users_model::{add_user, get_user_by_username, NewUser}}, utils::cookie_util::set_refresh_token_cookie, ModelManager};
 use super::{Error, Result};
 
 pub fn routes(mm : ModelManager) -> Router {

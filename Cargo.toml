@@ -5,7 +5,7 @@ members = [
 	"services/gateway",
 	"shared/_dev_utils",
 	"shared/telemetry",
-	"shared/shared_utils"]
+	"shared/shared_utils", "services/user_service"]
 
 [workspace.dependencies]
 axum = "0.8.3"

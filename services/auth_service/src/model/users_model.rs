@@ -81,19 +81,6 @@ pub async fn add_user(pool : &Pool, user : NewUser) -> Result<Uuid> {
     return Ok(user.user_id);
 }
 
-// update user password
-pub async fn update_password(pool : &Pool, id : Uuid, new_password : String) -> Result<()> {
-    let query = "UPDATE Users SET password = ? WHERE user_id = ?";
-    sqlx::query(query)
-        .bind(new_password)
-        .bind(id)
-        .execute(pool)
-        .await
-        .map_err(|_e| Error::PasswordNotUpdated)?;
-
-    return Ok(());
-}
-
 // update role
 pub async fn update_role(pool : &Pool, id : Uuid, new_role : UserType) -> Result<()> {
     let query = "UPDATE Users SET role = ? WHERE user_id = ?";
@@ -103,18 +90,6 @@ pub async fn update_role(pool : &Pool, id : Uuid, new_role : UserType) -> Result
         .execute(pool)
         .await
         .map_err(|_e| Error::RoleNotUpdated)?;
-
-    return Ok(());
-}
-
-//delete user
-pub async fn delete_user(pool : &Pool, id : Uuid) -> Result<()> {
-    let query = "DELETE FROM Users WHERE user_id = ?";
-    sqlx::query(query)
-        .bind(id)
-        .execute(pool)
-        .await
-        .map_err(|_e| Error::UserNotDeleted)?;
 
     return Ok(());
 }
