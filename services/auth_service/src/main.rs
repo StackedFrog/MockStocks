@@ -9,6 +9,7 @@ mod config;
 mod crypt;
 mod error;
 mod model;
+mod oAuth;
 mod router;
 mod utils;
 

@@ -1,15 +1,21 @@
 use super::{Error, Result};
 use crate::{
-    ModelManager, crypt, model::redis_token, utils::cookie_util::set_refresh_token_cookie,
+    ModelManager, crypt,
+    model::redis_token,
+    oAuth::{
+        oAuth_url::oauth_url,
+        oauth_autherized::{self, AuthRequest, UserData, google_autherized},
+    },
+    utils::cookie_util::set_refresh_token_cookie,
 };
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{Query, State},
     routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
 use tower_cookies::{Cookie, Cookies};
-use tracing::{Level, event, instrument};
+use tracing::{Level, event, info, instrument};
 
 pub fn routes(mm: ModelManager) -> Router {
     Router::new()
@@ -17,6 +23,8 @@ pub fn routes(mm: ModelManager) -> Router {
         .route("/registar", post(registar_handler))
         .route("/logout", post(logoff_handler))
         .route("/refresh", post(access_token_handler))
+        .route("/google", post(google_oauth))
+        .route("/authorized", get(login_autherized))
         .with_state(mm)
 }
 
@@ -187,4 +195,25 @@ async fn logoff_handler(
     redis_token::remove_refresh_token(token_claims, mm.client).await?;
 
     Ok(payload.pwd)
+}
+
+async fn google_oauth(State(mm): State<ModelManager>) -> Result<String> {
+    let url = oauth_url(mm)
+        .await
+        .map_err(|_| Error::MissingRefreshToken)?;
+
+    Ok(url.to_string())
+}
+
+async fn login_autherized(
+    Query(query): Query<AuthRequest>,
+    State(mm): State<ModelManager>,
+) -> Result<Json<UserData>> {
+    let user = google_autherized(query, mm)
+        .await
+        .map_err(|_| Error::MissingRefreshToken)?;
+
+    info!("User data: {:?}", user);
+
+    Ok(Json(user))
 }

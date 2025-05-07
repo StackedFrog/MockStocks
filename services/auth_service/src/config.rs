@@ -2,10 +2,15 @@ use config::{Config, Environment};
 use serde::Deserialize;
 use std::{collections::HashMap, sync::OnceLock};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Settings {
     pub redis_password: String,
     pub cargo_pkg_name: String,
+    pub client_id: String,
+    pub client_secret: String,
+    pub redirect_url: String,
+    pub auth_url: String,
+    pub token_url: String,
 }
 
 impl Settings {

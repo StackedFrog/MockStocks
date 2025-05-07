@@ -5,5 +5,7 @@ pub enum Error {
     FailedToSaveToken,
     TokenNotFound,
     FailedToDeleteToken,
+    FailedToSaveCsrf,
     TokenRotationFailed,
+    CsrfNotFound,
 }
