@@ -36,6 +36,7 @@ struct StockQuery {
 struct RangeQuery {
     symbol: String,
     range: String,
+    interval: String,
 }
 
 /// Query parameters for `/history` endpoint.
@@ -66,10 +67,11 @@ async fn get_stock_price(Query(params): Query<StockQuery>) -> Result<Json<Latest
 /// **Query Parameters:**
 /// - `symbol` (required): Stock symbol.
 /// - `range` (required): Date range (e.g., "6mo")
+/// - `ìnterval` (required): Data resolution (e.g., "30m")
 ///
 /// **Returns:** JSON with historical quotes.
 async fn get_range(Query(params): Query<RangeQuery>) -> Result<Json<QuoteFromRange>> {
-    let data = fetch_quote_from_timerange(&params.symbol, &params.range).await?;
+    let data = fetch_quote_from_timerange(&params.symbol, &params.range, &params.interval).await?;
     Ok(Json(data))
 }
 
