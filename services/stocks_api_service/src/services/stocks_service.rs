@@ -1,9 +1,9 @@
-use yahoo_finance_api::{Quote, YahooConnector};
+use super::{Error, Result};
 use chrono::{DateTime, Local};
+use futures::future::try_join_all;
 use serde::Serialize;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
-use futures::future::try_join_all;
-use super::{Error, Result};
+use yahoo_finance_api::{Quote, YahooConnector};
 // use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, ACCEPT, ACCEPT_LANGUAGE, CONNECTION};
 // use serde_json::Value;
 // use reqwest;
@@ -49,8 +49,8 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
         .last_quote()
         .map_err(|_| Error::FailedToExtractQuote)?;
 
-    let utc_date = DateTime::from_timestamp(quote.timestamp as i64, 0)
-        .ok_or(Error::FailedToParseDateTime)?;
+    let utc_date =
+        DateTime::from_timestamp(quote.timestamp as i64, 0).ok_or(Error::FailedToParseDateTime)?;
     let local_date: DateTime<Local> = DateTime::from(utc_date);
 
     Ok(LatestQuote {

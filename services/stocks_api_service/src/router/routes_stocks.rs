@@ -1,7 +1,10 @@
-use axum::{extract::Query, response::Json, routing::get, Router};
-use serde::Deserialize;
 use crate::services::Result;
-use crate::services::stocks_service::{fetch_historic_quotes, fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker, HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult};
+use crate::services::stocks_service::{
+    HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult, fetch_historic_quotes,
+    fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker,
+};
+use axum::{Router, extract::Query, response::Json, routing::get};
+use serde::Deserialize;
 
 /// Defines all routes available in the Stocks API service.
 ///
@@ -19,7 +22,7 @@ pub fn routes() -> Router {
         .route("/stocks", get(get_multiple_stock_prices))
         .route("/history", get(get_historic_stock))
         .route("/ticker", get(get_tickers))
-        // .route("/trending", get(get_trending_quotes))
+    // .route("/trending", get(get_trending_quotes))
 }
 
 /// Query parameters for `/stock`, `/ticker` and `/stocks` endpoints.
@@ -78,7 +81,9 @@ async fn get_range(Query(params): Query<RangeQuery>) -> Result<Json<QuoteFromRan
 /// - `symbol` (required): Comma-separated symbols (e.g., "AAPL,GOOG,MSFT")
 ///
 /// **Returns:** JSON array of latest quotes.
-async fn get_multiple_stock_prices(Query(params): Query<StockQuery>) -> Result<Json<Vec<LatestQuote>>> {
+async fn get_multiple_stock_prices(
+    Query(params): Query<StockQuery>,
+) -> Result<Json<Vec<LatestQuote>>> {
     let symbols: Vec<&str> = params.symbol.split(',').map(|s| s.trim()).collect();
     let data = fetch_latest_quotes_parallel(&symbols).await?;
     Ok(Json(data))
@@ -94,7 +99,9 @@ async fn get_multiple_stock_prices(Query(params): Query<StockQuery>) -> Result<J
 /// - `end` (required): End date (RFC3339 format)
 ///
 /// **Returns:** JSON with historical quotes.
-async fn get_historic_stock(Query(params): Query<HistoricStockQuery>) -> Result<Json<HistoricQuotes>> {
+async fn get_historic_stock(
+    Query(params): Query<HistoricStockQuery>,
+) -> Result<Json<HistoricQuotes>> {
     let data = fetch_historic_quotes(&params.symbol, &params.start, &params.end).await?;
     Ok(Json(data))
 }
