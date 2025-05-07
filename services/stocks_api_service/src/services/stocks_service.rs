@@ -49,7 +49,9 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
         .last_quote()
         .map_err(|_| Error::FailedToExtractQuote)?;
 
-    let local_date: DateTime<Local> = DateTime::from(DateTime::from_timestamp(quote.timestamp as i64, 0).unwrap()); 
+    let utc_date = DateTime::from_timestamp(quote.timestamp as i64, 0)
+        .ok_or(Error::FailedToParseDateTime)?;
+    let local_date: DateTime<Local> = DateTime::from(utc_date);
 
     Ok(LatestQuote {
         symbol: symbol.to_string(),
@@ -66,7 +68,7 @@ pub async fn fetch_quote_from_timerange(symbol: &str, range: &str) -> Result<Quo
         .await
         .map_err(|_| Error::FailedToFetch)?;
 
-    let fetched_quotes = response.quotes().unwrap();
+    let fetched_quotes = response.quotes().map_err(|_| Error::FailedToExtractQuote)?;
 
     Ok(QuoteFromRange {
         symbol: symbol.to_string(),
