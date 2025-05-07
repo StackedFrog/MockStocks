@@ -2,7 +2,7 @@ use axum::{extract::Query, response::Json, routing::get, Router};
 use serde::Deserialize;
 use crate::services::Result;
 
-use crate::services::stocks_service::{fetch_historic_quotes, fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker, fetch_trending_quotes, HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult};
+use crate::services::stocks_service::{fetch_historic_quotes, fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker, HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult};
 
 /// Defines all routes available in the Stocks API service.
 ///
@@ -20,7 +20,7 @@ pub fn routes() -> Router {
         .route("/stocks", get(get_multiple_stock_prices))
         .route("/history", get(get_historic_stock))
         .route("/ticker", get(get_tickers))
-        .route("/trending", get(get_trending_quotes))
+        // .route("/trending", get(get_trending_quotes))
 }
 
 /// Query parameters for `/stock`, `/ticker` and `/stocks` endpoints.
@@ -113,12 +113,7 @@ async fn get_tickers(Query(params): Query<StockQuery>) -> Result<Json<Vec<Ticker
     Ok(Json(data))
 }
 
-/// Handler for `GET /trending`
-///
-/// Fetches the latest quotes for trending stocks in the US market.
-///
-/// **Returns:** JSON array of trending stock quotes.
-async fn get_trending_quotes() -> Result<Json<Vec<LatestQuote>>> {
-    let data = fetch_trending_quotes().await?;
-    Ok(Json(data))
-}
+// async fn get_trending_quotes() -> Result<Json<Vec<LatestQuote>>> {
+//     let data = fetch_trending_quotes().await?;
+//     Ok(Json(data))
+// }
