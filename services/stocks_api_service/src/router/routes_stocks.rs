@@ -1,7 +1,6 @@
 use axum::{extract::Query, response::Json, routing::get, Router};
 use serde::Deserialize;
 use crate::services::Result;
-
 use crate::services::stocks_service::{fetch_historic_quotes, fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker, HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult};
 
 /// Defines all routes available in the Stocks API service.

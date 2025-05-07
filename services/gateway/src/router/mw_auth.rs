@@ -1,14 +1,9 @@
+use super::error::{Error, Result};
 use axum::{extract::Request, middleware::Next, response::Response};
 use hyper::HeaderMap;
-use super::error::{Error, Result};
 use shared_utils::ctx::Ctx;
 
-
-pub async fn mw_ctx_resolver(
-    mut req: Request,
-    next: Next
-) -> Result<Response>{
-
+pub async fn mw_ctx_resolver(mut req: Request, next: Next) -> Result<Response> {
     let ctx = ctx_resolver(req.headers()).await?;
 
     req.extensions_mut().insert(ctx);
@@ -19,7 +14,7 @@ pub async fn mw_ctx_resolver(
 async fn ctx_resolver(header: &HeaderMap) -> Result<Ctx> {
     // let token = header.get("AUTHORIZATION").ok_or(Error::Variant1)?;
 
-    let Some(auth_header) = header.get("AUTHORIZATION") else{
+    let Some(auth_header) = header.get("AUTHORIZATION") else {
         return Err(Error::TokenMissing);
     };
 

@@ -82,12 +82,11 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
         return Err(Error::TooManySymbols);
     }
 
-    let fetches = symbols.iter().
-        map(|&symbol| fetch_latest_quote(symbol));
+    let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(symbol));
 
-    let results = try_join_all(fetches).
-        await.
-        map_err(|_| Error::FailedtoFetchMultipleQuotes)?;
+    let results = try_join_all(fetches)
+        .await
+        .map_err(|_| Error::FailedtoFetchMultipleQuotes)?;
 
     Ok(results)
 }
@@ -95,20 +94,18 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
 pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes> {
     let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
-    let start_offset = OffsetDateTime::parse(start, &Rfc3339)
-        .map_err(|_| Error::FailedToParseDateTime)?;
-    let end_offset = OffsetDateTime::parse(end, &Rfc3339)
-        .map_err(|_| Error::FailedToParseDateTime)?;
+    let start_offset =
+        OffsetDateTime::parse(start, &Rfc3339).map_err(|_| Error::FailedToParseDateTime)?;
+    let end_offset =
+        OffsetDateTime::parse(end, &Rfc3339).map_err(|_| Error::FailedToParseDateTime)?;
     let response = provider
         .get_quote_history(symbol, start_offset, end_offset)
         .await
         .map_err(|_| Error::FailedToFetch)?;
 
-    let fetched_quotes = response
-        .quotes()
-        .map_err(|_| Error::FailedToExtractQuote)?;
+    let fetched_quotes = response.quotes().map_err(|_| Error::FailedToExtractQuote)?;
 
-    Ok(HistoricQuotes{
+    Ok(HistoricQuotes {
         symbol: symbol.to_string(),
         start: start.to_string(),
         end: end.to_string(),
@@ -124,14 +121,15 @@ pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>> 
         .await
         .map_err(|_| Error::FailedToSearchForTicker)?;
 
-    let results = response.quotes
+    let results = response
+        .quotes
         .into_iter()
         .map(|quote| TickerSearchResult {
             symbol: quote.symbol,
             name: quote.long_name,
             exchange: quote.exchange,
         })
-    .collect();
+        .collect();
 
     Ok(results)
 }
