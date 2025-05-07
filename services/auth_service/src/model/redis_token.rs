@@ -1,9 +1,9 @@
 use super::{Error, Result};
-use crate::router::routes_login::TokenClaims;
+use crate::crypt::token::Claims;
 use redis::{AsyncCommands, aio::MultiplexedConnection};
 
 pub async fn save_refresh_token(
-    token_claims: TokenClaims,
+    token_claims: &Claims,
     token: &String,
     mut con: MultiplexedConnection,
 ) -> Result<()> {
@@ -16,7 +16,7 @@ pub async fn save_refresh_token(
 }
 
 pub async fn remove_refresh_token(
-    token_claims: TokenClaims,
+    token_claims: &Claims,
     mut con: MultiplexedConnection,
 ) -> Result<()> {
     let _: () = con
@@ -27,7 +27,7 @@ pub async fn remove_refresh_token(
 }
 
 pub async fn get_refresh_token(
-    token_claims: TokenClaims,
+    token_claims: &Claims,
     mut con: MultiplexedConnection,
 ) -> Result<String> {
     let token: String = con
@@ -38,9 +38,9 @@ pub async fn get_refresh_token(
 }
 
 pub async fn rotate_token(
-    old_refresh_claims: TokenClaims,
-    new_refresh_claims: TokenClaims,
-    new_refresh: String,
+    old_refresh_claims: &Claims,
+    new_refresh_claims: &Claims,
+    new_refresh: &String,
     mut con: MultiplexedConnection,
 ) -> Result<()> {
     let (_, _): (String, String) = redis::pipe()

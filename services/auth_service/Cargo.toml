@@ -19,3 +19,5 @@ shared_utils = {path = "../../shared/shared_utils"}
 config = "0.15.11"
 oauth2 = "5.0.0"
 reqwest = { version = "0.12.15", features = ["json"] }
+jsonwebtoken = "9.3.1"
+uuid = { version = "1.0", features = ["v4"] }

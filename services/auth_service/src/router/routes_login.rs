@@ -1,6 +1,10 @@
 use super::{Error, Result};
 use crate::{
-    ModelManager, crypt,
+    ModelManager,
+    crypt::{
+        self,
+        token::{self, Claims},
+    },
     model::redis_token,
     oAuth::{
         oAuth_url::oauth_url,
@@ -28,24 +32,10 @@ pub fn routes(mm: ModelManager) -> Router {
         .with_state(mm)
 }
 
-#[derive(Clone, Debug)]
-pub struct TokenClaims {
-    sub: String,
-    jti: String,
-    pub exp: u64,
-    iat: u64,
-}
-
 pub struct TokenClaimsAccessToken {
     sub: String,
     pub exp: u64,
     iat: u64,
-}
-
-impl TokenClaims {
-    pub fn to_redis_key(&self) -> String {
-        format!("refresh_token:{}:{}", self.sub, self.jti)
-    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -70,25 +60,19 @@ async fn login_handler(
 
     // crypt::pwd::validate_pwd(payload.pwd, pwd)?;
 
-    let refresh_token = "refresh_token".to_string();
-    let token_claims = TokenClaims {
-        sub: refresh_token.to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    let user_id = "test_id".to_string();
 
-    // create access and refresh tokens
+    let claims = Claims::new(user_id);
+
+    let token = token::create_token(&claims)?;
+
+    // create access and refresh TokenClaims
+
+    redis_token::save_refresh_token(&claims, &token, mm.client.clone()).await?;
+
+    set_refresh_token_cookie(cookies, token);
 
     let access_token = "access_token".to_string();
-
-    redis_token::save_refresh_token(token_claims.clone(), &refresh_token, mm.client.clone())
-        .await?;
-    println!(
-        "toekn: {:?}",
-        redis_token::get_refresh_token(token_claims, mm.client).await?
-    );
-    set_refresh_token_cookie(cookies, refresh_token);
 
     Ok(Json(TokenPayload {
         token: access_token,
@@ -105,68 +89,48 @@ async fn registar_handler(
     // check use name uniquness
 
     // insert new user
+    //
 
-    let token_claims = TokenClaims {
-        sub: "name".to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    let user_id = "test_id".to_string();
+
+    let claims = Claims::new(user_id);
+
+    let token = token::create_token(&claims)?;
 
     // create access and refresh tokens
 
-    let refresh_token = "refresh_token".to_string();
+    redis_token::save_refresh_token(&claims, &token, mm.client).await?;
+
+    set_refresh_token_cookie(cookies, token);
+
     let access_token = "access_token".to_string();
-
-    redis_token::save_refresh_token(token_claims, &refresh_token, mm.client).await?;
-
-    set_refresh_token_cookie(cookies, refresh_token);
 
     Ok(Json(TokenPayload {
         token: access_token,
     }))
 }
 
-#[instrument(err(Debug))]
 async fn access_token_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
 ) -> Result<Json<TokenPayload>> {
-    let refresh_token_old = cookies
+    let refresh_token_cookie = cookies
         .get("refreshToken")
         .ok_or(Error::MissingRefreshToken)?;
 
-    let old_val = refresh_token_old.value();
+    let refresh_token = refresh_token_cookie.value();
 
-    let refresh_token = "refresh_token2".to_string();
+    let claims = token::validate_signature(refresh_token)?;
 
-    event!(Level::ERROR, "this is an event");
+    let claims_new = Claims::new(claims.claims.sub.clone());
 
-    let token_claims = TokenClaims {
-        sub: refresh_token.to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    let refresh_token_new = token::create_token(&claims_new)?;
 
-    let token_claims_old = TokenClaims {
-        sub: old_val.to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    redis_token::rotate_token(&claims.claims, &claims_new, &refresh_token_new, mm.client).await?;
 
-    redis_token::rotate_token(
-        token_claims_old,
-        token_claims,
-        refresh_token.clone(),
-        mm.client,
-    )
-    .await?;
+    set_refresh_token_cookie(cookies, refresh_token_new);
 
     let access_token = "access_token2".to_string();
-
-    set_refresh_token_cookie(cookies, refresh_token);
 
     Ok(Json(TokenPayload {
         token: access_token,
@@ -178,21 +142,17 @@ async fn logoff_handler(
     cookies: Cookies,
     Json(payload): Json<LoginPayload>,
 ) -> Result<String> {
-    let refresh_token = cookies
+    let refresh_token_cookie = cookies
         .get("refreshToken")
-        .ok_or(Error::MissingRefreshToken)?
-        .into_owned();
+        .ok_or(Error::MissingRefreshToken)?;
 
-    let token_claims = TokenClaims {
-        sub: "name".to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    let refresh_token = refresh_token_cookie.value();
 
-    cookies.remove(refresh_token);
+    let claims = token::validate_signature(refresh_token)?;
 
-    redis_token::remove_refresh_token(token_claims, mm.client).await?;
+    cookies.remove(Cookie::from("refreshToken"));
+
+    redis_token::remove_refresh_token(&claims.claims, mm.client).await?;
 
     Ok(payload.pwd)
 }
