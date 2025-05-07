@@ -1,20 +1,21 @@
 use crate::{
     AppState,
     proxy_client::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
+    utils::url_format::{self, target_url},
 };
 use axum::{
     Router,
     body::Body,
     extract::{Path, Request, State},
     response::Response,
-    routing::post,
+    routing::any,
 };
 
 use super::{Error, Result};
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
-        .route("/auth/{*path}", post(auth_proxy))
+        .route("/auth/{*path}", any(auth_proxy))
         .with_state(state)
 }
 
@@ -29,7 +30,8 @@ pub async fn auth_proxy(
     // replace wirh parser
 
     let auth_url = "http://auth:4002";
-    let target_url = format!("{}/{}", auth_url, path);
+
+    let target_url = target_url(auth_url, path, req.uri());
 
     let service_request = ServiceRequestBuilder::new(req, target_url, &client)
         .with_content_type()

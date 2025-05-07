@@ -1,7 +1,7 @@
 use crate::{
     AppState,
     proxy_client::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
-    utils::dns::DNS,
+    utils::{dns::DNS, url_format::target_url},
 };
 use axum::{
     Router,
@@ -30,11 +30,7 @@ async fn api_proxy(
         .to_domain()
         .map_err(|_| Error::ServiceDoesNotExist)?;
 
-    let mut target_url = format!("{}/{}", service_url, path);
-
-    if let Some(quary) = req.uri().query() {
-        target_url = format!("{}?{}", target_url, quary);
-    }
+    let target_url = target_url(service_url, path, req.uri());
 
     let service_request = ServiceRequestBuilder::new(req, target_url, &client)
         .with_content_type()
