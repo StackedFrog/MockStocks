@@ -12,7 +12,11 @@ use yahoo_finance_api::{Quote, YahooConnector};
 pub struct LatestQuote {
     pub symbol: String,
     pub date: String,
-    pub close_price: f64,
+    pub close: f64,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub volume: u64,
 }
 
 #[derive(Serialize)]
@@ -56,7 +60,11 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
     Ok(LatestQuote {
         symbol: symbol.to_string(),
         date: local_date.to_string(),
-        close_price: quote.close,
+        close: quote.close,
+        open: quote.open,
+        high: quote.high,
+        low: quote.low,
+        volume: quote.volume,
     })
 }
 
