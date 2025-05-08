@@ -1,6 +1,6 @@
 mod error;
-pub mod oAuth_client;
-pub mod oAuth_url;
+pub mod o_auth_client;
+pub mod o_auth_url;
 pub mod oauth_autherized;
 use oauth2::{
     EmptyExtraTokenFields, EndpointNotSet, EndpointSet, RevocationErrorResponseType,
@@ -9,7 +9,7 @@ use oauth2::{
     basic::{BasicErrorResponseType, BasicTokenType},
 };
 
-pub use self::error::{Error, Result};
+pub use self::error::Error;
 
 pub type Client = oauth2::Client<
     StandardErrorResponse<BasicErrorResponseType>,
@@ -33,9 +33,9 @@ pub struct OauthManager {
 
 impl OauthManager {
     pub fn new() -> Self {
-        let oauth_client = oAuth_client::oauth_client().unwrap();
-        let api_client = oAuth_client::api_client();
-        let token_client = oAuth_client::token_client();
+        let oauth_client = o_auth_client::oauth_client().unwrap();
+        let api_client = o_auth_client::api_client();
+        let token_client = o_auth_client::token_client();
         Self {
             oauth_client,
             api_client,

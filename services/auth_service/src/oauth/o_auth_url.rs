@@ -1,8 +1,9 @@
 use oauth2::{CsrfToken, PkceCodeChallenge, Scope, url::Url};
 
-use crate::model::{ModelManager, redis_csrf};
-
-use super::Result;
+use crate::{
+    model::{ModelManager, redis_csrf},
+    router::Result,
+};
 
 pub async fn oauth_url(mm: ModelManager) -> Result<Url> {
     let client = mm.oauth_manager.oauth_client;

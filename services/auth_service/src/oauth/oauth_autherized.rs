@@ -1,9 +1,12 @@
 use oauth2::{AuthorizationCode, PkceCodeVerifier, TokenResponse};
 use serde::{Deserialize, Serialize};
 
-use crate::model::{ModelManager, redis_csrf};
+use crate::{
+    model::{ModelManager, redis_csrf},
+    router::Result,
+};
 
-use super::{Error, Result};
+use super::Error;
 
 #[derive(Deserialize)]
 pub struct AuthRequest {

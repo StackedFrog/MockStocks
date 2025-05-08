@@ -1,7 +1,7 @@
-use crate::config::Settings;
+use crate::{config::Settings, router::Result};
 use oauth2::{AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl, basic::BasicClient};
 
-use super::{Client, Error, Result};
+use super::{Client, Error};
 
 pub fn oauth_client() -> Result<Client> {
     let settings = Settings::get().clone();
