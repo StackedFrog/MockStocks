@@ -10,6 +10,7 @@ pub enum Error {
     CanNotParseServiceResponse,
     TokenMissing,
     BadTokenFormat,
+    FailedToValidateToken,
 }
 
 impl IntoResponse for Error {
@@ -17,7 +18,17 @@ impl IntoResponse for Error {
         let err = format!("Error: {:?}", self);
 
         error!(err);
+        let code = match self {
+            Error::TokenMissing | Error::BadTokenFormat | Error::FailedToValidateToken => {
+                StatusCode::UNAUTHORIZED
+            }
+            Error::CanNotParseServiceResponse => StatusCode::BAD_GATEWAY,
+            Error::ServiceNotAvailable | Error::ServiceDoesNotExist => {
+                StatusCode::SERVICE_UNAVAILABLE
+            }
+            // _ => StatusCode::INTERNAL_SERVER_ERROR
+        };
 
-        (StatusCode::INTERNAL_SERVER_ERROR, err).into_response()
+        code.into_response()
     }
 }

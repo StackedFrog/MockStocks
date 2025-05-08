@@ -1,4 +1,4 @@
-use crate::{crypt, jwt, model};
+use crate::{crypt, model, oauth};
 use axum::{http::StatusCode, response::IntoResponse};
 use std::fmt::Debug;
 use tracing::error;
@@ -9,7 +9,7 @@ pub enum Error {
     MissingRefreshToken,
     Model(model::Error),
     Crypt(crypt::Error),
-    Jwt(jwt::Error)
+    Oauth(oauth::Error),
 }
 
 impl From<model::Error> for Error {
@@ -24,23 +24,40 @@ impl From<crypt::Error> for Error {
     }
 }
 
-impl From<jwt::Error> for Error {
-    fn from(val: jwt::Error) -> Self {
-        Error::Jwt(val)
+impl From<oauth::Error> for Error {
+    fn from(val: oauth::Error) -> Self {
+        Error::Oauth(val)
     }
 }
-
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let err = match &self {
             Error::Model(error) => format!("Error: {:?}", error),
             Error::Crypt(error) => format!("Error: {:?}", error),
-            Error::Jwt(error) => format!("Error: {:?}", error),
+            Error::Oauth(error) => format!("Error: {:?}", error),
             error => format!("Error: {:?}", error),
         };
 
         error!(err);
 
-        (StatusCode::INTERNAL_SERVER_ERROR, err).into_response()
+        let code = match self {
+            Error::MissingRefreshToken => StatusCode::UNAUTHORIZED,
+            Error::Oauth(err) => match err {
+                oauth::Error::FailedToFetchToken
+                | oauth::Error::FailedToFetchUserData
+                | oauth::Error::UserDataWrongFormat => StatusCode::UNAUTHORIZED,
+                oauth::Error::FailedAuthUrl
+                | oauth::Error::FailedRedirectUrl
+                | oauth::Error::FailedTokenUrl => StatusCode::INTERNAL_SERVER_ERROR,
+            },
+            Error::Crypt(_) => StatusCode::UNAUTHORIZED,
+            Error::Model(err) => match err {
+                model::Error::UsernameNotFound => StatusCode::UNAUTHORIZED,
+                model::Error::UserNotAdded => StatusCode::BAD_REQUEST,
+                _ => StatusCode::INTERNAL_SERVER_ERROR,
+            },
+        };
+
+        code.into_response()
     }
 }
