@@ -1,3 +1,3 @@
-pub mod tracing_propegation;
-pub mod telemetry;
 pub mod metrics;
+pub mod telemetry;
+pub mod tracing_propegation;

@@ -1,10 +1,19 @@
-use axum::{body::Body, extract::{Path, Request, State}, response::Response, routing::{any, get, post}, Router};
+use crate::{
+    AppState,
+    utils::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
+};
+use axum::{
+    Router,
+    body::Body,
+    extract::{Path, Request, State},
+    response::Response,
+    routing::{any, get, post},
+};
 use tracing::instrument;
-use crate::{utils::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder}, AppState};
 
 use super::{Error, Result};
 
-pub fn routes(state: AppState) -> Router{
+pub fn routes(state: AppState) -> Router {
     Router::new()
         .route("/auth/{*path}", post(auth_proxy))
         .with_state(state)
@@ -13,9 +22,9 @@ pub fn routes(state: AppState) -> Router{
 // #[instrument]
 pub async fn auth_proxy(
     state: State<AppState>,
-    Path(path) : Path<String>,
-    req : Request<Body>
-) -> Result<Response>{
+    Path(path): Path<String>,
+    req: Request<Body>,
+) -> Result<Response> {
     let client = state.http_client.clone();
 
     // replace wirh parser
@@ -31,13 +40,18 @@ pub async fn auth_proxy(
         .await
         .build();
 
-    let service_res = service_request.send().await.map_err(|_| Error::ServiceNotAvailable)?;
+    let service_res = service_request
+        .send()
+        .await
+        .map_err(|_| Error::ServiceNotAvailable)?;
 
     let response = ServiceResponseBuilder::new(service_res)
         .with_content_type()
         .with_status()
         .with_cookie()
-        .build().await.map_err(|_|Error::CanNotParseServiceResponse)?;
+        .build()
+        .await
+        .map_err(|_| Error::CanNotParseServiceResponse)?;
 
     Ok(response)
 }

@@ -1,8 +1,8 @@
-use axum::{handler::HandlerWithoutStateExt, http::StatusCode, Router};
+use axum::{Router, handler::HandlerWithoutStateExt, http::StatusCode};
 use tower_http::services::ServeDir;
 
-pub fn serve_static() -> Router{
-    async fn handle_404() -> (StatusCode, &'static str){
+pub fn serve_static() -> Router {
+    async fn handle_404() -> (StatusCode, &'static str) {
         (StatusCode::NOT_FOUND, "Not Found")
     }
     let service_404 = handle_404.into_service();

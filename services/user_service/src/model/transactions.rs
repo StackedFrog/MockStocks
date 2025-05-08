@@ -1,8 +1,9 @@
 use crate::model::Pool;
-use rust_decimal::Decimal;
-use uuid::Uuid;
 use crate::model::error::{Error, Result};
 use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
+use sqlx::PgConnection;
+use uuid::Uuid;
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct Transaction {
@@ -10,20 +11,28 @@ pub struct Transaction {
     user_id: Uuid,
     date: DateTime<Utc>,
     symbol: String,
-    transaction_type: String,
+    transaction_type: TransactionType,
     quantity: Decimal,
 }
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct NewTransaction {
-    user_id: Uuid,
-    date: DateTime<Utc>,
-    symbol: String,
-    transaction_type: String,
-    quantity:  Decimal
+    pub user_id: Uuid,
+    pub symbol: String,
+    pub transaction_type: TransactionType,
+    pub quantity: Decimal,
 }
 
-pub async fn get_all_transactions_by_user(pool: &Pool, user_id : Uuid) -> Result<Vec<Transaction>> {
+#[derive(Debug, sqlx::Type)]
+#[sqlx(type_name = "transaction_type")]
+pub enum TransactionType {
+    #[sqlx(rename = "purchase")]
+    Purchase,
+    #[sqlx(rename = "sale")]
+    Sale,
+}
+
+pub async fn get_all_transactions_by_user(pool: &Pool, user_id: Uuid) -> Result<Vec<Transaction>> {
     let query = "SELECT * FROM Transactions WHERE user_id = ?";
     let transactions = sqlx::query_as(query)
         .bind(user_id)
@@ -34,17 +43,20 @@ pub async fn get_all_transactions_by_user(pool: &Pool, user_id : Uuid) -> Result
     return Ok(transactions);
 }
 
-pub async fn add_transaction(pool : &Pool, transaction : NewTransaction) -> Result<Transaction> {
+pub async fn add_transaction(
+    pool: &mut PgConnection,
+    transaction: NewTransaction,
+) -> Result<Transaction> {
     let query = "INSERT INTO Transactions (user_id, date, symbol, transaction_type, quantity) VALUES (?, ?, ?, ?, ?)";
-    let new_transaction : Transaction = sqlx::query_as(query)
-    .bind(transaction.user_id)
-    .bind(Utc::now())
-    .bind(transaction.symbol)
-    .bind(transaction.transaction_type)
-    .bind(transaction.quantity)
-    .fetch_one(pool)
-    .await
-    .map_err(|_e| Error::TransactionNotAdded)?;
+    let new_transaction: Transaction = sqlx::query_as(query)
+        .bind(transaction.user_id)
+        .bind(Utc::now())
+        .bind(transaction.symbol)
+        .bind(transaction.transaction_type)
+        .bind(transaction.quantity)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::TransactionNotAdded)?;
 
     return Ok(new_transaction);
 }

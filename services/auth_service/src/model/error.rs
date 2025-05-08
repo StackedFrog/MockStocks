@@ -12,5 +12,5 @@ pub enum Error {
     UserNotAdded,
     PasswordNotUpdated,
     RoleNotUpdated,
-    UserNotDeleted
+    UserNotDeleted,
 }

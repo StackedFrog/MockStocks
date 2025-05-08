@@ -1,9 +1,45 @@
 use crate::model::Pool;
-use uuid::Uuid;
 use crate::model::error::{Error, Result};
+use rust_decimal::Decimal;
+use sqlx::PgConnection;
+use uuid::Uuid;
+
+#[derive(sqlx::FromRow, Debug)]
+pub struct User {
+    pub user_id: Uuid,
+    pub username: String,
+    pub password: String,
+    pub role: UserType,
+    pub cash: Decimal,
+}
+
+#[derive(Debug, sqlx::Type)]
+#[sqlx(type_name = "user_type")]
+pub enum UserType {
+    #[sqlx(rename = "admin")]
+    Admin,
+    #[sqlx(rename = "user")]
+    User,
+}
+
+// get user by id
+pub async fn get_user_by_id(pool: &Pool, id: Uuid) -> Result<User> {
+    let query = "SELECT * FROM Users WHERE user_id = ?";
+    let user: User = sqlx::query_as(query)
+        .bind(id)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::UserIDNotFound)?;
+
+    return Ok(user);
+}
 
 // update user password
-pub async fn update_password(pool : &Pool, id : Uuid, new_password : String) -> Result<()> {
+pub async fn update_password(
+    pool: &mut PgConnection,
+    id: Uuid,
+    new_password: String,
+) -> Result<()> {
     let query = "UPDATE Users SET password = ? WHERE user_id = ?";
     sqlx::query(query)
         .bind(new_password)
@@ -15,8 +51,21 @@ pub async fn update_password(pool : &Pool, id : Uuid, new_password : String) -> 
     return Ok(());
 }
 
+// update user cash
+pub async fn update_cash(pool: &mut PgConnection, id: Uuid, cash: Decimal) -> Result<()> {
+    let query = "UPDATE Users SET cash = ? WHERE user_id = ?";
+    sqlx::query(query)
+        .bind(cash)
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::CashNotUpdated)?;
+
+    return Ok(());
+}
+
 // delete user
-pub async fn delete_user(pool : &Pool, id : Uuid) -> Result<()> {
+pub async fn delete_user(pool: &Pool, id: Uuid) -> Result<()> {
     let query = "DELETE FROM Users WHERE user_id = ?";
     sqlx::query(query)
         .bind(id)

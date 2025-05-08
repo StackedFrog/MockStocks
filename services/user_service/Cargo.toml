@@ -5,9 +5,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-rust_decimal = "1.37.1"
+rust_decimal = { version = "1.37.1", features = ["macros"] }
 chrono = "0.4.41"
 sqlx = { version = "0.8.3", features = ["chrono", "postgres", "runtime-tokio", "rust_decimal", "uuid"] }
 uuid = "1.16.0"
 shared_utils = {path = "../../shared/shared_utils"}
+_dev_utils = {path = "../../shared/_dev_utils"}
 axum.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+telemetry = {path = "../../shared/telemetry"}
+serde = { version = "1.0.219", features = ["derive"] }

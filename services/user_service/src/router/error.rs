@@ -1,6 +1,5 @@
-use crate::{crypt, model};
+use crate::model;
 use axum::{http::StatusCode, response::IntoResponse};
-use std::fmt::Debug;
 use tracing::error;
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -8,7 +7,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     MissingRefreshToken,
     Model(model::Error),
-    Crypt(crypt::Error),
+    UuidNotParsed,
+    TxNotCreated,
 }
 
 impl From<model::Error> for Error {
@@ -17,17 +17,10 @@ impl From<model::Error> for Error {
     }
 }
 
-impl From<crypt::Error> for Error {
-    fn from(val: crypt::Error) -> Self {
-        Error::Crypt(val)
-    }
-}
-
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let err = match &self {
             Error::Model(error) => format!("Error: {:?}", error),
-            Error::Crypt(error) => format!("Error: {:?}", error),
             error => format!("Error: {:?}", error),
         };
 
