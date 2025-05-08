@@ -1,6 +1,6 @@
 use config::{Config, Environment};
 use serde::Deserialize;
-use std::{collections::HashMap, sync::OnceLock};
+use std::sync::OnceLock;
 
 #[derive(Deserialize, Clone)]
 pub struct Settings {

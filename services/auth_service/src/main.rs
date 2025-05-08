@@ -7,16 +7,15 @@ use tower_http::trace::{DefaultOnResponse, TraceLayer};
 
 mod config;
 mod crypt;
-mod error;
+mod jwt;
 mod model;
-mod oAuth;
+mod oauth;
 mod router;
 mod utils;
-mod jwt;
 
 #[tokio::main]
 async fn main() {
-    telemetry::init_telemetry("auth service");
+    telemetry::init_telemetry(&config::Settings::get().cargo_pkg_name);
 
     let mm = ModelManager::new().await;
 

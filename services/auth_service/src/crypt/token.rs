@@ -42,9 +42,6 @@ pub fn validate_signature(token: &str) -> Result<TokenData<Claims>> {
     // if cannot decode, throw error (fail to validate, mapped into error types)
 }
 
-
-
-
 pub fn create_token(claims: &Claims) -> Result<String> {
     let secret = "secret";
     encode(

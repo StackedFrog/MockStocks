@@ -1,9 +1,9 @@
 use crate::model::Pool;
-use uuid::Uuid;
 use crate::model::error::{Error, Result};
+use uuid::Uuid;
 
 // update user password
-pub async fn update_password(pool : &Pool, id : Uuid, new_password : String) -> Result<()> {
+pub async fn update_password(pool: &Pool, id: Uuid, new_password: String) -> Result<()> {
     let query = "UPDATE Users SET password = ? WHERE user_id = ?";
     sqlx::query(query)
         .bind(new_password)
@@ -16,7 +16,7 @@ pub async fn update_password(pool : &Pool, id : Uuid, new_password : String) -> 
 }
 
 // delete user
-pub async fn delete_user(pool : &Pool, id : Uuid) -> Result<()> {
+pub async fn delete_user(pool: &Pool, id: Uuid) -> Result<()> {
     let query = "DELETE FROM Users WHERE user_id = ?";
     sqlx::query(query)
         .bind(id)

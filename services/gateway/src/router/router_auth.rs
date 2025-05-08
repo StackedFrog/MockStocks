@@ -1,7 +1,7 @@
 use crate::{
     AppState,
     proxy_client::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
-    utils::url_format::{self, target_url},
+    utils::url_format::target_url,
 };
 use axum::{
     Router,
@@ -19,15 +19,12 @@ pub fn routes(state: AppState) -> Router {
         .with_state(state)
 }
 
-// #[instrument]
 pub async fn auth_proxy(
     state: State<AppState>,
     Path(path): Path<String>,
     req: Request<Body>,
 ) -> Result<Response> {
     let client = state.http_client.clone();
-
-    // replace wirh parser
 
     let auth_url = "http://auth:4002";
 

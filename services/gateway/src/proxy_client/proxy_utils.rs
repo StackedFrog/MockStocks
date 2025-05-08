@@ -3,7 +3,6 @@ use http_body_util::BodyExt;
 use reqwest::{Client, RequestBuilder};
 use shared_utils::ctx::Ctx;
 use telemetry::tracing_propegation;
-use tracing::info;
 
 use super::{Error, Result};
 
