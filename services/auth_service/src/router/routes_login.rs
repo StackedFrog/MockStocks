@@ -1,12 +1,17 @@
 use super::{Error, Result};
 use crate::{
-    crypt::{
-        self,
-        token::{self, Claims},
-    }, jwt, model::redis_token, oAuth::{
-        oAuth_url::oauth_url,
-        oauth_autherized::{self, google_autherized, AuthRequest, UserData},
-    }, utils::cookie_util::set_refresh_token_cookie, ModelManager
+    ModelManager,
+    crypt::{self, token},
+    jwt,
+    model::{
+        redis_token,
+        users_model::{NewUser, add_user, get_user_by_username},
+    },
+    oauth::{
+        o_auth_url::oauth_url,
+        oauth_autherized::{AuthRequest, UserData, google_autherized},
+    },
+    utils::cookie_util::set_refresh_token_cookie,
 };
 use axum::{
     Json, Router,
@@ -15,12 +20,12 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use tower_cookies::{Cookie, Cookies};
-use tracing::{Level, event, info, instrument};
+use tracing::info;
 
 pub fn routes(mm: ModelManager) -> Router {
     Router::new()
         .route("/login", post(login_handler))
-        .route("/registar", post(registar_handler))
+        .route("/register", post(register_handler))
         .route("/logout", post(logoff_handler))
         .route("/refresh", post(access_token_handler))
         .route("/google", post(google_oauth))
@@ -28,10 +33,10 @@ pub fn routes(mm: ModelManager) -> Router {
         .with_state(mm)
 }
 
-#[derive(Debug, Deserialize)]
-struct LoginPayload {
-    user_name: String,
-    pwd: String,
+#[derive(Deserialize)]
+pub struct UserPayload {
+    pub username: String,
+    pub pwd: String,
 }
 
 #[derive(Serialize)]
@@ -42,19 +47,15 @@ struct TokenPayload {
 async fn login_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>,
+    Json(payload): Json<UserPayload>,
 ) -> Result<Json<TokenPayload>> {
-    // get user from model by name
-    let user_name = "username".to_string();
-    let pwd = "pwd".to_string();
+    let user = get_user_by_username(&mm.pool, payload.username).await?;
 
-    // crypt::pwd::validate_pwd(payload.pwd, pwd)?;
+    crypt::pwd::validate_pwd(payload.pwd, user.pwd)?;
 
-    let user_id = "test_id".to_string();
+    let user_id = user.user_id;
 
-    let (refresh_token, access_token) = jwt::creat_token_pair(user_id, mm).await?;
-
-    // create access and refresh TokenClaims
+    let (refresh_token, access_token) = jwt::creat_token_pair(user_id.to_string(), mm).await?;
 
     set_refresh_token_cookie(cookies, refresh_token.token);
 
@@ -63,25 +64,20 @@ async fn login_handler(
     }))
 }
 
-async fn registar_handler(
+async fn register_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>,
+    Json(payload): Json<UserPayload>,
 ) -> Result<Json<TokenPayload>> {
     let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd)?;
 
-    // check use name uniquness
+    let new_user = NewUser::new_basic_user(payload.username, pwd_hash);
 
-    // insert new user
+    let user_id = add_user(&mm.pool, new_user).await?;
 
-    let user_id = "test_id".to_string();
-
-    let (refresh_token, access_token) = jwt::creat_token_pair(user_id, mm).await?;
-
-    // create access and refresh tokens
+    let (refresh_token, access_token) = jwt::creat_token_pair(user_id.to_string(), mm).await?;
 
     set_refresh_token_cookie(cookies, refresh_token.token);
-
 
     Ok(Json(TokenPayload {
         token: access_token.token,
@@ -110,7 +106,7 @@ async fn access_token_handler(
 async fn logoff_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>,
+    Json(payload): Json<UserPayload>,
 ) -> Result<String> {
     let refresh_token_cookie = cookies
         .get("refreshToken")
@@ -126,9 +122,7 @@ async fn logoff_handler(
 }
 
 async fn google_oauth(State(mm): State<ModelManager>) -> Result<String> {
-    let url = oauth_url(mm)
-        .await
-        .map_err(|_| Error::MissingRefreshToken)?;
+    let url = oauth_url(mm).await?;
 
     Ok(url.to_string())
 }
@@ -137,9 +131,7 @@ async fn login_autherized(
     Query(query): Query<AuthRequest>,
     State(mm): State<ModelManager>,
 ) -> Result<Json<UserData>> {
-    let user = google_autherized(query, mm)
-        .await
-        .map_err(|_| Error::MissingRefreshToken)?;
+    let user = google_autherized(query, mm).await?;
 
     info!("User data: {:?}", user);
 
