@@ -68,7 +68,11 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
     })
 }
 
-pub async fn fetch_quote_from_timerange(symbol: &str, range: &str, interval: &str) -> Result<QuoteFromRange> {
+pub async fn fetch_quote_from_timerange(
+    symbol: &str,
+    range: &str,
+    interval: &str,
+) -> Result<QuoteFromRange> {
     let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
