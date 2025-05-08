@@ -1,14 +1,17 @@
 ## TODO
 
-#### Money
-- Add Buy/Sell buttons to trading page
+#### Buying and Selling
+- Add Buy/Sell buttons logic
 - Display balance
 
-#### Auth
-- Login and Register buttons only when not signed in
-- Login and Register posting
-- Account page w/ trades overview
 
-#### Trading Page
-- Implement api to show realtime trades
-- Search bar to find stock by name
+#### Trading Page (Antoine)
+- fetch real time data
+
+#### Auth
+- Login and Register buttons should only be displayed when not signed in
+- Login and Register logic
+- Account page
+
+#### Optional but cool
+- Portfolio page (maybe on account page)
