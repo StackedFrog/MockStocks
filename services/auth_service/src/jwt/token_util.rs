@@ -1,4 +1,5 @@
 use crate::{
+    config::Settings,
     crypt::token::{Claims, create_token},
     model::{ModelManager, redis_token},
 };
@@ -14,9 +15,9 @@ pub struct AccessToken {
 }
 
 impl AccessToken {
-    pub fn new(id: String) -> Result<Self> {
-        let experation_time = 500;
-        let claims = Claims::new(id, experation_time);
+    pub fn new(id: String, role: String) -> Result<Self> {
+        let experation_time = Settings::get().token_access_exp;
+        let claims = Claims::new(id, role, experation_time);
         let token = create_token(&claims)?;
 
         Ok(Self { token })
@@ -24,9 +25,9 @@ impl AccessToken {
 }
 
 impl RefreshToken {
-    pub fn new(id: String) -> Result<Self> {
-        let experation_time = 500;
-        let claims = Claims::new(id, experation_time);
+    pub fn new(id: String, role: String) -> Result<Self> {
+        let experation_time = Settings::get().token_refresh_exp;
+        let claims = Claims::new(id, role, experation_time);
         let token = create_token(&claims)?;
 
         Ok(Self { token, claims })
@@ -36,4 +37,8 @@ impl RefreshToken {
         redis_token::save_refresh_token(&self.claims, &self.token, mm.client).await?;
         Ok(())
     }
+}
+
+pub trait TokenData {
+    fn to_token_data(&self) -> (String, String);
 }
