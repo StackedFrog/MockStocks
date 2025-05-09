@@ -15,11 +15,11 @@ services:
 
   db:
     image: postgres
+    env_file: ".env"
     expose:
       - "5432"
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: dev_db
+    volumes:
+      - ./sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     networks:
       - backend
     healthcheck:
