@@ -10,14 +10,34 @@ async fn test_server() -> Result<()> {
 
     let cli = httpc_test::new_client("http://localhost:4001").unwrap();
 
-    let res = cli
-        .do_post("/auth/register", json!({"username":"sven", "pwd":"pwd"}))
+    cli.do_post(
+        "/auth/register",
+        json!({"email":"test@me2344","username":"sv223", "pwd":"pwd"}),
+    )
+    .await?
+    .print()
+    .await?;
+
+    cli.do_post(
+        "/auth/logout",
+        json!({"username":"svennnnnnnnnn", "pwd":"pwd"}),
+    )
+    .await?
+    .print()
+    .await?;
+
+    cli.do_post("/auth/login", json!({"email":"test@me2344", "pwd":"pwd"}))
+        .await?
+        .print()
         .await?;
 
-    let body = res.json_body();
-    res.print().await?;
-
-    println!("---------- {:?} -------", body);
+    cli.do_post(
+        "/auth/refresh",
+        json!({"username":"svennnnnnnnnn", "pwd":"pwd"}),
+    )
+    .await?
+    .print()
+    .await?;
 
     // let cookie = cli.cookie_value("refreshToken").unwrap().clone();
     //

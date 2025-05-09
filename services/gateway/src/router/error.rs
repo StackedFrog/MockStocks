@@ -25,8 +25,7 @@ impl IntoResponse for Error {
             Error::CanNotParseServiceResponse => StatusCode::BAD_GATEWAY,
             Error::ServiceNotAvailable | Error::ServiceDoesNotExist => {
                 StatusCode::SERVICE_UNAVAILABLE
-            }
-            // _ => StatusCode::INTERNAL_SERVER_ERROR
+            } // _ => StatusCode::INTERNAL_SERVER_ERROR
         };
 
         code.into_response()

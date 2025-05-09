@@ -5,7 +5,7 @@ CREATE TABLE Users (
     email VARCHAR(50) UNIQUE,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(250),
-    oauth_id VARCHAR(250),
+    oauth_id VARCHAR(250) UNIQUE,
     role USER_TYPE NOT NULL
 );
 
