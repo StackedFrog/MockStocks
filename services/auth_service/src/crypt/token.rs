@@ -5,6 +5,8 @@ use jsonwebtoken::{
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::config::Settings;
+
 use super::{Error, Result};
 
 // methods for token
@@ -13,14 +15,16 @@ pub struct Claims {
     pub sub: String, // subject
     jti: String,     // unique id
     pub exp: u64,    // expiration time
-    iat: u64,        // creation time
+    pub role: String,
+    iat: u64, // creation time
 }
 
 impl Claims {
-    pub fn new(id: String, exp: u64) -> Self {
+    pub fn new(id: String, role: String, exp: u64) -> Self {
         Claims {
             sub: id,
             jti: Uuid::new_v4().to_string(),
+            role: role,
             exp: get_current_timestamp() + exp, // from config later
             iat: get_current_timestamp(),
         }
@@ -32,7 +36,8 @@ impl Claims {
 }
 
 pub fn validate_signature(token: &str) -> Result<TokenData<Claims>> {
-    let secret = "secret";
+    let settings = Settings::get();
+    let secret = &settings.token_secret;
     decode::<Claims>(
         token,
         &DecodingKey::from_secret(secret.as_ref()),
@@ -43,7 +48,8 @@ pub fn validate_signature(token: &str) -> Result<TokenData<Claims>> {
 }
 
 pub fn create_token(claims: &Claims) -> Result<String> {
-    let secret = "secret";
+    let settings = Settings::get();
+    let secret = &settings.token_secret;
     encode(
         &Header::default(),
         claims,

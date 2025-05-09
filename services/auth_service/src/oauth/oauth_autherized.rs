@@ -16,11 +16,11 @@ pub struct AuthRequest {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UserData {
-    given_name: String,
-    family_name: String,
+    pub given_name: String,
+    pub family_name: String,
     picture: String,
-    id: String,
-    name: String,
+    pub id: String,
+    pub name: String,
 }
 
 pub async fn google_autherized(auth_request: AuthRequest, mm: ModelManager) -> Result<UserData> {

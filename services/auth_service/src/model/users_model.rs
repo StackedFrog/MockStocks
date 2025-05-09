@@ -1,24 +1,50 @@
+use core::fmt;
+
+use crate::jwt::token_util::TokenData;
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
+use crate::oauth::oauth_autherized::UserData;
+use tracing::info;
 use uuid::Uuid;
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct User {
     pub user_id: Uuid,
-    pub username: String,
-    pub pwd: String,
+    // pub username: String,
+    pub password: String,
     pub role: UserType,
 }
 
+impl TokenData for User {
+    fn to_token_data(&self) -> (String, String) {
+        (self.user_id.to_string(), self.role.to_string())
+    }
+}
+
+#[derive(sqlx::FromRow, Debug)]
+pub struct UserTokenData {
+    pub user_id: Uuid,
+    pub role: UserType,
+}
+
+impl TokenData for UserTokenData {
+    fn to_token_data(&self) -> (String, String) {
+        (self.user_id.to_string(), self.role.to_string())
+    }
+}
+
+#[derive(Debug)]
 pub struct NewUser {
+    email: String,
     username: String,
     password: String,
     role: UserType,
 }
 
 impl NewUser {
-    pub fn new_basic_user(username: String, pwd_hash: String) -> Self {
+    pub fn new(email: String, username: String, pwd_hash: String) -> Self {
         Self {
+            email,
             username,
             password: pwd_hash,
             role: UserType::User,
@@ -33,6 +59,12 @@ pub enum UserType {
     Admin,
     #[sqlx(rename = "user")]
     User,
+}
+
+impl fmt::Display for UserType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 // pub async fn get_all_users(pool : &Pool) -> Result<Vec<User>> {
@@ -58,10 +90,10 @@ pub enum UserType {
 // }
 
 // get user by username
-pub async fn get_user_by_username(pool: &Pool, username: String) -> Result<User> {
-    let query = "SELECT * FROM Users WHERE username = ?";
+pub async fn get_user_by_username(pool: &Pool, email: String) -> Result<User> {
+    let query = "SELECT * FROM Users WHERE email= $1";
     let user: User = sqlx::query_as(query)
-        .bind(username)
+        .bind(email)
         .fetch_one(pool)
         .await
         .map_err(|_e| Error::UsernameNotFound)?;
@@ -70,17 +102,44 @@ pub async fn get_user_by_username(pool: &Pool, username: String) -> Result<User>
 }
 
 //add user
-pub async fn add_user(pool: &Pool, user: NewUser) -> Result<Uuid> {
-    let query = "INSERT INTO Users (username, password, role) VALUES (?, ?, ?)";
-    let user: User = sqlx::query_as(query)
+pub async fn add_user(pool: &Pool, user: NewUser) -> Result<UserTokenData> {
+    let query = "INSERT INTO Users (email, username, password, role) VALUES ($1, $2, $3, $4) RETURNING user_id, role";
+    let user: UserTokenData = sqlx::query_as(query)
+        .bind(user.email)
         .bind(user.username)
         .bind(user.password)
         .bind(user.role)
         .fetch_one(pool)
         .await
-        .map_err(|_e| Error::UserNotAdded)?;
+        .map_err(|_e| {
+            info!("{}", _e);
+            Error::UserNotAdded
+        })?;
+    return Ok(user);
+}
 
-    return Ok(user.user_id);
+pub async fn get_user_by_oauth_id(pool: &Pool, oauth_id: &String) -> Result<Option<UserTokenData>> {
+    let query = "SELECT * FROM Users WHERE oauth_id = $1";
+    let user: Option<UserTokenData> = sqlx::query_as(query)
+        .bind(oauth_id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|_| Error::UserNotAdded)?;
+    Ok(user)
+}
+
+//add user
+pub async fn add_oauth_user(pool: &Pool, user: UserData) -> Result<UserTokenData> {
+    let query =
+        "INSERT INTO Users (username, oauth_id, role) VALUES ($1, $2, $3) RETURNING user_id, role";
+    let user_id: UserTokenData = sqlx::query_as(query)
+        .bind(user.name)
+        .bind(user.id)
+        .bind(UserType::User)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::UserNotAdded)?;
+    return Ok(user_id);
 }
 
 // update role

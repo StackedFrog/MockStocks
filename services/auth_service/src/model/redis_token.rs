@@ -1,5 +1,5 @@
 use super::{Error, Result};
-use crate::crypt::token::Claims;
+use crate::{config::Settings, crypt::token::Claims};
 use redis::{AsyncCommands, aio::MultiplexedConnection};
 
 pub async fn save_refresh_token(
@@ -7,9 +7,10 @@ pub async fn save_refresh_token(
     token: &String,
     mut con: MultiplexedConnection,
 ) -> Result<()> {
+    let exp = Settings::get().token_refresh_exp;
     let redis_key = token_claims.to_redis_key();
     let _: String = con
-        .set_ex(redis_key, token, token_claims.exp)
+        .set_ex(redis_key, token, exp)
         .await
         .map_err(|_| Error::FailedToSaveToken)?;
     Ok(())
@@ -43,14 +44,11 @@ pub async fn rotate_token(
     new_refresh: &String,
     mut con: MultiplexedConnection,
 ) -> Result<()> {
+    let exp = Settings::get().token_refresh_exp;
     let (_, _): (String, String) = redis::pipe()
         .atomic()
         .get_del(old_refresh_claims.to_redis_key())
-        .set_ex(
-            new_refresh_claims.to_redis_key(),
-            new_refresh,
-            new_refresh_claims.exp,
-        )
+        .set_ex(new_refresh_claims.to_redis_key(), new_refresh, exp)
         .query_async(&mut con)
         .await
         .map_err(|_| Error::TokenRotationFailed)?;

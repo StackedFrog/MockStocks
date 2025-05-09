@@ -2,14 +2,16 @@ use super::{Error, Result};
 use crate::{
     ModelManager,
     crypt::{self, token},
-    jwt,
+    jwt::{self, token_util::TokenData},
     model::{
         redis_token,
-        users_model::{NewUser, add_user, get_user_by_username},
+        users_model::{
+            NewUser, add_oauth_user, add_user, get_user_by_oauth_id, get_user_by_username,
+        },
     },
     oauth::{
         o_auth_url::oauth_url,
-        oauth_autherized::{AuthRequest, UserData, google_autherized},
+        oauth_autherized::{AuthRequest, google_autherized},
     },
     utils::cookie_util::set_refresh_token_cookie,
 };
@@ -34,7 +36,14 @@ pub fn routes(mm: ModelManager) -> Router {
 }
 
 #[derive(Deserialize)]
-pub struct UserPayload {
+pub struct LoginPayload {
+    pub email: String,
+    pub pwd: String,
+}
+
+#[derive(Deserialize)]
+pub struct RegisterPayload {
+    pub email: String,
     pub username: String,
     pub pwd: String,
 }
@@ -44,44 +53,38 @@ struct TokenPayload {
     token: String,
 }
 
+#[derive(Serialize)]
+struct RedirectPayload {
+    url: String,
+}
 async fn login_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<UserPayload>,
+    Json(payload): Json<LoginPayload>,
 ) -> Result<Json<TokenPayload>> {
-    let user = get_user_by_username(&mm.pool, payload.username).await?;
+    let user = get_user_by_username(&mm.pool, payload.email).await?;
 
-    crypt::pwd::validate_pwd(payload.pwd, user.pwd)?;
+    crypt::pwd::validate_pwd(payload.pwd, &user.password)?;
 
-    let user_id = user.user_id;
+    let payload = login_user(user, cookies, mm).await?;
 
-    let (refresh_token, access_token) = jwt::creat_token_pair(user_id.to_string(), mm).await?;
-
-    set_refresh_token_cookie(cookies, refresh_token.token);
-
-    Ok(Json(TokenPayload {
-        token: access_token.token,
-    }))
+    Ok(Json(payload))
 }
 
 async fn register_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<UserPayload>,
+    Json(payload): Json<RegisterPayload>,
 ) -> Result<Json<TokenPayload>> {
     let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd)?;
 
-    let new_user = NewUser::new_basic_user(payload.username, pwd_hash);
+    let new_user = NewUser::new(payload.email, payload.username, pwd_hash);
 
-    let user_id = add_user(&mm.pool, new_user).await?;
+    let user = add_user(&mm.pool, new_user).await?;
 
-    let (refresh_token, access_token) = jwt::creat_token_pair(user_id.to_string(), mm).await?;
+    let payload = login_user(user, cookies, mm).await?;
 
-    set_refresh_token_cookie(cookies, refresh_token.token);
-
-    Ok(Json(TokenPayload {
-        token: access_token.token,
-    }))
+    Ok(Json(payload))
 }
 
 async fn access_token_handler(
@@ -94,6 +97,7 @@ async fn access_token_handler(
 
     let refresh_token = refresh_token_cookie.value();
     let claims = token::validate_signature(refresh_token)?;
+
     let (refresh_token_new, access_token) = jwt::rotate_tokens(claims, mm).await?;
 
     set_refresh_token_cookie(cookies, refresh_token_new.token);
@@ -103,11 +107,7 @@ async fn access_token_handler(
     }))
 }
 
-async fn logoff_handler(
-    State(mm): State<ModelManager>,
-    cookies: Cookies,
-    Json(payload): Json<UserPayload>,
-) -> Result<String> {
+async fn logoff_handler(State(mm): State<ModelManager>, cookies: Cookies) -> Result<()> {
     let refresh_token_cookie = cookies
         .get("refreshToken")
         .ok_or(Error::MissingRefreshToken)?;
@@ -116,24 +116,48 @@ async fn logoff_handler(
     let claims = token::validate_signature(refresh_token)?;
 
     cookies.remove(Cookie::from("refreshToken"));
+
     redis_token::remove_refresh_token(&claims.claims, mm.client).await?;
 
-    Ok(payload.pwd)
+    Ok(())
 }
 
-async fn google_oauth(State(mm): State<ModelManager>) -> Result<String> {
+async fn google_oauth(State(mm): State<ModelManager>) -> Result<Json<RedirectPayload>> {
     let url = oauth_url(mm).await?;
 
-    Ok(url.to_string())
+    Ok(Json(RedirectPayload {
+        url: url.to_string(),
+    }))
 }
 
 async fn login_autherized(
     Query(query): Query<AuthRequest>,
     State(mm): State<ModelManager>,
-) -> Result<Json<UserData>> {
-    let user = google_autherized(query, mm).await?;
+    cookies: Cookies,
+) -> Result<Json<TokenPayload>> {
+    let user_data = google_autherized(query, mm.clone()).await?;
 
-    info!("User data: {:?}", user);
+    let user_option = get_user_by_oauth_id(&mm.pool, &user_data.id).await?;
 
-    Ok(Json(user))
+    let user = match user_option {
+        Some(user) => user,
+        None => add_oauth_user(&mm.pool, user_data).await?,
+    };
+
+    let payload = login_user(user, cookies, mm).await?;
+
+    Ok(Json(payload))
+}
+
+async fn login_user(
+    user: impl TokenData,
+    cookies: Cookies,
+    mm: ModelManager,
+) -> Result<TokenPayload> {
+    let (user_id, user_role) = user.to_token_data();
+    let (refresh_token, access_token) = jwt::creat_token_pair(user_id, user_role, mm).await?;
+    set_refresh_token_cookie(cookies, refresh_token.token);
+    Ok(TokenPayload {
+        token: access_token.token,
+    })
 }

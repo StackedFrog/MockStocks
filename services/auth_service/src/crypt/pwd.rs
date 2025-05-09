@@ -3,7 +3,7 @@ use argon2::password_hash::SaltString;
 use argon2::password_hash::rand_core::OsRng;
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 
-pub fn validate_pwd(pwd_clear: String, pwd: String) -> Result<()> {
+pub fn validate_pwd(pwd_clear: String, pwd: &String) -> Result<()> {
     let pwd_hash = PasswordHash::new(&pwd).map_err(|_| Error::PwdWrongFormat)?;
     Argon2::default()
         .verify_password(pwd_clear.as_bytes(), &pwd_hash)
@@ -33,7 +33,7 @@ mod tests {
     fn test_validate_pwd() {
         let pwd_clear = "test_pwd".to_string();
         let res = encrypt_pwd(pwd_clear.clone()).unwrap();
-        assert_eq!(validate_pwd(pwd_clear, res).is_ok(), true);
+        assert_eq!(validate_pwd(pwd_clear, &res).is_ok(), true);
     }
 
     #[test]
@@ -41,7 +41,7 @@ mod tests {
         let pwd_clear = "test_pwd".to_string();
         let pwd_wrong = "not_matching".to_string();
         let res = encrypt_pwd(pwd_clear.clone()).unwrap();
-        assert_eq!(validate_pwd(pwd_wrong, res).is_err(), true);
+        assert_eq!(validate_pwd(pwd_wrong, &res).is_err(), true);
     }
 
     #[test]
