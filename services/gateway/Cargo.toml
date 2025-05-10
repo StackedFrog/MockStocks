@@ -18,6 +18,8 @@ telemetry = {path = "../../shared/telemetry"}
 shared_utils = {path = "../../shared/shared_utils"}
 serde = { version = "1.0.219", features = ["derive"] }
 jsonwebtoken = "9.3.1"
+config = "0.15.11"
+uuid = { version = "1.16.0", features = ["v4", "serde"] }
 
 [dev-dependencies]
 anyhow = "1.0.98"

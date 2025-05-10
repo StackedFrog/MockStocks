@@ -20,5 +20,5 @@ shared_utils = {path = "../../shared/shared_utils"}
 config = "0.15.11"
 oauth2 = "5.0.0"
 reqwest = { version = "0.12.15", features = ["json"] }
-uuid = { version = "1.16.0", features = ["v4"] }
+uuid = { version = "1.16.0", features = ["v4", "serde"] }
 sqlx = { version = "0.8.3", features = ["chrono", "postgres", "runtime-tokio", "rust_decimal", "uuid"] }

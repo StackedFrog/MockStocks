@@ -19,8 +19,13 @@ async fn main() {
 
     let mm = ModelManager::new().await;
 
+    let router_user = router::routes_user::routes(mm.clone());
+    let router_admin = router::routes_admin::routes(mm.clone());
+
     let app = Router::new()
         .merge(router::routes_login::routes(mm))
+        .nest("/user", router_user)
+        .nest("/admin", router_admin)
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
