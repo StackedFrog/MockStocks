@@ -2,16 +2,17 @@ pub mod token_util;
 
 use jsonwebtoken::TokenData;
 use token_util::{AccessToken, RefreshToken};
+use uuid::Uuid;
 
 use crate::{
     crypt::token::Claims,
-    model::{ModelManager, redis_token},
+    model::{ModelManager, redis_token, users_model::UserType},
     router::Result,
 };
 
 pub async fn creat_token_pair(
-    user_id: String,
-    role: String,
+    user_id: Uuid,
+    role: UserType,
     mm: ModelManager,
 ) -> Result<(RefreshToken, AccessToken)> {
     let (refres_token, access_token) = generate_tokens(user_id, role)?;
@@ -19,7 +20,7 @@ pub async fn creat_token_pair(
     Ok((refres_token, access_token))
 }
 
-fn generate_tokens(user_id: String, role: String) -> Result<(RefreshToken, AccessToken)> {
+fn generate_tokens(user_id: Uuid, role: UserType) -> Result<(RefreshToken, AccessToken)> {
     let refres_token = RefreshToken::new(user_id.clone(), role.clone())?;
     let access_token = AccessToken::new(user_id.clone(), role.clone())?;
     Ok((refres_token, access_token))

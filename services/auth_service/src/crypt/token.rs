@@ -5,22 +5,22 @@ use jsonwebtoken::{
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::config::Settings;
+use crate::{config::Settings, model::users_model::UserType};
 
 use super::{Error, Result};
 
 // methods for token
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Claims {
-    pub sub: String, // subject
-    jti: String,     // unique id
-    pub exp: u64,    // expiration time
-    pub role: String,
+    pub sub: Uuid, // subject
+    jti: String,   // unique id
+    pub exp: u64,  // expiration time
+    pub role: UserType,
     iat: u64, // creation time
 }
 
 impl Claims {
-    pub fn new(id: String, role: String, exp: u64) -> Self {
+    pub fn new(id: Uuid, role: UserType, exp: u64) -> Self {
         Claims {
             sub: id,
             jti: Uuid::new_v4().to_string(),

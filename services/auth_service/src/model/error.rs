@@ -7,12 +7,13 @@ pub enum Error {
     FailedToDeleteToken,
     FailedToSaveCsrf,
     TokenRotationFailed,
+    FailedTokenScan,
     CsrfNotFound,
     // UsersNotFound,
-    // UserIDNotFound,
+    UserIDNotFound,
     UsernameNotFound,
     UserNotAdded,
-    // PasswordNotUpdated,
-    // RoleNotUpdated,
+    PwdNotUpdated,
+    RoleNotUpdated,
     // UserNotDeleted
 }

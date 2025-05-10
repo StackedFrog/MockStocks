@@ -3,11 +3,8 @@ use crate::{
     ModelManager,
     crypt::{self, token},
     jwt::{self, token_util::TokenData},
-    model::{
-        redis_token,
-        users_model::{
-            NewUser, add_oauth_user, add_user, get_user_by_oauth_id, get_user_by_username,
-        },
+    model::users_model::{
+        NewUser, add_oauth_user, add_user, get_user_by_oauth_id, get_user_by_username,
     },
     oauth::{
         o_auth_url::oauth_url,
@@ -21,14 +18,12 @@ use axum::{
     routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
-use tower_cookies::{Cookie, Cookies};
-use tracing::info;
+use tower_cookies::Cookies;
 
 pub fn routes(mm: ModelManager) -> Router {
     Router::new()
         .route("/login", post(login_handler))
         .route("/register", post(register_handler))
-        .route("/logout", post(logoff_handler))
         .route("/refresh", post(access_token_handler))
         .route("/google", post(google_oauth))
         .route("/authorized", get(login_autherized))
@@ -105,21 +100,6 @@ async fn access_token_handler(
     Ok(Json(TokenPayload {
         token: access_token.token,
     }))
-}
-
-async fn logoff_handler(State(mm): State<ModelManager>, cookies: Cookies) -> Result<()> {
-    let refresh_token_cookie = cookies
-        .get("refreshToken")
-        .ok_or(Error::MissingRefreshToken)?;
-
-    let refresh_token = refresh_token_cookie.value();
-    let claims = token::validate_signature(refresh_token)?;
-
-    cookies.remove(Cookie::from("refreshToken"));
-
-    redis_token::remove_refresh_token(&claims.claims, mm.client).await?;
-
-    Ok(())
 }
 
 async fn google_oauth(State(mm): State<ModelManager>) -> Result<Json<RedirectPayload>> {

@@ -4,6 +4,7 @@ use crate::jwt::token_util::TokenData;
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
 use crate::oauth::oauth_autherized::UserData;
+use serde::{Deserialize, Serialize};
 use tracing::info;
 use uuid::Uuid;
 
@@ -16,8 +17,8 @@ pub struct User {
 }
 
 impl TokenData for User {
-    fn to_token_data(&self) -> (String, String) {
-        (self.user_id.to_string(), self.role.to_string())
+    fn to_token_data(&self) -> (Uuid, UserType) {
+        (self.user_id, self.role)
     }
 }
 
@@ -28,8 +29,8 @@ pub struct UserTokenData {
 }
 
 impl TokenData for UserTokenData {
-    fn to_token_data(&self) -> (String, String) {
-        (self.user_id.to_string(), self.role.to_string())
+    fn to_token_data(&self) -> (Uuid, UserType) {
+        (self.user_id, self.role)
     }
 }
 
@@ -52,7 +53,7 @@ impl NewUser {
     }
 }
 
-#[derive(Debug, sqlx::Type)]
+#[derive(Debug, sqlx::Type, Deserialize, Serialize, Clone, Copy)]
 #[sqlx(type_name = "user_type")]
 pub enum UserType {
     #[sqlx(rename = "admin")]
@@ -78,16 +79,16 @@ impl fmt::Display for UserType {
 // }
 
 // get user by id
-// pub async fn get_user_by_id(pool : &Pool, id : Uuid) -> Result<User> {
-//     let query = "SELECT * FROM Users WHERE user_id = ?";
-//     let user : User = sqlx::query_as(query)
-//         .bind(id)
-//         .fetch_one(pool)
-//         .await
-//         .map_err(|_e| Error::UserIDNotFound)?;
-//
-//     return Ok(user);
-// }
+pub async fn get_user_by_id(pool: &Pool, id: &Uuid) -> Result<User> {
+    let query = "SELECT * FROM Users WHERE user_id = $1";
+    let user: User = sqlx::query_as(query)
+        .bind(id)
+        .fetch_one(pool)
+        .await
+        .map_err(|_e| Error::UserIDNotFound)?;
+
+    return Ok(user);
+}
 
 // get user by username
 pub async fn get_user_by_username(pool: &Pool, email: String) -> Result<User> {
@@ -127,7 +128,15 @@ pub async fn get_user_by_oauth_id(pool: &Pool, oauth_id: &String) -> Result<Opti
         .map_err(|_| Error::UserNotAdded)?;
     Ok(user)
 }
-
+pub async fn get_users_role(pool: &Pool, user_id: &Uuid) -> Result<UserType> {
+    let query = "SELECT role FROM Users WHERE user_id = $1";
+    let user: UserType = sqlx::query_scalar(query)
+        .bind(user_id)
+        .fetch_one(pool)
+        .await
+        .map_err(|_| Error::UserNotAdded)?;
+    Ok(user)
+}
 //add user
 pub async fn add_oauth_user(pool: &Pool, user: UserData) -> Result<UserTokenData> {
     let query =
@@ -142,15 +151,28 @@ pub async fn add_oauth_user(pool: &Pool, user: UserData) -> Result<UserTokenData
     return Ok(user_id);
 }
 
+// update pwd
+pub async fn update_pwd(pool: &Pool, id: Uuid, new_pwd: String) -> Result<()> {
+    let query = "UPDATE Users SET password = $1 WHERE user_id = $2";
+    sqlx::query(query)
+        .bind(new_pwd)
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::PwdNotUpdated)?;
+
+    return Ok(());
+}
+
 // update role
-// pub async fn update_role(pool : &Pool, id : Uuid, new_role : UserType) -> Result<()> {
-//     let query = "UPDATE Users SET role = ? WHERE user_id = ?";
-//     sqlx::query(query)
-//         .bind(new_role)
-//         .bind(id)
-//         .execute(pool)
-//         .await
-//         .map_err(|_e| Error::RoleNotUpdated)?;
-//
-//     return Ok(());
-// }
+pub async fn update_role(pool: &Pool, id: Uuid, new_role: UserType) -> Result<()> {
+    let query = "UPDATE Users SET role = $1 WHERE user_id = $2";
+    sqlx::query(query)
+        .bind(new_role)
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::RoleNotUpdated)?;
+
+    return Ok(());
+}

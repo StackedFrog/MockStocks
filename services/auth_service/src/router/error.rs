@@ -1,12 +1,13 @@
 use crate::{crypt, model, oauth};
 use axum::{http::StatusCode, response::IntoResponse};
 use std::fmt::Debug;
-use tracing::error;
+use tracing::info;
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Clone)]
 pub enum Error {
     MissingRefreshToken,
+    NotAuthorized,
     Model(model::Error),
     Crypt(crypt::Error),
     Oauth(oauth::Error),
@@ -38,10 +39,11 @@ impl IntoResponse for Error {
             error => format!("Error: {:?}", error),
         };
 
-        error!(err);
+        info!(err);
 
         let code = match self {
             Error::MissingRefreshToken => StatusCode::UNAUTHORIZED,
+            Error::NotAuthorized => StatusCode::FORBIDDEN,
             Error::Oauth(err) => match err {
                 oauth::Error::FailedToFetchToken
                 | oauth::Error::FailedToFetchUserData

@@ -1,7 +1,9 @@
+use uuid::Uuid;
+
 use crate::{
     config::Settings,
     crypt::token::{Claims, create_token},
-    model::{ModelManager, redis_token},
+    model::{ModelManager, redis_token, users_model::UserType},
 };
 
 use super::Result;
@@ -15,7 +17,7 @@ pub struct AccessToken {
 }
 
 impl AccessToken {
-    pub fn new(id: String, role: String) -> Result<Self> {
+    pub fn new(id: Uuid, role: UserType) -> Result<Self> {
         let experation_time = Settings::get().token_access_exp;
         let claims = Claims::new(id, role, experation_time);
         let token = create_token(&claims)?;
@@ -25,7 +27,7 @@ impl AccessToken {
 }
 
 impl RefreshToken {
-    pub fn new(id: String, role: String) -> Result<Self> {
+    pub fn new(id: Uuid, role: UserType) -> Result<Self> {
         let experation_time = Settings::get().token_refresh_exp;
         let claims = Claims::new(id, role, experation_time);
         let token = create_token(&claims)?;
@@ -40,5 +42,5 @@ impl RefreshToken {
 }
 
 pub trait TokenData {
-    fn to_token_data(&self) -> (String, String);
+    fn to_token_data(&self) -> (Uuid, UserType);
 }
