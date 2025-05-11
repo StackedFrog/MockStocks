@@ -9,7 +9,7 @@ axum.workspace = true
 tokio.workspace = true
 tower.workspace = true
 tracing.workspace = true
-tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing"] }
+tower-http = { version = "0.6.2", features = ["fs", "trace", "tracing", "cors"] }
 tower-cookies = "0.11.0"
 reqwest = "0.12.15"
 hyper = "1.6.0"

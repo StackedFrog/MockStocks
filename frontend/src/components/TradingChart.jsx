@@ -1,58 +1,56 @@
-import { CandlestickSeries, createChart, ColorType } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
+import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
 
-export const TradingChart = (props) => {
-    const {
-        data, 
-        colors: {
-            backgroundColor = 'rgb(15,15,15)',
-            lineColor = '#2962FF',
-            textColor = 'white',
-            areaTopColor = '#2962FF',
-            areaBottomColor = 'rgba(41, 98, 255, 0.28)',
-        } = {},
-    } = props;
+const CandleChart = ({ data, colors = {} }) => {
+  const {
+    backgroundColor = 'rgb(15,15,15)',
+    textColor         = 'white',
+  } = colors;
 
-    const chartContainerRef = useRef();
+  const chartContainerRef = useRef(null);
 
-    useEffect(() => {
-        const handleResize = () => {
-            chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-        };
+  useEffect(() => {
+    // 1. Create chart instance
+    const chart = createChart(chartContainerRef.current, {
+      layout: {
+        background: { type: ColorType.Solid, color: backgroundColor },  // docs: use createChart to set background :contentReference[oaicite:0]{index=0}
+        textColor,
+      },
+      width:  chartContainerRef.current.clientWidth,
+      height: 300,
+    });
 
-        // Initialize the chart
-        const chart = createChart(chartContainerRef.current, {
-            layout: {
-                background: { type: ColorType.Solid, color: backgroundColor },
-                textColor,
-            },
-            width: chartContainerRef.current.clientWidth,
-            height: 300,
-        });
-        chart.timeScale().fitContent();
+    // 2. Add candlestick series via addSeries(CandlestickSeries, …)
+    const series = chart.addSeries(CandlestickSeries, {
+      upColor:        '#4fff44',
+      borderUpColor:  '#4fff44',
+      wickUpColor:    '#4fff44',
+      downColor:      '#ff4976',
+      borderDownColor:'#ff4976',
+      wickDownColor:  '#ff4976',
+    });  // per v4+ API use addSeries(CandlestickSeries, options) :contentReference[oaicite:1]{index=1}
 
-        // Add a Candlestick series
-        const candlestickSeries = chart.addSeries(CandlestickSeries, {
-            upColor: '#4fff44', // Color for up candles (bullish)
-            borderUpColor: '#4fff44',
-            wickUpColor: '#4fff44',
-            downColor: '#ff4976', // Color for down candles (bearish)
-            borderDownColor: '#ff4976',
-            wickDownColor: '#ff4976',
-        });
+    series.setData(data);
+    chart.timeScale().fitContent();
 
-        // Set the data for the candlestick chart
-        candlestickSeries.setData(data);
+    // 3. Make chart responsive
+    const handleResize = () => {
+      chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+    };
+    window.addEventListener('resize', handleResize);
 
-        // Resize event listener
-        window.addEventListener('resize', handleResize);
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      chart.remove();
+    };
+  }, [data, backgroundColor, textColor]);
 
-        // Cleanup
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            chart.remove();
-        };
-    }, [data, backgroundColor, textColor, lineColor, areaTopColor, areaBottomColor]);
-
-    return <div ref={chartContainerRef} />;
+  return <div ref={chartContainerRef} />;
 };
+
+export const TradingChart = ({ data, symbol, colors }) => {
+  return <CandleChart data={data} colors={colors} />;
+};
+
+export default TradingChart;

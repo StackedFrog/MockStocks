@@ -17,6 +17,7 @@ async fn main() {
     let api_router =
         router_api::routes(state.clone()).layer(from_fn(router::mw_auth::mw_ctx_resolver));
 
+
     let app = Router::new()
         .merge(api_router)
         .merge(router_auth::routes(state.clone()))
