@@ -33,7 +33,7 @@ pub enum TransactionType {
 }
 
 pub async fn get_all_transactions_by_user(pool: &Pool, user_id: Uuid) -> Result<Vec<Transaction>> {
-    let query = "SELECT * FROM Transactions WHERE user_id = ?";
+    let query = "SELECT * FROM Transactions WHERE user_id = $1";
     let transactions = sqlx::query_as(query)
         .bind(user_id)
         .fetch_all(pool)
@@ -47,7 +47,7 @@ pub async fn add_transaction(
     pool: &mut PgConnection,
     transaction: NewTransaction,
 ) -> Result<Transaction> {
-    let query = "INSERT INTO Transactions (user_id, date, symbol, transaction_type, quantity) VALUES (?, ?, ?, ?, ?)";
+    let query = "INSERT INTO Transactions (user_id, date, symbol, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5)";
     let new_transaction: Transaction = sqlx::query_as(query)
         .bind(transaction.user_id)
         .bind(Utc::now())

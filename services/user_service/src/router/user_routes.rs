@@ -5,6 +5,8 @@ use serde::Deserialize;
 use shared_utils::ctx::Ctx;
 use uuid::Uuid;
 
+use crate::model::holdings::get_holding_by_symbol;
+use crate::model::holdings::update_quantity;
 use crate::model::{
     ModelManager,
     holdings::{NewHolding, add_holding},
@@ -24,7 +26,7 @@ pub fn routes(mm: ModelManager) -> Router {
 #[derive(Deserialize)]
 pub struct TransactionPayload {
     pub symbol: String,
-    pub quantity: Decimal,
+    pub cash: Decimal,
 }
 
 async fn purchase_handler(
@@ -38,11 +40,15 @@ async fn purchase_handler(
 
     // get stock price from API
     let some_price: Decimal = dec!(10.00);
-    let new_cash = user.cash - some_price * body.quantity;
+    let new_cash = user.cash - body.cash;
+    let quantity = some_price / body.cash;
 
     if new_cash < dec!(0.0) {
         // something to stop
     }
+
+    // check if holding already exists
+    let holding = get_holding_by_symbol(&mm.pool, user_id, &body.symbol).await;
 
     // begin transaction (sqlx)
     let mut tx = mm.pool.begin().await.map_err(|_| Error::TxNotCreated)?;
@@ -55,19 +61,31 @@ async fn purchase_handler(
         user_id,
         symbol: body.symbol.clone(),
         transaction_type: TransactionType::Purchase,
-        quantity: body.quantity,
+        quantity: quantity,
     };
 
     add_transaction(&mut *tx, new_transaction).await?;
 
-    // add holding
-    let new_holding = NewHolding {
-        user_id,
-        symbol: body.symbol.clone(),
-        quantity: body.quantity,
-    };
-
-    add_holding(&mut *tx, new_holding).await?;
+    match holding {
+        Ok(holding) => {
+            // update holding
+            let updated_holding = NewHolding {
+                user_id,
+                symbol: body.symbol.clone(),
+                quantity: holding.quantity + quantity
+            };
+            update_quantity(&mut *tx, updated_holding);
+        },
+        Err(_holding) => {
+            // add holding
+            let new_holding = NewHolding {
+                user_id,
+                symbol: body.symbol.clone(),
+                quantity
+            };
+            add_holding(&mut *tx, new_holding).await?;
+        }
+    }
 
     // commit tx
     tx.commit().await;

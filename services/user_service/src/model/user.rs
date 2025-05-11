@@ -24,7 +24,7 @@ pub enum UserType {
 
 // get user by id
 pub async fn get_user_by_id(pool: &Pool, id: Uuid) -> Result<User> {
-    let query = "SELECT * FROM Users WHERE user_id = ?";
+    let query = "SELECT * FROM Users WHERE user_id = $1";
     let user: User = sqlx::query_as(query)
         .bind(id)
         .fetch_one(pool)
@@ -40,7 +40,7 @@ pub async fn update_password(
     id: Uuid,
     new_password: String,
 ) -> Result<()> {
-    let query = "UPDATE Users SET password = ? WHERE user_id = ?";
+    let query = "UPDATE Users SET password = $1 WHERE user_id = $2";
     sqlx::query(query)
         .bind(new_password)
         .bind(id)
@@ -53,7 +53,7 @@ pub async fn update_password(
 
 // update user cash
 pub async fn update_cash(pool: &mut PgConnection, id: Uuid, cash: Decimal) -> Result<()> {
-    let query = "UPDATE Users SET cash = ? WHERE user_id = ?";
+    let query = "UPDATE Users SET cash = $1 WHERE user_id = $2";
     sqlx::query(query)
         .bind(cash)
         .bind(id)
@@ -66,7 +66,7 @@ pub async fn update_cash(pool: &mut PgConnection, id: Uuid, cash: Decimal) -> Re
 
 // delete user
 pub async fn delete_user(pool: &Pool, id: Uuid) -> Result<()> {
-    let query = "DELETE FROM Users WHERE user_id = ?";
+    let query = "DELETE FROM Users WHERE user_id = $1";
     sqlx::query(query)
         .bind(id)
         .execute(pool)
