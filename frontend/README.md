@@ -1,5 +1,17 @@
 ## TODO
 
-- Add Buy/Sell buttons to trading page  
-- fix Api data displayed inside the chart (I think the date is in a wrong format so it crashes)
-- Fix login/register form action (right now hardcoded localhost:8000)
+#### Buying and Selling
+- Add Buy/Sell buttons logic
+- Display balance
+
+
+#### Trading Page (Antoine)
+- fetch real time data
+
+#### Auth
+- Login and Register buttons should only be displayed when not signed in
+- Login and Register logic
+- Account page
+
+#### Optional but cool
+- Portfolio page (maybe on account page)

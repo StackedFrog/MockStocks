@@ -10,7 +10,7 @@ use crate::{config::Settings, model::users_model::UserType};
 use super::{Error, Result};
 
 // methods for token
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Claims {
     pub sub: Uuid, // subject
     jti: String,   // unique id

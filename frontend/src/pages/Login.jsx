@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useApi } from "./../api_wrapper.jsx"
 
 function Login() {
   useEffect(() => {
     document.title = "Login"
   }, [])
 
+  const {apiFetch} = useApi()
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [pwd, setPassword] = useState("")
 
   const handleLogin = async (e) => {
     e.preventDefault()
 
     try {
-      const response = await fetch("http://localhost:8000/login", { //change port later!!!!!
+      const response = await apiFetch("/auth/login", { //change port later!!!!!
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, pwd }),
       })
       const data = await response.json()
       console.log(data)

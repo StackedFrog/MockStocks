@@ -39,7 +39,7 @@ pub struct LoginPayload {
 #[derive(Deserialize)]
 pub struct RegisterPayload {
     pub email: String,
-    pub username: String,
+    pub name: String,
     pub pwd: String,
 }
 
@@ -73,7 +73,7 @@ async fn register_handler(
 ) -> Result<Json<TokenPayload>> {
     let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd)?;
 
-    let new_user = NewUser::new(payload.email, payload.username, pwd_hash);
+    let new_user = NewUser::new(payload.email, payload.name, pwd_hash);
 
     let user = add_user(&mm.pool, new_user).await?;
 

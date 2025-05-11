@@ -1,9 +1,8 @@
-use core::fmt;
-
 use crate::jwt::token_util::TokenData;
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
 use crate::oauth::oauth_autherized::UserData;
+use core::fmt;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 use uuid::Uuid;
@@ -97,7 +96,10 @@ pub async fn get_user_by_username(pool: &Pool, email: String) -> Result<User> {
         .bind(email)
         .fetch_one(pool)
         .await
-        .map_err(|_e| Error::UsernameNotFound)?;
+        .map_err(|_e| {
+            info!("{}", _e);
+            Error::UsernameNotFound
+        })?;
 
     return Ok(user);
 }
