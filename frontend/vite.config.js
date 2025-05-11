@@ -12,5 +12,10 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, '../view'),
     emptyOutDir: true
-  }
+  },
+  server: {
+    host: true, // shorthand for 0.0.0.0
+    allowedHosts: ['frontend'],
+  },
+
 })

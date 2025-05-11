@@ -34,6 +34,11 @@ impl ServiceRequestBuilder {
         self
     }
 
+    pub fn with_json_res(mut self) -> Self {
+        self.request_builder = self.request_builder.header("Accept", "application/json");
+        self
+    }
+
     pub fn with_cookie(mut self) -> Self {
         if let Some(cookie) = self.request.headers().get("cookie") {
             self.request_builder = self.request_builder.header("cookie", cookie);
