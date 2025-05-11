@@ -13,6 +13,21 @@ services:
       timeout: 2s
       retries: 5
 
+  db:
+    image: postgres
+    env_file: ".env"
+    expose:
+      - "5432"
+    volumes:
+      - ./sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dev_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   auth:
     build:
       context: .
@@ -27,6 +42,8 @@ services:
       - backend
     depends_on:
       redis:
+        condition: service_healthy
+      db:
         condition: service_healthy
 
   gateway:
@@ -62,6 +79,21 @@ services:
       - /app/target
     expose:
       - "4003"
+    networks:
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    env_file: ".env"
+    environment:
+      - HOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    expose:
+      - "5173"
     networks:
       - backend
 

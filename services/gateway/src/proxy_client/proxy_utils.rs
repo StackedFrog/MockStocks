@@ -1,9 +1,9 @@
 use axum::{body::Body, extract::Request, http::response::Builder, response::Response};
 use http_body_util::BodyExt;
 use reqwest::{Client, RequestBuilder};
-use shared_utils::ctx::Ctx;
 use telemetry::tracing_propegation;
-use tracing::info;
+
+use crate::router::mw_auth::Claims;
 
 use super::{Error, Result};
 
@@ -34,6 +34,11 @@ impl ServiceRequestBuilder {
         self
     }
 
+    pub fn with_json_res(mut self) -> Self {
+        self.request_builder = self.request_builder.header("Accept", "application/json");
+        self
+    }
+
     pub fn with_cookie(mut self) -> Self {
         if let Some(cookie) = self.request.headers().get("cookie") {
             self.request_builder = self.request_builder.header("cookie", cookie);
@@ -42,10 +47,10 @@ impl ServiceRequestBuilder {
     }
 
     pub fn with_user_id(mut self) -> Self {
-        if let Some(ctx) = self.request.extensions().get::<Ctx>() {
+        if let Some(ctx) = self.request.extensions().get::<Claims>() {
             self.request_builder = self
                 .request_builder
-                .header("x-user-id", ctx.user_id().clone());
+                .header("x-user-id", ctx.sub.to_string().clone());
         }
         self
     }

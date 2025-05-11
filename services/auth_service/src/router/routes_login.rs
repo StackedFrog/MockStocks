@@ -1,49 +1,46 @@
 use super::{Error, Result};
 use crate::{
-    ModelManager, crypt, model::redis_token, utils::cookie_util::set_refresh_token_cookie,
+    ModelManager,
+    crypt::{self, token},
+    jwt::{self, token_util::TokenData},
+    model::users_model::{
+        NewUser, add_oauth_user, add_user, get_user_by_oauth_id, get_user_by_username,
+    },
+    oauth::{
+        o_auth_url::oauth_url,
+        oauth_autherized::{AuthRequest, google_autherized},
+    },
+    utils::cookie_util::set_refresh_token_cookie,
 };
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{Query, State},
     routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
-use tower_cookies::{Cookie, Cookies};
-use tracing::{Level, event, instrument};
+use tower_cookies::Cookies;
 
 pub fn routes(mm: ModelManager) -> Router {
     Router::new()
         .route("/login", post(login_handler))
-        .route("/registar", post(registar_handler))
-        .route("/logout", post(logoff_handler))
+        .route("/register", post(register_handler))
         .route("/refresh", post(access_token_handler))
+        .route("/google", post(google_oauth))
+        .route("/authorized", get(login_autherized))
         .with_state(mm)
 }
 
-#[derive(Clone, Debug)]
-pub struct TokenClaims {
-    sub: String,
-    jti: String,
-    pub exp: u64,
-    iat: u64,
+#[derive(Deserialize)]
+pub struct LoginPayload {
+    pub email: String,
+    pub pwd: String,
 }
 
-pub struct TokenClaimsAccessToken {
-    sub: String,
-    pub exp: u64,
-    iat: u64,
-}
-
-impl TokenClaims {
-    pub fn to_redis_key(&self) -> String {
-        format!("refresh_token:{}:{}", self.sub, self.jti)
-    }
-}
-
-#[derive(Debug, Deserialize)]
-struct LoginPayload {
-    user_name: String,
-    pwd: String,
+#[derive(Deserialize)]
+pub struct RegisterPayload {
+    pub email: String,
+    pub username: String,
+    pub pwd: String,
 }
 
 #[derive(Serialize)]
@@ -51,140 +48,96 @@ struct TokenPayload {
     token: String,
 }
 
+#[derive(Serialize)]
+struct RedirectPayload {
+    url: String,
+}
 async fn login_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
     Json(payload): Json<LoginPayload>,
 ) -> Result<Json<TokenPayload>> {
-    // get user from model by name
-    let user_name = "username".to_string();
-    let pwd = "pwd".to_string();
+    let user = get_user_by_username(&mm.pool, payload.email).await?;
 
-    // crypt::pwd::validate_pwd(payload.pwd, pwd)?;
+    crypt::pwd::validate_pwd(payload.pwd, &user.password)?;
 
-    let refresh_token = "refresh_token".to_string();
-    let token_claims = TokenClaims {
-        sub: refresh_token.to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    let payload = login_user(user, cookies, mm).await?;
 
-    // create access and refresh tokens
-
-    let access_token = "access_token".to_string();
-
-    redis_token::save_refresh_token(token_claims.clone(), &refresh_token, mm.client.clone())
-        .await?;
-    println!(
-        "toekn: {:?}",
-        redis_token::get_refresh_token(token_claims, mm.client).await?
-    );
-    set_refresh_token_cookie(cookies, refresh_token);
-
-    Ok(Json(TokenPayload {
-        token: access_token,
-    }))
+    Ok(Json(payload))
 }
 
-async fn registar_handler(
+async fn register_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>,
+    Json(payload): Json<RegisterPayload>,
 ) -> Result<Json<TokenPayload>> {
     let pwd_hash = crypt::pwd::encrypt_pwd(payload.pwd)?;
 
-    // check use name uniquness
+    let new_user = NewUser::new(payload.email, payload.username, pwd_hash);
 
-    // insert new user
+    let user = add_user(&mm.pool, new_user).await?;
 
-    let token_claims = TokenClaims {
-        sub: "name".to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
+    let payload = login_user(user, cookies, mm).await?;
 
-    // create access and refresh tokens
-
-    let refresh_token = "refresh_token".to_string();
-    let access_token = "access_token".to_string();
-
-    redis_token::save_refresh_token(token_claims, &refresh_token, mm.client).await?;
-
-    set_refresh_token_cookie(cookies, refresh_token);
-
-    Ok(Json(TokenPayload {
-        token: access_token,
-    }))
+    Ok(Json(payload))
 }
 
-#[instrument(err(Debug))]
 async fn access_token_handler(
     State(mm): State<ModelManager>,
     cookies: Cookies,
 ) -> Result<Json<TokenPayload>> {
-    let refresh_token_old = cookies
+    let refresh_token_cookie = cookies
         .get("refreshToken")
         .ok_or(Error::MissingRefreshToken)?;
 
-    let old_val = refresh_token_old.value();
+    let refresh_token = refresh_token_cookie.value();
+    let claims = token::validate_signature(refresh_token)?;
 
-    let refresh_token = "refresh_token2".to_string();
+    let (refresh_token_new, access_token) = jwt::rotate_tokens(claims, mm).await?;
 
-    event!(Level::ERROR, "this is an event");
-
-    let token_claims = TokenClaims {
-        sub: refresh_token.to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
-
-    let token_claims_old = TokenClaims {
-        sub: old_val.to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
-    };
-
-    redis_token::rotate_token(
-        token_claims_old,
-        token_claims,
-        refresh_token.clone(),
-        mm.client,
-    )
-    .await?;
-
-    let access_token = "access_token2".to_string();
-
-    set_refresh_token_cookie(cookies, refresh_token);
+    set_refresh_token_cookie(cookies, refresh_token_new.token);
 
     Ok(Json(TokenPayload {
-        token: access_token,
+        token: access_token.token,
     }))
 }
 
-async fn logoff_handler(
+async fn google_oauth(State(mm): State<ModelManager>) -> Result<Json<RedirectPayload>> {
+    let url = oauth_url(mm).await?;
+
+    Ok(Json(RedirectPayload {
+        url: url.to_string(),
+    }))
+}
+
+async fn login_autherized(
+    Query(query): Query<AuthRequest>,
     State(mm): State<ModelManager>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>,
-) -> Result<String> {
-    let refresh_token = cookies
-        .get("refreshToken")
-        .ok_or(Error::MissingRefreshToken)?
-        .into_owned();
+) -> Result<Json<TokenPayload>> {
+    let user_data = google_autherized(query, mm.clone()).await?;
 
-    let token_claims = TokenClaims {
-        sub: "name".to_string(),
-        jti: "uuid".to_string(),
-        exp: 500,
-        iat: 400,
+    let user_option = get_user_by_oauth_id(&mm.pool, &user_data.id).await?;
+
+    let user = match user_option {
+        Some(user) => user,
+        None => add_oauth_user(&mm.pool, user_data).await?,
     };
 
-    cookies.remove(refresh_token);
+    let payload = login_user(user, cookies, mm).await?;
 
-    redis_token::remove_refresh_token(token_claims, mm.client).await?;
+    Ok(Json(payload))
+}
 
-    Ok(payload.pwd)
+async fn login_user(
+    user: impl TokenData,
+    cookies: Cookies,
+    mm: ModelManager,
+) -> Result<TokenPayload> {
+    let (user_id, user_role) = user.to_token_data();
+    let (refresh_token, access_token) = jwt::creat_token_pair(user_id, user_role, mm).await?;
+    set_refresh_token_cookie(cookies, refresh_token.token);
+    Ok(TokenPayload {
+        token: access_token.token,
+    })
 }

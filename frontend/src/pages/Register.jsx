@@ -14,7 +14,7 @@ function Register() {
     e.preventDefault()
 
     try {
-      const response = await fetch("http://localhost:8000/register", { //change port later!!!!!
+      const response = await fetch("/auth/register", { //change port later!!!!!
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),

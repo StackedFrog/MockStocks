@@ -1,5 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse};
-use tracing::error;
+use tracing::info;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -10,14 +10,26 @@ pub enum Error {
     CanNotParseServiceResponse,
     TokenMissing,
     BadTokenFormat,
+    FailedToValidateToken,
+    NotAuthorized,
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let err = format!("Error: {:?}", self);
 
-        error!(err);
+        info!(err);
+        let code = match self {
+            Error::TokenMissing | Error::BadTokenFormat | Error::FailedToValidateToken => {
+                StatusCode::UNAUTHORIZED
+            }
+            Error::CanNotParseServiceResponse => StatusCode::BAD_GATEWAY,
+            Error::ServiceNotAvailable | Error::ServiceDoesNotExist => {
+                StatusCode::SERVICE_UNAVAILABLE
+            }
+            Error::NotAuthorized => StatusCode::FORBIDDEN, // _ => StatusCode::INTERNAL_SERVER_ERROR
+        };
 
-        (StatusCode::INTERNAL_SERVER_ERROR, err).into_response()
+        code.into_response()
     }
 }

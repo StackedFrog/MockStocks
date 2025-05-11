@@ -7,19 +7,25 @@ use tower_http::trace::{DefaultOnResponse, TraceLayer};
 
 mod config;
 mod crypt;
-mod error;
+mod jwt;
 mod model;
+mod oauth;
 mod router;
 mod utils;
 
 #[tokio::main]
 async fn main() {
-    telemetry::init_telemetry("auth service");
+    telemetry::init_telemetry(&config::Settings::get().cargo_pkg_name);
 
     let mm = ModelManager::new().await;
 
+    let router_user = router::routes_user::routes(mm.clone());
+    let router_admin = router::routes_admin::routes(mm.clone());
+
     let app = Router::new()
         .merge(router::routes_login::routes(mm))
+        .nest("/user", router_user)
+        .nest("/admin", router_admin)
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
