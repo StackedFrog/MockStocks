@@ -3,8 +3,10 @@ CREATE TYPE TRANSACTION_TYPE AS ENUM('purchase', 'sale');
 
 CREATE TABLE Users (
     user_id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(250),
+    oauth_id VARCHAR(250) UNIQUE,
     role USER_TYPE NOT NULL,
     cash NUMERIC NOT NULL DEFAULT 25000.00
 );

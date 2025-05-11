@@ -15,7 +15,7 @@ impl ModelManager {
     pub async fn new() -> Self {
         let pool = PgPoolOptions::new()
             .max_connections(5)
-            .connect("postgres://postgres:password@localhost/dev_db")
+            .connect("postgres://postgres:password@db/dev_db")
             .await
             .expect("Connection pool could not be created");
         Self { pool }

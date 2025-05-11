@@ -13,7 +13,12 @@ tower-http = { version = "0.6.2", features = ["trace", "tracing"] }
 tower-cookies = "0.11.0"
 argon2 = { version = "0.5.3", features = ["std"] }
 serde = { version = "1.0.219", features = ["derive"] }
+jsonwebtoken = "9.3.1"
 redis = { version = "0.29.5", features = ["tokio-comp"] }
 telemetry = {path = "../../shared/telemetry"}
-sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio", "uuid"] }
-uuid = "1.16.0"
+shared_utils = {path = "../../shared/shared_utils"}
+config = "0.15.11"
+oauth2 = "5.0.0"
+reqwest = { version = "0.12.15", features = ["json"] }
+uuid = { version = "1.16.0", features = ["v4", "serde"] }
+sqlx = { version = "0.8.3", features = ["chrono", "postgres", "runtime-tokio", "rust_decimal", "uuid"] }

@@ -1,0 +1,48 @@
+import React, { createContext, useContext, useEffect, useState} from "react";
+
+
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+	const [accessToken, setAccessToken] = useState(null);
+
+	const refreshAccessToken = async () => {
+		try {
+			const res = await fetch("/auth/refresh", {
+				method: "POST",
+				credentials: "include"
+			})
+
+			if (res.ok) {
+				const data = await res.json()
+				setAccessToken(data.token)
+			}else{
+				setAccessToken(null)
+				console.log("failed to get accessToken")
+				// maybe redirect user somewhere?
+			}
+		}
+		catch(err){
+			setAccessToken(null)
+			console.log("error refreshing token", err)
+
+		}
+
+	}
+
+	useEffect(() => {
+		refreshAccessToken()
+	}, []);
+
+	return (
+		<AuthContext.Provider value={{accessToken, setAccessToken, refreshAccessToken}}>
+		{children}
+		</AuthContext.Provider>
+	)
+}
+
+export const useAuth = () => {
+	const ctx = useContext(AuthContext)
+	return ctx
+}

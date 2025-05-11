@@ -8,7 +8,6 @@ use uuid::Uuid;
 pub struct User {
     pub user_id: Uuid,
     pub username: String,
-    pub password: String,
     pub role: UserType,
     pub cash: Decimal,
 }

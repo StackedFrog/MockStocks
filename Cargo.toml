@@ -5,10 +5,14 @@ members = [
 	"services/gateway",
 	"shared/_dev_utils",
 	"shared/telemetry",
-	"shared/shared_utils", "services/user_service"]
+	"shared/shared_utils",
+        "services/stocks_api_service",
+	"services/user_service"
+]
 
 [workspace.dependencies]
 axum = "0.8.3"
 tokio = { version = "1.44.2", features = ["rt-multi-thread"] }
 tower = { version = "0.5.2", features = ["tracing"] }
+serde = { version = "1.0.219", features = ["derive"] }
 tracing = { version = "0.1.41", features = ["std", "attributes"] }

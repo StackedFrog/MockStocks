@@ -2,9 +2,8 @@ use axum::{Json, Router, extract::State, routing::post};
 use rust_decimal::Decimal;
 use rust_decimal::dec;
 use serde::Deserialize;
-use shared_utils::ctx::Ctx;
 use uuid::Uuid;
-
+use shared_utils::ctx::{self, Ctx};
 use crate::model::holdings::get_holding_by_symbol;
 use crate::model::holdings::update_quantity;
 use crate::model::{
@@ -35,7 +34,7 @@ async fn purchase_handler(
     Json(body): Json<TransactionPayload>,
 ) -> Result<()> {
     // get user info
-    let user_id = Uuid::parse_str(ctx.user_id()).map_err(|_| Error::UuidNotParsed)?;
+    let user_id = ctx.user_id();
     let user = get_user_by_id(&mm.pool, user_id).await?;
 
     // get stock price from API
@@ -99,7 +98,7 @@ async fn sale_handler(
     Json(body): Json<TransactionPayload>,
 ) -> Result<()> {
     // get user info
-    let user_id = Uuid::parse_str(ctx.user_id()).map_err(|_| Error::UuidNotParsed)?;
+    let user_id = ctx.user_id();
     let user = get_user_by_id(&mm.pool, user_id).await?;
 
     // get stock price from API

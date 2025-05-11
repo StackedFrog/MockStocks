@@ -5,4 +5,6 @@ pub enum Error {
     PwdNotMatching,
     PwdFailedHash,
     PwdWrongFormat,
+    FailedToValidateToken,
+    FailedToCreateToken,
 }

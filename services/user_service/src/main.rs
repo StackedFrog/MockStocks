@@ -1,7 +1,6 @@
 use axum::Router;
 use model::ModelManager;
 use telemetry::telemetry;
-
 mod model;
 mod router;
 

@@ -1,8 +1,9 @@
 use axum::{body::Body, extract::Request, http::response::Builder, response::Response};
 use http_body_util::BodyExt;
 use reqwest::{Client, RequestBuilder};
-use shared_utils::ctx::Ctx;
 use telemetry::tracing_propegation;
+
+use crate::router::mw_auth::Claims;
 
 use super::{Error, Result};
 
@@ -33,6 +34,14 @@ impl ServiceRequestBuilder {
         self
     }
 
+<<<<<<< HEAD:services/gateway/src/utils/proxy_utils.rs
+=======
+    pub fn with_json_res(mut self) -> Self {
+        self.request_builder = self.request_builder.header("Accept", "application/json");
+        self
+    }
+
+>>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f:services/gateway/src/proxy_client/proxy_utils.rs
     pub fn with_cookie(mut self) -> Self {
         if let Some(cookie) = self.request.headers().get("cookie") {
             self.request_builder = self.request_builder.header("cookie", cookie);
@@ -41,8 +50,15 @@ impl ServiceRequestBuilder {
     }
 
     pub fn with_user_id(mut self) -> Self {
+<<<<<<< HEAD:services/gateway/src/utils/proxy_utils.rs
         if let Some(ctx) = self.request.extensions().get::<Ctx>() {
             self.request_builder = self.request_builder.header("x-user-id", ctx.user_id());
+=======
+        if let Some(ctx) = self.request.extensions().get::<Claims>() {
+            self.request_builder = self
+                .request_builder
+                .header("x-user-id", ctx.sub.to_string().clone());
+>>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f:services/gateway/src/proxy_client/proxy_utils.rs
         }
         self
     }

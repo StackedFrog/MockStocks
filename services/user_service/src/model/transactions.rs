@@ -50,13 +50,10 @@ pub async fn add_transaction(
     let query = "INSERT INTO Transactions (user_id, date, symbol, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5)";
     let new_transaction: Transaction = sqlx::query_as(query)
         .bind(transaction.user_id)
-        .bind(Utc::now())
         .bind(transaction.symbol)
         .bind(transaction.transaction_type)
         .bind(transaction.quantity)
         .fetch_one(pool)
         .await
-        .map_err(|_e| Error::TransactionNotAdded)?;
-
-    return Ok(new_transaction);
+        .map_err(|_| Error::TransactionNotAdded)?;
 }
