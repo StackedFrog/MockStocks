@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useApi } from "./../api_wrapper.jsx"
 
 function Register() {
   useEffect(() => {
     document.title = "Register"
   }, [])
 
+  const {apiFetch} = useApi()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [pwd, setPassword] = useState("")
 
   const handleRegister = async (e) => {
     e.preventDefault()
 
     try {
-      const response = await fetch("/auth/register", { //change port later!!!!!
+      const response = await apiFetch("/auth/register", { //change port later!!!!!
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({email, name ,pwd}),
       })
       if (response.ok) {
         const data = await response.json()

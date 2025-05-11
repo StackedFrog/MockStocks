@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TradingChart } from '../components/TradingChart.jsx';
 import BuyingAndSelling from '../components/BuyingAndSelling.jsx';
+import { useApi } from "./../api_wrapper.jsx"
 
 function TradingPage() {
 
   // TRADING PAGE LOGIC
 
+  const {apiFetch} = useApi()
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [stockSymbol, setStockSymbol] = useState(null);
@@ -22,7 +24,7 @@ function TradingPage() {
     const fetchStocks = async () => {
       try {
         // api endpoint = get stock by name
-        const response = await fetch(`http://localhost:4003/ticker?symbol=${encodeURIComponent(searchTerm)}`);
+        const response = await apiFetch(`/api/stocks_api/ticker?symbol=${encodeURIComponent(searchTerm)}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const results = await response.json();
         setSearchResults(results);
@@ -49,7 +51,7 @@ function TradingPage() {
 
     try {
         // api endpoint = get trading data by symbol with 5h range and 10m interval
-      const response = await fetch(`http://localhost:4003/range?symbol=${encodeURIComponent(symbol)}&range=12h&interval=15m`);
+      const response = await apiFetch(`/api/stocks_api/range?symbol=${encodeURIComponent(symbol)}&range=12h&interval=15m`);
       if (!response.ok) { throw new Error("Network was not ok.")}
       const data = await response.json()
       const formatedData = data?.quotes.map(elt => ({
@@ -95,7 +97,7 @@ function TradingPage() {
         </>
 
         ) : (
-          
+
           // SEARCH BAR
           <div className="flex justify-center items-center flex-col p-4 text-white">
             <h1
