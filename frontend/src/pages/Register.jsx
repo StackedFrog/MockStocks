@@ -7,7 +7,7 @@ function Register() {
     document.title = "Register"
   }, [])
 
-  const {apiFetch} = useApi()
+  const { authenticate } = useApi()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
@@ -16,18 +16,7 @@ function Register() {
     e.preventDefault()
 
     try {
-      const response = await apiFetch("/auth/register", { //change port later!!!!!
-        method: "POST",
-        body: JSON.stringify({email, name ,pwd}),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        console.log(data)
-      } else {
-        alert("Something went wrong")
-        return
-      }
-
+	await authenticate("/auth/register", JSON.stringify({email, name ,pwd}) )
     } catch(err) {
       console.error(err)
       alert("Something went wrong.")

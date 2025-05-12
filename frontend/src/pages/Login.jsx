@@ -7,7 +7,7 @@ function Login() {
     document.title = "Login"
   }, [])
 
-  const {apiFetch} = useApi()
+  const { authenticate } = useApi()
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
 
@@ -15,13 +15,7 @@ function Login() {
     e.preventDefault()
 
     try {
-      const response = await apiFetch("/auth/login", { //change port later!!!!!
-        method: "POST",
-        body: JSON.stringify({ email, pwd }),
-      })
-      const data = await response.json()
-      console.log(data)
-
+	await authenticate("/auth/login", JSON.stringify({ email, pwd }))
     } catch(err) {
       console.error(err)
       alert("Something went wrong.")
