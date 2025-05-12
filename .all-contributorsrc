@@ -1,4 +1,9 @@
 {
         "projectName": "MockStocks",
-        "projectOwner": "StackedFrog"
+        "projectOwner": "StackedFrog",
+        "repoType": "github",
+        "repoHost": "https://github.com",
+        "files": ["README.md"],
+        "imageSize": 100,
+        "contributors": []
 }
