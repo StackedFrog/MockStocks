@@ -69,6 +69,7 @@ If you have any feedback, issues, or feature requests, please file an [file an i
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SchwarzNikolas"><img src="https://avatars.githubusercontent.com/u/71844580?v=4?s=100" width="100px;" alt="Nikolas"/><br /><sub><b>Nikolas</b></sub></a><br /><a href="https://github.com/StackedFrog/MockStocks/commits?author=SchwarzNikolas" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/StackedFrog"><img src="https://avatars.githubusercontent.com/u/147399576?v=4?s=100" width="100px;" alt="StackedFrog"/><br /><sub><b>StackedFrog</b></sub></a><br /><a href="https://github.com/StackedFrog/MockStocks/commits?author=StackedFrog" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
