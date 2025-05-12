@@ -1,6 +1,6 @@
 mod error;
 pub mod proxy_utils;
-use reqwest::Client;
+use reqwest::{Client, redirect::Policy};
 
 pub use self::error::{Error, Result};
 
@@ -11,8 +11,9 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> AppState {
+        let client = Client::builder().redirect(Policy::none()).build().unwrap();
         AppState {
-            http_client: Client::new(),
+            http_client: client,
         }
     }
 }
