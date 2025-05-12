@@ -6,15 +6,6 @@ use crate::services::stocks_service::{
 use axum::{Router, extract::Query, response::Json, routing::get};
 use serde::Deserialize;
 
-/// Defines all routes available in the Stocks API service.
-///
-/// # Routes
-/// - `GET /stock`: Fetch latest quote for a stock symbol.
-/// - `GET /range`: Fetch historical quotes for a stock in a date range.
-/// - `GET /stocks`: Fetch latest quotes for multiple symbols (comma-separated).
-/// - `GET /history`: Fetch historical quotes between start and end dates.
-/// - `GET /ticker`: Search for tickers by company name or keyword.
-/// - `GET /trending`: Fetch trending stock quotes in the US market.
 pub fn routes() -> Router {
     Router::new()
         .route("/stock", get(get_stock_price))
@@ -25,13 +16,11 @@ pub fn routes() -> Router {
     // .route("/trending", get(get_trending_quotes))
 }
 
-/// Query parameters for `/stock`, `/ticker` and `/stocks` endpoints.
 #[derive(Deserialize)]
 struct StockQuery {
     symbol: String,
 }
 
-/// Query parameters for `/range` endpoint.
 #[derive(Deserialize)]
 struct RangeQuery {
     symbol: String,
@@ -39,7 +28,6 @@ struct RangeQuery {
     interval: String,
 }
 
-/// Query parameters for `/history` endpoint.
 #[derive(Deserialize)]
 struct HistoricStockQuery {
     symbol: String,
@@ -47,42 +35,16 @@ struct HistoricStockQuery {
     end: String,
 }
 
-/// Handler for `GET /stock`
-///
-/// Fetches the latest quote for a single stock symbol.
-///
-/// **Query Parameters:**
-/// - `symbol` (required): The stock symbol (e.g., AAPL)
-///
-/// **Returns:** JSON with latest quote info.
 async fn get_stock_price(Query(params): Query<StockQuery>) -> Result<Json<LatestQuote>> {
     let data = fetch_latest_quote(&params.symbol).await?;
     Ok(Json(data))
 }
 
-/// Handler for `GET /range`
-///
-/// Fetches historical quotes for a symbol over a date range.
-///
-/// **Query Parameters:**
-/// - `symbol` (required): Stock symbol.
-/// - `range` (required): Date range (e.g., "6mo")
-/// - `ìnterval` (required): Data resolution (e.g., "30m")
-///
-/// **Returns:** JSON with historical quotes.
 async fn get_range(Query(params): Query<RangeQuery>) -> Result<Json<QuoteFromRange>> {
     let data = fetch_quote_from_timerange(&params.symbol, &params.range, &params.interval).await?;
     Ok(Json(data))
 }
 
-/// Handler for `GET /stocks`
-///
-/// Fetches the latest quotes for multiple stock symbols (parallel fetch).
-///
-/// **Query Parameters:**
-/// - `symbol` (required): Comma-separated symbols (e.g., "AAPL,GOOG,MSFT")
-///
-/// **Returns:** JSON array of latest quotes.
 async fn get_multiple_stock_prices(
     Query(params): Query<StockQuery>,
 ) -> Result<Json<Vec<LatestQuote>>> {
@@ -91,16 +53,6 @@ async fn get_multiple_stock_prices(
     Ok(Json(data))
 }
 
-/// Handler for `GET /history`
-///
-/// Fetches historical quotes between start and end dates.
-///
-/// **Query Parameters:**
-/// - `symbol` (required): Stock symbol.
-/// - `start` (required): Start date (RFC3339 format)
-/// - `end` (required): End date (RFC3339 format)
-///
-/// **Returns:** JSON with historical quotes.
 async fn get_historic_stock(
     Query(params): Query<HistoricStockQuery>,
 ) -> Result<Json<HistoricQuotes>> {
@@ -108,14 +60,6 @@ async fn get_historic_stock(
     Ok(Json(data))
 }
 
-/// Handler for `GET /ticker`
-///
-/// Searches for stock tickers by company name or keyword.
-///
-/// **Query Parameters:**
-/// - `string` (required): Search string (e.g., "Apple")
-///
-/// **Returns:** JSON array of matching tickers.
 async fn get_tickers(Query(params): Query<StockQuery>) -> Result<Json<Vec<TickerSearchResult>>> {
     let data = fetch_ticker(&params.symbol).await?;
     Ok(Json(data))
