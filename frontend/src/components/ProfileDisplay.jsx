@@ -2,16 +2,16 @@ import React, { useState } from "react"
 import { useApi } from ""
 
 
-function DisplayBalance(){
+function DisplayProfile(){
     const {apiFetch} = useApi()
-    const [cash] = useState()
+    const [name] = useState()
 
-    const handleBalance = async (e) =>{
+    const handleProfile = async (e) =>{
         e.preventDefault()
         try{
             const response = await apiFetch("",{
                 method: "GET",
-                body: JSON.stringify(cash)
+                body: JSON.stringify(name)
             })
             if (response.ok){
                 const data = await response.json();
@@ -34,4 +34,4 @@ function DisplayBalance(){
     )
 }
 
-export default DisplayBalance
+export default DisplayProfile
