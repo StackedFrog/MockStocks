@@ -1,9 +1,24 @@
 {
-        "projectName": "MockStocks",
-        "projectOwner": "StackedFrog",
-        "repoType": "github",
-        "repoHost": "https://github.com",
-        "files": ["README.md"],
-        "imageSize": 100,
-        "contributors": []
+  "projectName": "MockStocks",
+  "projectOwner": "StackedFrog",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "contributors": [
+    {
+      "login": "SchwarzNikolas",
+      "name": "Nikolas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71844580?v=4",
+      "profile": "https://github.com/SchwarzNikolas",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7
 }
