@@ -90,17 +90,28 @@ export const useApi = () => {
 	}
 
 	const apiAuth = async (url, payload = {}) => {
-			const headers = {
-				"Content-Type": 'application/json',
+		const headers = {
+			"Content-Type": 'application/json',
+		}
+
+		let res = await fetch(url, {
+			headers,
+			method: "POST",
+			body: payload,
+		})
+
+		if (res.ok){
+			const data = await res.json()
+			if(data.url){
+
+				window.location.href = data.url
+			}else{
+				setAccessToken(data.token)
 			}
+		}
 
-			let res = await fetch(url, {
-				headers,
-				method: "POST",
-				body: payload,
-			})
 
-			return res
+		return res
 	}
 
 	const apiUnAuth = async (url) => {
@@ -118,5 +129,5 @@ export const useApi = () => {
 	}
 
 
-	return { apiFetch, apiUnAuth ,logout, logout_all, apiAuth}
+	return { apiFetch, apiUnAuth , apiAuth}
 }

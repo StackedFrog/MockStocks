@@ -6,10 +6,10 @@ function OAuthButton(){
 	const onRedirect = async () => {
 		try {
 			const res = await apiAuth("/auth/google")
-			if (res.ok){
-				const data = await res.json()
-				window.location.href = data.url
-			}
+			// if (res.ok){
+			// 	const data = await res.json()
+			// 	window.location.href = data.url
+			// }
 		} catch(err) {
 			console.error(err)
 			alert("Something went wrong.")
