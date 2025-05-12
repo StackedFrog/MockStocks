@@ -64,6 +64,17 @@ pub fn propagate_tracing(request: &Request) -> Span {
     span
 }
 
+pub fn set_trace_kind(request: &Request) -> Span {
+    let span = tracing::span!(
+        Level::INFO,
+        "request",
+        method = %request.method(),
+        uri = %request.uri(),
+        otel.kind = "server"
+    );
+    span
+}
+
 pub fn inject_tracing_context() -> HeaderMap {
     let mut headers = HeaderMap::new();
     global::get_text_map_propagator(|propagator| {
