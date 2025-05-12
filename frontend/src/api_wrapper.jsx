@@ -1,32 +1,32 @@
 import { useAuth } from "./auth_context.jsx";
 import { useNavigate } from 'react-router-dom'
 
-	// const apiCall = async (url, options = {}) => {
-	// 	const headers = {
-	// 		...options.headers,
-	// 		...(accessToken ? { Authorization: `Bearer ${accessToken}` }: {}),
-	// 		"Content-Type": 'application/json',
-	// 	}
-	//
-	// 	let res = await fetch(url, {
-	// 		...options,
-	// 		headers
-	// 	})
-	// 	return res
-	// 	}
+// const apiCall = async (url, options = {}) => {
+// 	const headers = {
+// 		...options.headers,
+// 		...(accessToken ? { Authorization: `Bearer ${accessToken}` }: {}),
+// 		"Content-Type": 'application/json',
+// 	}
+//
+// 	let res = await fetch(url, {
+// 		...options,
+// 		headers
+// 	})
+// 	return res
+// 	}
 
-	// const apiFetch = async (url, options = {}) => {
-	//
-	// 	const res = apiCall(url, options)
-	//
-	// 	if (res.status === 401){
-	// 		await refreshAccessToken()
-	//
-	// 		res = apiCall(url, options)
-	// 	}
-	// 	return res;
-	// }
-	//
+// const apiFetch = async (url, options = {}) => {
+//
+// 	const res = apiCall(url, options)
+//
+// 	if (res.status === 401){
+// 		await refreshAccessToken()
+//
+// 		res = apiCall(url, options)
+// 	}
+// 	return res;
+// }
+//
 
 
 
