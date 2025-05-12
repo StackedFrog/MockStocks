@@ -53,10 +53,8 @@ function TradingPage() {
                 try {
                         // api endpoint = get trading data by symbol with 5h range and 10m interval
                         const response = await apiFetch(`/api/stocks_api/range?symbol=${encodeURIComponent(symbol)}&range=12h&interval=15m`);
-                        console.log(response)
                         if (!response.ok) { throw new Error("Network was not ok.")}
                         const data = await response.json()
-                        console.log(data)
                         const formatedData = data?.quotes.map(elt => ({
                                 time: elt.timestamp,
                                 open: elt.open,
