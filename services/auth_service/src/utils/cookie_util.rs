@@ -15,3 +15,10 @@ fn set_cookie(cookies: Cookies, cookie_name: String, cookie_value: String) {
         .build();
     cookies.add(cookie);
 }
+
+pub fn remove_refresh_token_cookie(cookies: Cookies) {
+    let mut cookie = Cookie::from("refreshToken");
+    cookie.set_path("/auth/");
+
+    cookies.remove(cookie);
+}

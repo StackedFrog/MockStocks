@@ -15,6 +15,7 @@ use crate::{
 use axum::{
     Json, Router,
     extract::{Query, State},
+    response::Redirect,
     routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
@@ -114,7 +115,7 @@ async fn login_autherized(
     Query(query): Query<AuthRequest>,
     State(mm): State<ModelManager>,
     cookies: Cookies,
-) -> Result<Json<TokenPayload>> {
+) -> Result<Redirect> {
     let user_data = google_autherized(query, mm.clone()).await?;
 
     let user_option = get_user_by_oauth_id(&mm.pool, &user_data.id).await?;
@@ -126,7 +127,7 @@ async fn login_autherized(
 
     let payload = login_user(user, cookies, mm).await?;
 
-    Ok(Json(payload))
+    Ok(Redirect::to("/"))
 }
 
 async fn login_user(
