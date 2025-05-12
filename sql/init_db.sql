@@ -8,7 +8,7 @@ CREATE TABLE Users (
     password VARCHAR(250),
     oauth_id VARCHAR(250) UNIQUE,
     role USER_TYPE NOT NULL,
-    cash NUMERIC NOT NULL DEFAULT 25000.00
+    balance NUMERIC NOT NULL DEFAULT 25000.00
 );
 
 CREATE TABLE Transactions (

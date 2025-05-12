@@ -3,14 +3,10 @@ use model::ModelManager;
 use telemetry::telemetry;
 mod model;
 mod router;
+mod config;
 
 #[tokio::main]
 async fn main() {
-    println!("Hello, world from user service main!");
-    let db = model::ModelManager::new().await;
-
-    _dev_utils::_dev_db::db_setup::init_database(&db.pool).await;
-
     telemetry::init_telemetry("user service");
 
     let mm = ModelManager::new().await;

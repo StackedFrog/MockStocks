@@ -9,7 +9,7 @@ pub struct User {
     pub user_id: Uuid,
     pub username: String,
     pub role: UserType,
-    pub cash: Decimal,
+    pub balance: Decimal,
 }
 
 #[derive(Debug, sqlx::Type)]
@@ -22,7 +22,7 @@ pub enum UserType {
 }
 
 // get user by id
-pub async fn get_user_by_id(pool: &Pool, id: Uuid) -> Result<User> {
+pub async fn get_user_by_id(pool: &Pool, id: &Uuid) -> Result<User> {
     let query = "SELECT * FROM Users WHERE user_id = $1";
     let user: User = sqlx::query_as(query)
         .bind(id)
@@ -36,7 +36,7 @@ pub async fn get_user_by_id(pool: &Pool, id: Uuid) -> Result<User> {
 // update user password
 pub async fn update_password(
     pool: &mut PgConnection,
-    id: Uuid,
+    id: &Uuid,
     new_password: String,
 ) -> Result<()> {
     let query = "UPDATE Users SET password = $1 WHERE user_id = $2";
@@ -51,20 +51,20 @@ pub async fn update_password(
 }
 
 // update user cash
-pub async fn update_cash(pool: &mut PgConnection, id: Uuid, cash: Decimal) -> Result<()> {
+pub async fn update_balance(pool: &mut PgConnection, id: &Uuid, balance: Decimal) -> Result<()> {
     let query = "UPDATE Users SET cash = $1 WHERE user_id = $2";
     sqlx::query(query)
-        .bind(cash)
+        .bind(balance)
         .bind(id)
         .execute(pool)
         .await
-        .map_err(|_e| Error::CashNotUpdated)?;
+        .map_err(|_e| Error::BalanceNotUpdated)?;
 
     return Ok(());
 }
 
 // delete user
-pub async fn delete_user(pool: &Pool, id: Uuid) -> Result<()> {
+pub async fn delete_user(pool: &Pool, id: &Uuid) -> Result<()> {
     let query = "DELETE FROM Users WHERE user_id = $1";
     sqlx::query(query)
         .bind(id)

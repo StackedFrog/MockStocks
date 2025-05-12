@@ -8,7 +8,8 @@ pub enum Error {
     MissingRefreshToken,
     Model(model::Error),
     UuidNotParsed,
-    TxNotCreated,
+    InsufficientStockQuantity,
+    InsufficientBalance,
 }
 
 impl From<model::Error> for Error {
