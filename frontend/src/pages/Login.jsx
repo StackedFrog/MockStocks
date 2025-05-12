@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "./../api_wrapper.jsx"
+import OAuthButton from "../components/oAuthButton.jsx";
 
 function Login() {
   useEffect(() => {
     document.title = "Login"
   }, [])
 
-  const { authenticate } = useApi()
+  const { apiAuth} = useApi()
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
 
@@ -15,10 +16,18 @@ function Login() {
     e.preventDefault()
 
     try {
-	await authenticate("/auth/login", JSON.stringify({ email, pwd }))
-    } catch(err) {
-      console.error(err)
-      alert("Something went wrong.")
+	const res = await apiAuth("/auth/login", JSON.stringify({ email, pwd }))
+
+	if (res.ok){
+		const data = await res.json()
+		setAccessToken(data.token)
+		navigate("/trade")
+	}
+
+
+	} catch(err) {
+      		console.error(err)
+      		alert("Something went wrong.")
     }
 
 
@@ -48,6 +57,7 @@ function Login() {
             Login
           </button>
         </form>
+	< OAuthButton  />
         <p className="text-sm text-center mt-4">
           No account? <Link to="/register" className="underline">Register</Link>
         </p>

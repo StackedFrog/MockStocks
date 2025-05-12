@@ -7,7 +7,7 @@ function Register() {
     document.title = "Register"
   }, [])
 
-  const { authenticate } = useApi()
+  const { apiAuth} = useApi()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
@@ -16,8 +16,16 @@ function Register() {
     e.preventDefault()
 
     try {
-	await authenticate("/auth/register", JSON.stringify({email, name ,pwd}) )
-    } catch(err) {
+	const res = await apiAuth("/auth/register", JSON.stringify({email, name ,pwd}) )
+
+			if (res.ok){
+				const data = await res.json()
+				setAccessToken(data.token)
+				navigate("/trade")
+			}
+
+
+		} catch(err) {
       console.error(err)
       alert("Something went wrong.")
     }

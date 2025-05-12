@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom'
 function LogoutButton(){
 
 	const navigate = useNavigate()
-	const {logout} = useApi()
+	const { apiUnAuth } = useApi()
 
 	const onLogout = async () => {
-		logout()
+		await apiUnAuth("/auth/user/logout")
 		navigate("/")
 	}
 

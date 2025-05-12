@@ -36,9 +36,20 @@ export const useApi = () => {
 	const navigate = useNavigate()
 
 	const apiFetch = async (url, options = {}) => {
+
+		let token = accessToken
+
+		if (!token){
+			token = await refreshAccessToken()
+			if (!token){
+				navigate("/")
+				return
+			}
+		}
+
 		const headers = {
 			...options.headers,
-			...(accessToken ? { Authorization: `Bearer ${accessToken}` }: {}),
+			...({ Authorization: `Bearer ${token}` }),
 			"Content-Type": 'application/json',
 		}
 
@@ -50,52 +61,51 @@ export const useApi = () => {
 		if (res.status === 403){
 			console.log("missing privilige")
 			navigate("/")
+			return
 		}
 
-		else if (res.status === 401){
-			await refreshAccessToken()
-			const retryHeaders = {
+		if (res.status === 401){
+			token = await refreshAccessToken()
+			if (!token){
+				navigate("/")
+				return
+			}
+			const headers = {
 				...options.headers,
-				...(accessToken ? { Authorization: `Bearer ${accessToken}` }: {}),
+				...({ Authorization: `Bearer ${token}` }),
 				"Content-Type": 'application/json',
 			}
 
-			res = await fetch(url, {
+			let res = await fetch(url, {
 				...options,
-				headers: retryHeaders
+				headers
 			})
-			if (res.status === 401){
-				console.log("redirecting ")
+
+			if(res.status === 401){
 				navigate("/")
+				return
 			}
 		}
-
-
 		return res;
 	}
 
-	const authenticate = async (url, payload) => {
-		try {
-			const res = await apiFetch(url, { //change port later!!!!!
+	const apiAuth = async (url, payload = {}) => {
+			const headers = {
+				"Content-Type": 'application/json',
+			}
+
+			let res = await fetch(url, {
+				headers,
 				method: "POST",
 				body: payload,
 			})
-			if (res.ok){
-				const data = await res.json()
-				setAccessToken(data.token)
-				navigate("/trade")
-			}
 
-		} catch(err) {
-			console.error(err)
-			alert("Something went wrong.")
-		}
-
+			return res
 	}
 
-	const logout  = async () => {
+	const apiUnAuth = async (url) => {
 		try {
-			const res = await apiFetch("/auth/user/logout", { //change port later!!!!!
+			await apiFetch( url, { //change port later!!!!!
 				method: "POST",
 				credentials: "include"
 			})
@@ -108,5 +118,5 @@ export const useApi = () => {
 	}
 
 
-	return { apiFetch, logout, authenticate }
+	return { apiFetch, apiUnAuth ,logout, logout_all, apiAuth}
 }
