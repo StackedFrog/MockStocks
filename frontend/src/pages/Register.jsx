@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "./../api_wrapper.jsx"
+import { useNavigate } from 'react-router-dom'
 
 function Register() {
   useEffect(() => {
     document.title = "Register"
   }, [])
 
+  const navigate = useNavigate()
   const { apiAuth} = useApi()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -17,12 +19,9 @@ function Register() {
 
     try {
 	const res = await apiAuth("/auth/register", JSON.stringify({email, name ,pwd}) )
-
-			if (res.ok){
-				const data = await res.json()
-				setAccessToken(data.token)
-				navigate("/trade")
-			}
+		if (res.ok){
+			navigate("/trade")
+		}
 
 
 		} catch(err) {

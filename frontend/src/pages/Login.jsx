@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "./../api_wrapper.jsx"
 import OAuthButton from "../components/oAuthButton.jsx";
+import { useNavigate } from 'react-router-dom'
 
 function Login() {
   useEffect(() => {
     document.title = "Login"
   }, [])
 
+  const navigate = useNavigate()
   const { apiAuth} = useApi()
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
@@ -17,20 +19,14 @@ function Login() {
 
     try {
 	const res = await apiAuth("/auth/login", JSON.stringify({ email, pwd }))
-
 	if (res.ok){
-		const data = await res.json()
-		setAccessToken(data.token)
 		navigate("/trade")
 	}
-
 
 	} catch(err) {
       		console.error(err)
       		alert("Something went wrong.")
     }
-
-
   }
 
   return (
