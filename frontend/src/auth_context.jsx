@@ -1,13 +1,10 @@
 import React, { createContext, useContext, useEffect, useState} from "react";
 // import jwtDecode  from "jwt-decode";
 
-
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 	const [accessToken, setAccessToken] = useState(null);
-
 	const refreshAccessToken = async () => {
 		try {
 			const res = await fetch("/auth/refresh", {
@@ -19,7 +16,7 @@ export const AuthProvider = ({ children }) => {
 				const data = await res.json()
 				console.log("new token ", data.token)
 				setAccessToken(data.token)
-
+				return data.token;
 				// const decoded = jwtDecode(data.token);
 				// console.log(decoded)
 			}else{
@@ -43,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<AuthContext.Provider value={{accessToken, setAccessToken, refreshAccessToken}}>
-		{children}
+			{children}
 		</AuthContext.Provider>
 	)
 }
