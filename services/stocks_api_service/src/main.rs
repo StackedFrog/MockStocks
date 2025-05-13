@@ -7,7 +7,8 @@ use tower_http::{
 };
 
 mod router;
-mod services;
+mod stocks_service;
+mod yahoo_service;
 
 #[tokio::main]
 async fn main() {

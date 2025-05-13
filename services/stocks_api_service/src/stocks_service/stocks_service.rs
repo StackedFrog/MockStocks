@@ -4,9 +4,6 @@ use futures::future::try_join_all;
 use serde::Serialize;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use yahoo_finance_api::{Quote, YahooConnector};
-// use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, ACCEPT, ACCEPT_LANGUAGE, CONNECTION};
-// use serde_json::Value;
-// use reqwest;
 
 #[derive(Serialize, Clone)]
 pub struct LatestQuote {
@@ -54,7 +51,7 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
         .map_err(|_| Error::FailedToExtractQuote)?;
 
     let utc_date =
-        DateTime::from_timestamp(quote.timestamp as i64, 0).ok_or(Error::FailedToParseDateTime)?;
+        DateTime::from_timestamp(quote.timestamp as i64, 0).ok_or(Error::FailedToParse)?;
     let local_date: DateTime<Local> = DateTime::from(utc_date);
 
     Ok(LatestQuote {
@@ -106,10 +103,8 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
 pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes> {
     let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
-    let start_offset =
-        OffsetDateTime::parse(start, &Rfc3339).map_err(|_| Error::FailedToParseDateTime)?;
-    let end_offset =
-        OffsetDateTime::parse(end, &Rfc3339).map_err(|_| Error::FailedToParseDateTime)?;
+    let start_offset = OffsetDateTime::parse(start, &Rfc3339).map_err(|_| Error::FailedToParse)?;
+    let end_offset = OffsetDateTime::parse(end, &Rfc3339).map_err(|_| Error::FailedToParse)?;
     let response = provider
         .get_quote_history(symbol, start_offset, end_offset)
         .await
@@ -145,39 +140,3 @@ pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>> 
 
     Ok(results)
 }
-
-// pub async fn fetch_trending_quotes() -> Result<Vec<LatestQuote>> {
-//
-//     let client = reqwest::Client::new();
-//     let trending_url = "https://query1.finance.yahoo.com/v1/finance/trending/US";
-//
-//     let mut headers = HeaderMap::new();
-//     headers.insert(USER_AGENT, HeaderValue::from_static(
-//             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-//             AppleWebKit/537.36 (KHTML, like Gecko) \
-//             Chrome/123.0.0.0 Safari/537.36"));
-//     headers.insert(ACCEPT, HeaderValue::from_static("application/json"));
-//     headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
-//     headers.insert(CONNECTION, HeaderValue::from_static("keep-alive"));
-//
-//     let response = client
-//         .get(trending_url)
-//         .headers(headers)
-//         .send()
-//         .await
-//         .map_err(|_| Error::FailedToFetch)?
-//         .json::<Value>()
-//         .await
-//         .map_err(|_| Error::FailedToExtractQuote)?;
-//
-//     let symbols = response["finance"]["result"][0]["quotes"]
-//         .as_array()
-//         .unwrap()
-//         .iter()
-//         .filter_map(|q| q["symbol"].as_str())
-//         .collect::<Vec<&str>>();
-//
-//     let quotes = fetch_latest_quotes_parallel(&symbols[0..9].to_vec()).await?;
-//
-//     Ok(quotes)
-// }

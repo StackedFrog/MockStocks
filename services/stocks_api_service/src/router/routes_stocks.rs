@@ -1,8 +1,9 @@
-use crate::services::Result;
-use crate::services::stocks_service::{
+use crate::stocks_service::Result;
+use crate::stocks_service::stocks_service::{
     HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult, fetch_historic_quotes,
     fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker,
 };
+use crate::yahoo_service::yahoo_service::YahooService;
 use axum::{Router, extract::Query, response::Json, routing::get};
 use serde::Deserialize;
 
@@ -13,7 +14,7 @@ pub fn routes() -> Router {
         .route("/stocks", get(get_multiple_stock_prices))
         .route("/history", get(get_historic_stock))
         .route("/ticker", get(get_tickers))
-    // .route("/trending", get(get_trending_quotes))
+        .route("/trending", get(get_trending_quotes))
 }
 
 #[derive(Deserialize)]
@@ -65,7 +66,8 @@ async fn get_tickers(Query(params): Query<StockQuery>) -> Result<Json<Vec<Ticker
     Ok(Json(data))
 }
 
-// async fn get_trending_quotes() -> Result<Json<Vec<LatestQuote>>> {
-//     let data = fetch_trending_quotes().await?;
-//     Ok(Json(data))
-// }
+async fn get_trending_quotes() -> Result<Json<Vec<String>>> {
+    let service = YahooService::new();
+    let data = service.get_trending_symbols().await?;
+    Ok(Json(data))
+}
