@@ -67,16 +67,6 @@ impl fmt::Display for UserType {
     }
 }
 
-// pub async fn get_all_users(pool : &Pool) -> Result<Vec<User>> {
-//     let query = "SELECT * FROM Users";
-//     let users : Vec<User> = sqlx::query_as(query)
-//         .fetch_all(pool)
-//         .await
-//         .map_err(|_e| Error::UsersNotFound)?;
-//
-//     return Ok(users);
-// }
-
 // get user by id
 pub async fn get_user_by_id(pool: &Pool, id: &Uuid) -> Result<User> {
     let query = "SELECT * FROM Users WHERE user_id = $1";

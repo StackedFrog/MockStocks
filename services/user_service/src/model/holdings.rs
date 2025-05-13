@@ -112,3 +112,14 @@ pub async fn delete_holding(pool: &Pool, id: Uuid, symbol: String) -> Result<()>
 
     return Ok(());
 }
+
+pub async fn delete_all_holdings(pool: &mut PgConnection, user_id: &Uuid) -> Result<()>{
+    let query = "DELETE FROM Holdings WHERE user_id = $1";
+    sqlx::query(query)
+        .bind(user_id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::HoldingsNotDeleted)?;
+
+    return Ok(());
+}
