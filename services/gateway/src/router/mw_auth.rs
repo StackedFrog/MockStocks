@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-use super::error::{Error, Result};
-use axum::{extract::Request, middleware::Next, response::Response};
-use hyper::HeaderMap;
-use shared_utils::ctx::Ctx;
-
-pub async fn mw_ctx_resolver(mut req: Request, next: Next) -> Result<Response> {
-=======
 use crate::config::Settings;
 
 use super::error::{Error, Result};
@@ -45,7 +37,6 @@ pub async fn mw_ctx_resolver(mut req: Request, next: Next) -> Result<Response> {
 }
 
 pub async fn mw_ctx_resolver_admin(mut req: Request, next: Next) -> Result<Response> {
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
     let ctx = ctx_resolver(req.headers()).await?;
 
     validdate_role(&ctx)?;
@@ -55,17 +46,8 @@ pub async fn mw_ctx_resolver_admin(mut req: Request, next: Next) -> Result<Respo
     Ok(next.run(req).await)
 }
 
-<<<<<<< HEAD
-async fn ctx_resolver(header: &HeaderMap) -> Result<Ctx> {
-    // let token = header.get("AUTHORIZATION").ok_or(Error::Variant1)?;
-
-    let Some(auth_header) = header.get("AUTHORIZATION") else {
-        return Err(Error::TokenMissing);
-    };
-=======
 async fn ctx_resolver(header: &HeaderMap) -> Result<Claims> {
     let auth_header = header.get("AUTHORIZATION").ok_or(Error::TokenMissing)?;
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
 
     let token = auth_header
         .to_str()

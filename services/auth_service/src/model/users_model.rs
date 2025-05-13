@@ -12,7 +12,7 @@ pub struct User {
     pub user_id: Uuid,
     // pub username: String,
     pub password: String,
-    pub role: UserType
+    pub role: UserType,
 }
 
 impl TokenData for User {

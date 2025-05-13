@@ -2,10 +2,12 @@ use crate::model::Pool;
 use crate::model::error::{Error, Result};
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
+use serde::Serialize;
 use sqlx::PgConnection;
+use tracing::info;
 use uuid::Uuid;
 
-#[derive(sqlx::FromRow, Debug)]
+#[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct Holding {
     pub user_id: Uuid,
     pub symbol: String,
@@ -23,16 +25,21 @@ pub struct NewHolding {
 
 impl NewHolding {
     pub fn new(user_id: Uuid, symbol: String, quantity: Decimal) -> Self {
-        NewHolding { update: true, user_id, symbol, quantity }
+        NewHolding {
+            update: true,
+            user_id,
+            symbol,
+            quantity,
+        }
     }
 
-    pub fn update_quantity(self : &mut Self, quantity: Decimal) -> &Self {
+    pub fn update_quantity(self: &mut Self, quantity: Decimal) -> &Self {
         //self.update = true;
         self.quantity += quantity;
         self
     }
 
-    pub fn set_as_update(self : &mut Self) -> &Self {
+    pub fn set_as_update(self: &mut Self) -> &Self {
         self.update = false;
         self
     }
@@ -69,7 +76,7 @@ pub async fn add_holding(pool: &mut PgConnection, holding: NewHolding) -> Result
         .bind(holding.symbol)
         .bind(holding.quantity)
         .bind(Utc::now())
-        .fetch_one(pool)
+        .execute(pool)
         .await
         .map_err(|_e| Error::HoldingNotAdded)?;
 
@@ -78,7 +85,7 @@ pub async fn add_holding(pool: &mut PgConnection, holding: NewHolding) -> Result
 
 pub async fn update_quantity(pool: &mut PgConnection, updated: NewHolding) -> Result<()> {
     let query =
-        "UPDATE Holdings SET quantity = $1 last_updated = $2 WHERE user_id = $3 AND symbol = $4";
+        "UPDATE Holdings SET quantity = $1, last_updated = $2 WHERE user_id = $3 AND symbol = $4";
     sqlx::query(query)
         .bind(updated.quantity)
         .bind(Utc::now())
@@ -86,7 +93,10 @@ pub async fn update_quantity(pool: &mut PgConnection, updated: NewHolding) -> Re
         .bind(updated.symbol)
         .execute(pool)
         .await
-        .map_err(|_e| Error::HoldingNotUpdated)?;
+        .map_err(|_e| {
+            info!("{}", _e);
+            Error::HoldingNotUpdated
+        })?;
 
     return Ok(());
 }

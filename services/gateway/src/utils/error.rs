@@ -4,10 +4,6 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-<<<<<<< HEAD
-    CanNotParesResponseBody,
-=======
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
     CanNotParesServiceName,
 }
 

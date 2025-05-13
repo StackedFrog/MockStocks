@@ -1,29 +1,18 @@
 use crate::{
     AppState,
-<<<<<<< HEAD
-    utils::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
-=======
     proxy_client::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
     utils::url_format::target_url,
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
 };
 use axum::{
     Router,
     body::Body,
     extract::{Path, Request, State},
-<<<<<<< HEAD
-    response::Response,
-    routing::{any, get, post},
-};
-use tracing::instrument;
-=======
     middleware::from_fn,
     response::Response,
     routing::any,
 };
 use reqwest::RequestBuilder;
 use tracing::info;
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
 
 use super::{Error, Result, mw_auth};
 
@@ -36,10 +25,6 @@ pub fn routes(state: AppState) -> Router {
         .route("/auth/admin/{*path}", any(auth_proxy_admin))
         .layer(from_fn(mw_auth::mw_ctx_resolver_admin));
 
-<<<<<<< HEAD
-pub fn routes(state: AppState) -> Router {
-=======
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
     Router::new()
         .merge(user_router)
         .merge(admin_router)
@@ -116,8 +101,6 @@ pub async fn auth_proxy(
         .await
         .build();
 
-<<<<<<< HEAD
-=======
     info!("{:?}", service_request);
 
     let response = call_proxy(service_request).await?;
@@ -126,7 +109,6 @@ pub async fn auth_proxy(
 }
 
 async fn call_proxy(service_request: RequestBuilder) -> Result<Response> {
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
     let service_res = service_request
         .send()
         .await

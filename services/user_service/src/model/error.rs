@@ -11,5 +11,5 @@ pub enum Error {
     BalanceNotUpdated,
     UserNotDeleted,
     TxNotCreated,
-    TxFailed
+    TxFailed,
 }

@@ -16,29 +16,15 @@ struct UpdatePwd {
 }
 #[tokio::test]
 async fn test_server() -> Result<()> {
-<<<<<<< HEAD
-    let cli = httpc_test::new_client("http://localhost:4001").unwrap();
-
-    let res = cli
-        .do_post("/auth/login", json!({"user_name":"sven", "pwd":"pwd"}))
-=======
     let gateway_url = "http://localhost:4001".to_string();
 
     let cli = httpc_test::new_client("http://localhost:4001").unwrap();
     let res = cli
         .do_post("/auth/login", json!({"email":"test@me2344", "pwd":"pwd2"}))
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
         .await?;
 
     res.print().await?;
 
-<<<<<<< HEAD
-    // let cookie = cli.cookie_value("refreshToken").unwrap().clone();
-
-    // let res2 = cli.do_post("/auth/refresh",
-    //     json!({"user_name":"sven", "pwd":"pwd"})
-    // ).await?;
-=======
     //    let res = cli.do_post("/auth/user/change_pwd", json!({"email":"test@me2344", "pwd":"pwd2"}))
     //        .await?.print().await?;
     //
@@ -50,19 +36,11 @@ async fn test_server() -> Result<()> {
     //
     //  res.print()
     //     .await?;
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
     //
     let body: TokenPayload = res.json_body_as()?;
 
     let token = body.token;
 
-<<<<<<< HEAD
-    let client = cli.reqwest_client();
-
-    let res3 = client
-        .post("http://localhost:4001/auth/refresh")
-        .header(header::COOKIE, "refreshToken=tttt")
-=======
     let access_token = format!("Bearer {}", token);
 
     let client = cli.reqwest_client();
@@ -74,7 +52,6 @@ async fn test_server() -> Result<()> {
             old_pwd: "pwd".to_string(),
             new_pwd: "pwd2".to_string(),
         })
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
         .send()
         .await
         .unwrap();

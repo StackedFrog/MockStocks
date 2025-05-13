@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-use axum::{Router, handler::HandlerWithoutStateExt, http::StatusCode};
-=======
 use axum::{
     Router,
     body::Body,
@@ -12,12 +9,9 @@ use axum::{
 };
 use reqwest::get;
 use tower::MakeService;
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
 use tower_http::services::ServeDir;
 use tracing::info;
 
-<<<<<<< HEAD
-=======
 use crate::{
     proxy_client::{
         AppState,
@@ -28,7 +22,6 @@ use crate::{
 
 use super::{Error, Result};
 
->>>>>>> c704c7d1cc7823f1ed585ee789582cb75412bf0f
 pub fn serve_static() -> Router {
     async fn handle_404() -> (StatusCode, &'static str) {
         (StatusCode::NOT_FOUND, "Not Found")

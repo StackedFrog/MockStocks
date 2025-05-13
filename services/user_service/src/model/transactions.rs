@@ -3,13 +3,15 @@ use crate::model::error::{Error, Result};
 use crate::router::user_routes::TransactionPayload;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
+use serde::Serialize;
 use sqlx::PgConnection;
+use tracing::info;
 use uuid::Uuid;
 
-use super::holdings::{add_holding, update_quantity, NewHolding};
+use super::holdings::{NewHolding, add_holding, update_quantity};
 use super::user::update_balance;
 
-#[derive(sqlx::FromRow, Debug)]
+#[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct Transaction {
     transaction_id: Uuid,
     user_id: Uuid,
@@ -27,8 +29,7 @@ pub struct NewTransaction {
     pub quantity: Decimal,
 }
 
-
-#[derive(Debug, sqlx::Type)]
+#[derive(Debug, sqlx::Type, Serialize)]
 #[sqlx(type_name = "transaction_type")]
 pub enum TransactionType {
     #[sqlx(rename = "purchase")]
@@ -38,12 +39,22 @@ pub enum TransactionType {
 }
 
 impl NewTransaction {
-    pub fn new(user_id: &Uuid, symbol: String, transaction_type: TransactionType, quantity: Decimal) -> Self {
-        Self { user_id: user_id.clone(), symbol, transaction_type, quantity }
+    pub fn new(
+        user_id: &Uuid,
+        symbol: String,
+        transaction_type: TransactionType,
+        quantity: Decimal,
+    ) -> Self {
+        Self {
+            user_id: user_id.clone(),
+            symbol,
+            transaction_type,
+            quantity,
+        }
     }
 }
 
-pub async fn get_all_transactions_by_user(pool: &Pool, user_id: Uuid) -> Result<Vec<Transaction>> {
+pub async fn get_all_transactions_by_user(pool: &Pool, user_id: &Uuid) -> Result<Vec<Transaction>> {
     let query = "SELECT * FROM Transactions WHERE user_id = $1";
     let transactions = sqlx::query_as(query)
         .bind(user_id)
@@ -54,30 +65,30 @@ pub async fn get_all_transactions_by_user(pool: &Pool, user_id: Uuid) -> Result<
     return Ok(transactions);
 }
 
-pub async fn add_transaction(
-    pool: &mut PgConnection,
-    transaction: NewTransaction,
-) -> Result<()> {
+pub async fn add_transaction(pool: &mut PgConnection, transaction: NewTransaction) -> Result<()> {
     let query = "INSERT INTO Transactions (user_id, date, symbol, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5)";
     sqlx::query(query)
         .bind(transaction.user_id)
+        .bind(Utc::now())
         .bind(transaction.symbol)
         .bind(transaction.transaction_type)
         .bind(transaction.quantity)
-        .fetch_one(pool)
+        .execute(pool)
         .await
-        .map_err(|_| Error::TransactionNotAdded)?;
+        .map_err(|_e| {
+            info!("{}", _e);
+            Error::TransactionNotAdded
+        })?;
 
     Ok(())
 }
-
 
 pub async fn add_complete_transaction(
     pool: &Pool,
     user_id: &Uuid,
     new_balance: Decimal,
     new_holding: NewHolding,
-    new_transaction: NewTransaction
+    new_transaction: NewTransaction,
 ) -> Result<()> {
     // begin transaction (sqlx)
     let mut tx = pool.begin().await.map_err(|_| Error::TxNotCreated)?;

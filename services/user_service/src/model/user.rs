@@ -1,10 +1,12 @@
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
 use rust_decimal::Decimal;
+use serde::Serialize;
 use sqlx::PgConnection;
+use tracing::info;
 use uuid::Uuid;
 
-#[derive(sqlx::FromRow, Debug)]
+#[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct User {
     pub user_id: Uuid,
     pub username: String,
@@ -12,7 +14,7 @@ pub struct User {
     pub balance: Decimal,
 }
 
-#[derive(Debug, sqlx::Type)]
+#[derive(Debug, sqlx::Type, Serialize)]
 #[sqlx(type_name = "user_type")]
 pub enum UserType {
     #[sqlx(rename = "admin")]
@@ -52,13 +54,16 @@ pub async fn update_password(
 
 // update user cash
 pub async fn update_balance(pool: &mut PgConnection, id: &Uuid, balance: Decimal) -> Result<()> {
-    let query = "UPDATE Users SET cash = $1 WHERE user_id = $2";
+    let query = "UPDATE Users SET balance = $1 WHERE user_id = $2";
     sqlx::query(query)
         .bind(balance)
         .bind(id)
         .execute(pool)
         .await
-        .map_err(|_e| Error::BalanceNotUpdated)?;
+        .map_err(|_e| {
+            info!("{}", _e);
+            Error::BalanceNotUpdated
+        })?;
 
     return Ok(());
 }

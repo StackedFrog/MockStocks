@@ -10,6 +10,9 @@ pub enum Error {
     UuidNotParsed,
     InsufficientStockQuantity,
     InsufficientBalance,
+    FailedToFetchStock,
+    FailedToParseLatestQuote,
+    FailedToParsePrice,
 }
 
 impl From<model::Error> for Error {
