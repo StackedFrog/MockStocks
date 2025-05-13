@@ -1,4 +1,20 @@
-services:
+services: 
+  lgtm:
+    image: grafana/otel-lgtm
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_SECURITY_COOKIE_SAMESITE=none
+    expose:
+      - "4317"
+      - "4318"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/etc/grafana/dashboards
+    networks:
+      - backend
+
   redis:
     image: redis
     env_file: ".env"
@@ -35,7 +51,7 @@ services:
     env_file: ".env"
     volumes:
       - .:/app
-      - /app/target
+      - ./target:/app/target
     expose:
       - "4002"
     networks:
@@ -53,22 +69,9 @@ services:
     env_file: ".env"
     volumes:
       - .:/app
-      - /app/target
+      - ./target:/app/target
     ports:
       - "4001:4001"
-    networks:
-      - backend
-
-  lgtm:
-    image: grafana/otel-lgtm
-    environment:
-      - GF_SECURITY_ALLOW_EMBEDDING=true
-      - GF_SECURITY_COOKIE_SAMESITE=none
-    expose:
-      - "4317"
-      - "4318"
-    ports:
-      - "3000:3000"
     networks:
       - backend
 
@@ -79,7 +82,7 @@ services:
     env_file: ".env"
     volumes:
       - .:/app
-      - /app/target
+      - ./target:/app/target
     expose:
       - "4003"
     networks:
