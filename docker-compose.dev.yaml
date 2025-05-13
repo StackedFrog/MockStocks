@@ -50,8 +50,11 @@ services:
       dockerfile: services/auth_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - ./target:/app/target
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
+      - ./services/auth_service/:/app/services/auth_service
     expose:
       - "4002"
     networks:
@@ -68,8 +71,11 @@ services:
       dockerfile: services/gateway/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - ./target:/app/target
+      - ./services/gateway/:/app/services/gateway
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     ports:
       - "4001:4001"
     networks:
@@ -81,8 +87,11 @@ services:
       dockerfile: services/user_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - /app/target
+      - ./services/user_service/:/app/services/user_service
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     expose:
       - "4004"
     networks:
@@ -97,8 +106,11 @@ services:
       dockerfile: services/stocks_api_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - ./target:/app/target
+      - ./services/stocks_api_service/:/app/services/stocks_api_service
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     expose:
       - "4003"
     networks:
@@ -119,6 +131,10 @@ services:
     networks:
       - backend
 
+
 networks:
   backend:
     driver: bridge
+
+volumes:
+  target_cache:

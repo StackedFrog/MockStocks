@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "projectName": "MockStocks",
   "projectOwner": "StackedFrog",
   "repoType": "github",
@@ -57,4 +58,8 @@
   "commitType": "docs",
   "commitConvention": "angular",
   "contributorsPerLine": 7
+=======
+        "projectName": "MockStocks",
+        "projectOwner": "StackedFrog"
+>>>>>>> 21bbd7734215daaceb4c915d467b1cb1f609c8e1
 }
