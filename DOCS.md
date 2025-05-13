@@ -77,3 +77,8 @@ if not admin will sent 403
     - body format:
         user_id:String
         new_role: String
+
+
+# Stocks Api
+
+

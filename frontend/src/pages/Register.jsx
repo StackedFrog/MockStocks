@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "./../api_wrapper.jsx"
+import { useNavigate } from 'react-router-dom'
 
 function Register() {
   useEffect(() => {
     document.title = "Register"
   }, [])
 
-  const {apiFetch} = useApi()
+  const navigate = useNavigate()
+  const { apiAuth} = useApi()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
@@ -16,19 +18,13 @@ function Register() {
     e.preventDefault()
 
     try {
-      const response = await apiFetch("/auth/register", { //change port later!!!!!
-        method: "POST",
-        body: JSON.stringify({email, name ,pwd}),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        console.log(data)
-      } else {
-        alert("Something went wrong")
-        return
-      }
+	const res = await apiAuth("/auth/register", JSON.stringify({email, name ,pwd}) )
+		if (res.ok){
+			navigate("/trade")
+		}
 
-    } catch(err) {
+
+		} catch(err) {
       console.error(err)
       alert("Something went wrong.")
     }

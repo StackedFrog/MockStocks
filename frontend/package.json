@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "preview": "vite preview"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
+    "jwt-decode": "^4.0.0",
     "lightweight-charts": "^5.0.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -16,6 +16,11 @@ use tracing_subscriber::{
 
 use crate::tracing_propegation::TraceContextInjector;
 
+pub fn init_gateway_telemetry(name: &str) {
+    init_metrics(name);
+    init_telemetry(name)
+}
+
 pub fn init_telemetry(name: &str) {
     registry()
         .with(init_tracer(name))

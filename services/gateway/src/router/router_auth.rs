@@ -116,6 +116,7 @@ async fn call_proxy(service_request: RequestBuilder) -> Result<Response> {
 
     let response = ServiceResponseBuilder::new(service_res)
         .with_content_type()
+        .with_location()
         .with_status()
         .with_cookie()
         .build()

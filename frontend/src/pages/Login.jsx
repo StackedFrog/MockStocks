@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "./../api_wrapper.jsx"
+import OAuthButton from "../components/oAuthButton.jsx";
+import { useNavigate } from 'react-router-dom'
 
 function Login() {
   useEffect(() => {
     document.title = "Login"
   }, [])
 
-  const {apiFetch} = useApi()
+  const navigate = useNavigate()
+  const { apiAuth} = useApi()
   const [email, setEmail] = useState("")
   const [pwd, setPassword] = useState("")
 
@@ -15,19 +18,15 @@ function Login() {
     e.preventDefault()
 
     try {
-      const response = await apiFetch("/auth/login", { //change port later!!!!!
-        method: "POST",
-        body: JSON.stringify({ email, pwd }),
-      })
-      const data = await response.json()
-      console.log(data)
+	const res = await apiAuth("/auth/login", JSON.stringify({ email, pwd }))
+	if (res.ok){
+		navigate("/trade")
+	}
 
-    } catch(err) {
-      console.error(err)
-      alert("Something went wrong.")
+	} catch(err) {
+      		console.error(err)
+      		alert("Something went wrong.")
     }
-
-
   }
 
   return (
@@ -54,6 +53,7 @@ function Login() {
             Login
           </button>
         </form>
+	< OAuthButton  />
         <p className="text-sm text-center mt-4">
           No account? <Link to="/register" className="underline">Register</Link>
         </p>

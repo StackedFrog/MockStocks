@@ -5,6 +5,7 @@ use axum::{extract::Request, middleware::Next, response::Response};
 use hyper::HeaderMap;
 use jsonwebtoken::{Algorithm, DecodingKey, TokenData, Validation, decode};
 use serde::{Deserialize, Serialize};
+use tracing::info;
 use uuid::Uuid;
 //
 // #[derive(Serialize, Deserialize, Clone)]
@@ -77,5 +78,8 @@ fn validdate_token(token: &str) -> Result<TokenData<Claims>> {
         &DecodingKey::from_secret(secret.as_ref()),
         &Validation::new(Algorithm::HS256),
     )
-    .map_err(|_| Error::FailedToValidateToken)
+    .map_err(|_e| {
+        info!("{}", _e);
+        Error::FailedToValidateToken
+    })
 }

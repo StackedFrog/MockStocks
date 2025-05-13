@@ -13,6 +13,7 @@ use crate::{
         ModelManager, redis_token,
         users_model::{get_user_by_id, update_pwd},
     },
+    utils::cookie_util::remove_refresh_token_cookie,
 };
 
 use super::{Error, Result};
@@ -39,7 +40,7 @@ pub async fn logout_handler(State(mm): State<ModelManager>, cookies: Cookies) ->
     let refresh_token = refresh_token_cookie.value();
     let claims = token::validate_signature(refresh_token)?;
 
-    cookies.remove(Cookie::from("refreshToken"));
+    remove_refresh_token_cookie(cookies);
 
     redis_token::remove_refresh_token(&claims.claims, mm.client).await?;
 
@@ -51,9 +52,6 @@ async fn change_pwd_handler(
     ctx: Ctx,
     Json(change_paw_payload): Json<ChangePwdPayload>,
 ) -> Result<()> {
-    info!("{:?}", change_paw_payload);
-    info!("{:?}", ctx);
-
     let user = get_user_by_id(&mm.pool, ctx.user_id()).await?;
 
     crypt::pwd::validate_pwd(change_paw_payload.old_pwd, &user.password)?;
@@ -73,7 +71,7 @@ async fn logout_all_handler(State(mm): State<ModelManager>, cookies: Cookies) ->
     let refresh_token = refresh_token_cookie.value();
     let claims = token::validate_signature(refresh_token)?;
 
-    cookies.remove(Cookie::from("refreshToken"));
+    remove_refresh_token_cookie(cookies);
 
     redis_token::remove_all_refresh_tokens(claims.claims.sub, mm.client).await?;
 
