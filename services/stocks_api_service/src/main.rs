@@ -1,3 +1,4 @@
+use stocks_service::ClientManager;
 use ::telemetry::tracing_propegation;
 use axum::Router;
 use telemetry::telemetry;
@@ -14,12 +15,15 @@ mod yahoo_service;
 async fn main() {
     telemetry::init_telemetry("Stocks_Api_Servie");
 
+    let cm = ClientManager::new();
+
     // for testing, remove later
     let origin = ["http://localhost:5173".parse().unwrap()];
     let cors = CorsLayer::new().allow_origin(origin);
 
+
     let app = Router::new()
-        .merge(router::routes_stocks::routes())
+        .merge(router::routes_stocks::routes(cm))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(tracing_propegation::propagate_tracing)
