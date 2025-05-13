@@ -1,4 +1,6 @@
-use super::{Error, Result};
+use std::sync::Arc;
+
+use super::{ClientManager, Error, Result};
 use chrono::{DateTime, Local};
 use futures::future::try_join_all;
 use serde::Serialize;
@@ -38,8 +40,11 @@ pub struct TickerSearchResult {
     pub exchange: String,
 }
 
-pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
-    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
+pub async fn fetch_latest_quote(
+    provider: Arc<YahooConnector>,
+    symbol: &str) -> Result<LatestQuote> {
+
+    // YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
         .get_latest_quotes(symbol, "1d")
@@ -66,11 +71,12 @@ pub async fn fetch_latest_quote(symbol: &str) -> Result<LatestQuote> {
 }
 
 pub async fn fetch_quote_from_timerange(
+    provider: Arc<YahooConnector>,
     symbol: &str,
     range: &str,
     interval: &str,
 ) -> Result<QuoteFromRange> {
-    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
+    // let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
         .get_quote_range(symbol, interval, range)
@@ -86,12 +92,12 @@ pub async fn fetch_quote_from_timerange(
     })
 }
 
-pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<LatestQuote>> {
+pub async fn fetch_latest_quotes_parallel(provider: Arc<YahooConnector>,symbols: &[&str]) -> Result<Vec<LatestQuote>> {
     if symbols.len() > 10 {
         return Err(Error::TooManySymbols);
     }
 
-    let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(symbol));
+    let fetches = symbols.iter().map(|&symbol| fetch_latest_quote(provider.clone(), symbol));
 
     let results = try_join_all(fetches)
         .await
@@ -100,8 +106,11 @@ pub async fn fetch_latest_quotes_parallel(symbols: &[&str]) -> Result<Vec<Latest
     Ok(results)
 }
 
-pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes> {
-    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
+pub async fn fetch_historic_quotes(
+
+    provider: Arc<YahooConnector>,
+    symbol: &str, start: &str, end: &str) -> Result<HistoricQuotes> {
+    // let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let start_offset = OffsetDateTime::parse(start, &Rfc3339).map_err(|_| Error::FailedToParse)?;
     let end_offset = OffsetDateTime::parse(end, &Rfc3339).map_err(|_| Error::FailedToParse)?;
@@ -120,8 +129,11 @@ pub async fn fetch_historic_quotes(symbol: &str, start: &str, end: &str) -> Resu
     })
 }
 
-pub async fn fetch_ticker(search_term: &str) -> Result<Vec<TickerSearchResult>> {
-    let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
+pub async fn fetch_ticker(
+
+    provider: Arc<YahooConnector>,
+    search_term: &str) -> Result<Vec<TickerSearchResult>> {
+    // let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
         .search_ticker(search_term)
