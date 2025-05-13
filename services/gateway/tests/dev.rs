@@ -20,7 +20,7 @@ async fn test_server() -> Result<()> {
 
     let cli = httpc_test::new_client("http://localhost:4001").unwrap();
     let res = cli
-        .do_post("/auth/login", json!({"email":"test@me2344", "pwd":"pwd2"}))
+        .do_post("/auth/login", json!({"email":"svenarne.lindstroem@gmail.com", "pwd":"pwd"}))
         .await?;
 
     res.print().await?;
@@ -46,15 +46,12 @@ async fn test_server() -> Result<()> {
     let client = cli.reqwest_client();
 
     let res3 = client
-        .post(format!("{}/auth/admin/update_role", gateway_url))
+        .get(format!("{}/api/stocks_api/stocks?symbol=AAPL,MSFT", gateway_url))
         .header(header::AUTHORIZATION, access_token)
-        .json(&UpdatePwd {
-            old_pwd: "pwd".to_string(),
-            new_pwd: "pwd2".to_string(),
-        })
         .send()
         .await
         .unwrap();
+    println!("{:?}",res3);
 
     // println!("----- {:?}", res3);
     //

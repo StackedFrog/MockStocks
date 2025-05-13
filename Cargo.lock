@@ -3763,6 +3763,7 @@ dependencies = [
  "axum",
  "chrono",
  "futures",
+ "hyper",
  "serde",
  "serde_json",
  "surf",
