@@ -1,0 +1,60 @@
+{
+  "projectName": "MockStocks",
+  "projectOwner": "StackedFrog",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "contributors": [
+    {
+      "login": "SchwarzNikolas",
+      "name": "Nikolas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71844580?v=4",
+      "profile": "https://github.com/SchwarzNikolas",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "biancacasetta",
+      "name": "Bianca Casetta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86834800?v=4",
+      "profile": "https://github.com/biancacasetta",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tableba",
+      "name": "Antoine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143651768?v=4",
+      "profile": "https://github.com/tableba",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "StackedFrog",
+      "name": "StackedFrog",
+      "avatar_url": "https://avatars.githubusercontent.com/u/147399576?v=4",
+      "profile": "https://github.com/StackedFrog",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "SvenLindstrom",
+      "name": "SvenLindstrom",
+      "avatar_url": "https://avatars.githubusercontent.com/u/157505827?v=4",
+      "profile": "https://github.com/SvenLindstrom",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7
+}

@@ -1,4 +1,5 @@
 CREATE TYPE USER_TYPE AS ENUM('admin', 'user');
+CREATE TYPE TRANSACTION_TYPE AS ENUM('purchase', 'sale');
 
 CREATE TABLE Users (
     user_id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
@@ -6,7 +7,8 @@ CREATE TABLE Users (
     username VARCHAR(50) NOT NULL,
     password VARCHAR(250),
     oauth_id VARCHAR(250) UNIQUE,
-    role USER_TYPE NOT NULL
+    role USER_TYPE NOT NULL,
+    balance NUMERIC NOT NULL DEFAULT 25000.00
 );
 
 CREATE TABLE Transactions (
@@ -14,7 +16,7 @@ CREATE TABLE Transactions (
     user_id UUID NOT NULL REFERENCES Users(user_id),
     date TIMESTAMPTZ NOT NULL,
     symbol VARCHAR(10) NOT NULL, -- code name of company
-    transaction_type VARCHAR(10) NOT NULL, -- purchase/sale
+    transaction_type TRANSACTION_TYPE NOT NULL, -- purchase/sale
     quantity NUMERIC NOT NULL -- amount of shares
 );
 

@@ -1,8 +1,8 @@
 use redis::aio::MultiplexedConnection;
 mod error;
+pub mod redis_token;
 pub use self::error::{Error, Result};
 pub mod redis_csrf;
-pub mod redis_token;
 use crate::{config::Settings, oauth::OauthManager};
 use sqlx::{Postgres, postgres::PgPoolOptions};
 pub type Pool = sqlx::Pool<Postgres>;

@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 rust_decimal = "1.37.1"
+sqlx = { version = "0.8.3", features = ["chrono", "postgres", "runtime-tokio", "rust_decimal", "uuid"] }

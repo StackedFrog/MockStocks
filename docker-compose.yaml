@@ -1,2 +1,27 @@
 services:
-    
+  user:
+    build:
+      context: .
+      dockerfile: services/user_service/Dockerfile.dev
+    env_file: ".env"
+    volumes:
+      - .:/app
+      - /app/target
+    expose:
+      - "4004"
+    networks:
+      - backend
+ 
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth_service/Dockerfile.dev
+    env_file: ".env"
+    volumes:
+      - .:/app
+      - /app/target
+    expose:
+      - "4002"
+    networks:
+      - backend
+     

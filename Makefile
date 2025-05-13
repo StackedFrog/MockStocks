@@ -12,3 +12,12 @@ dev_up: decrypt
 
 dev_down:
 	sudo docker compose -f docker-compose.dev.yaml down
+
+start_windows: create_env
+	docker compose -f docker-compose.dev.yaml up
+
+stop_windows: 
+	docker compose -f docker-compose.dev.yaml down
+
+create_env:
+	cp .env.default .env;
