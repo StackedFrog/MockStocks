@@ -1,10 +1,10 @@
 import React, { useState } from "react"
-import { useApi } from ""
+import { useApi } from "./../api_wrapper"
 
 
-function DisplayProfile(){
+function DisplayName(){
     const {apiFetch} = useApi()
-    const [name] = useState()
+    const name = ""
 
     const handleProfile = async (e) =>{
         e.preventDefault()
@@ -29,9 +29,9 @@ function DisplayProfile(){
     }
     return(
         <>
-            <div></div>
+            <div>Welcome, ${name}</div>
         </>
     )
 }
 
-export default DisplayProfile
+export default DisplayName

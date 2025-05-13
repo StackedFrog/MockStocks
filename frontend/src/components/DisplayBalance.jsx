@@ -4,7 +4,7 @@ import { useApi } from ""
 
 function DisplayBalance(){
     const {apiFetch} = useApi()
-    const [cash] = useState()
+    const cash = ""
 
     const handleBalance = async (e) =>{
         e.preventDefault()
@@ -29,7 +29,7 @@ function DisplayBalance(){
     }
     return(
         <>
-            <div></div>
+            <div>Balance: ${cash}SEK</div>
         </>
     )
 }
