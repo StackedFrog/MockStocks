@@ -7,6 +7,7 @@ import AdminPage from './pages/AdminPage.jsx'
 import NotFound from './pages/NotFound';
 import { useAuth } from './auth_context.jsx'
 import UserNavBar from './components/UserNavBar.jsx';
+import RecentTrades from './components/RecentTrades.jsx';
 
 function App() {
   const { accessToken } = useAuth()
@@ -24,7 +25,7 @@ function App() {
         <Route path="/" element={<LangingPage />} />
         <Route path="/trade" element={<TradingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/recent" element={<TradingPage />} />
+        <Route path="/recent" element={<RecentTrades />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
