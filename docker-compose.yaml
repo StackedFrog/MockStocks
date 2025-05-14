@@ -5,8 +5,11 @@ services:
       dockerfile: services/user_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - /app/target
+      - ./services/user_service/:/app/services/user_service
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     expose:
       - "4004"
     networks:
