@@ -13,12 +13,14 @@ function App() {
   
 
   return (
-    <div>
+    <div>.
 
       {/* conditionally render nav bar */}
-      {isDefaultPath ? <SideNav /> : null}
+      {isDefaultPath ? null : <SideNav></SideNav> }  
       <Routes>
         <Route path="/" element={<LangingPage />} />
+        <Route path="/account" element={<TradingPage />} />
+        <Route path="/dashboard" element={<TradingPage />} />
         <Route path="/trade" element={<TradingPage />} />
         <Route path="/recent" element={<TradingPage />} />
         <Route path="*" element={<NotFound />} />

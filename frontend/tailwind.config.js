@@ -2,13 +2,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        white_text: '#f4f4ee',
-        light_green: '#75846c',
-        sand_stone: '#918d86',
-        stone_ish: '#777274',
-        dark_green: '#242f24'
-      },
+        'text': '#D7D9C9',
+        'background': '#1E1E1E',
+        'primary': '#303631',
+        'secondary': '#75846c',
+        'accent': '#702F2F',
+        'accent2': '#9D4141'
+       },
       fontFamily: {
+        sans: ['Inter', 'sans-serif'], // Inter = default sans font
       },
     },
   },
