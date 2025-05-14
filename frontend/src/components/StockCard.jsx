@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler);
 
-function StockCard({ symbol }) {
+function StockCard({ symbol, share }) {
         const { apiFetch } = useApi();
         const [chartData, setChartData] = useState(null);
         const [stockInfo, setStockInfo] = useState(null);
@@ -25,22 +25,21 @@ function StockCard({ symbol }) {
                                 );
                                 const stockData = await response.json();
                                 const info = { 
-                                        increase: stockData.quotes[8].close  - stockData.quotes[0].close,
-                                        percentage: (stockData.quotes[8].close  - stockData.quotes[0].close) / stockData.quotes[0].close * 100,
-                                        current: stockData.quotes[8].close
+                                        increase: stockData.quotes[stockData.quotes.length - 1].close  - stockData.quotes[0].close,
+                                        percentage: (stockData.quotes[stockData.quotes.length - 1].close  - stockData.quotes[0].close) / stockData.quotes[0].close * 100,
+                                        current: stockData.quotes[stockData.quotes.length - 1].close
                                 }
                                 setStockInfo(info);
                                 const labels = stockData.quotes.map((entry) => new Date(entry.timestamp * 1000).toLocaleString());
                                 let colour = {};
-                                if (info.increase > 0){
-                                        colour.border = "#4caf50";
-                                        colour.backgroundStrong = "rgba(0, 255, 13, 0.7)";
-                                        colour.backgroundWeak = "rgba(0, 255, 13, 0.2)";
-                                }    
-                                else {
-                                        colour.border = "#f44336";
-                                        colour.backgroundStrong = "rgba(244, 67, 54, 0.7)";
-                                        colour.backgroundWeak = "rgba(244, 67, 54, 0.2)";
+                                if (info.increase > 0) {
+                                        colour.border = "#4d7d2d";
+                                        colour.backgroundStrong = "rgba(77, 125, 45, 0.7)";
+                                        colour.backgroundWeak = "rgba(77, 125, 45, 0.2)";
+                                } else {
+                                        colour.border = "#691919";
+                                        colour.backgroundStrong = "rgba(105, 25, 25, 0.7)";
+                                        colour.backgroundWeak = "rgba(105, 25, 25, 0.2)";
                                 }
                                 const data = {
                                         labels,
@@ -71,7 +70,7 @@ function StockCard({ symbol }) {
         }, [symbol]);
 
         const options = {
-                responsive: false,
+                responsive: true,
                 scales: {
                         x: {
                                 display: false,
@@ -85,7 +84,7 @@ function StockCard({ symbol }) {
         return (
                 <div 
                 onClick={routeChange}
-                className={"w-96 border border-black px-3 py-2 rounded outline-none focus:ring-0 flex flex-col items-center"}
+                className={"border border-black px-3 py-2 rounded outline-none focus:ring-0 flex flex-col items-center"}
                 >
                 <span>{symbol}</span>
                 { stockInfo ? (<span>{Math.trunc(stockInfo.current * 100) / 100} USD</span>) : ( <span></span> )}
