@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import SideNav from './components/SideNav.jsx'
-import LangingPage from './pages/LangingPage.jsx';
+import LandingPage from './pages/LandingPage.jsx';
 import TradingPage from './pages/TradingPage.jsx';
 import DashboardPage from "./pages/Dashboard.jsx";
 import AdminPage from './pages/AdminPage.jsx'
@@ -21,7 +21,7 @@ function App() {
       {/* conditionally render nav bar */}
       {isDefaultPath ? <SideNav /> : null}
       <Routes>
-        <Route path="/" element={<LangingPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/register" element={<Register />} />
