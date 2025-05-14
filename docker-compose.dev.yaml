@@ -81,7 +81,7 @@ services:
     networks:
       - backend
 
-user:
+  user:
     build:
       context: .
       dockerfile: services/user_service/Dockerfile.dev
