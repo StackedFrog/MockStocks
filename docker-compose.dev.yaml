@@ -50,8 +50,11 @@ services:
       dockerfile: services/auth_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - ./target:/app/target
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
+      - ./services/auth_service/:/app/services/auth_service
     expose:
       - "4002"
     networks:
@@ -68,13 +71,11 @@ services:
       dockerfile: services/gateway/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - ./target:/app/target
+      - ./services/gateway/:/app/services/gateway
     ports:
       - "4001:4001"
     networks:
       - backend
-
   user:
     build:
       context: .
@@ -84,7 +85,13 @@ services:
       - .:/app
       - /app/target
     expose:
-      - "4004"
+      - "4317"
+      - "4318"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/etc/grafana/dashboards
     networks:
       - backend
     depends_on:
@@ -97,8 +104,11 @@ services:
       dockerfile: services/stocks_api_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - ./target:/app/target
+      - ./services/stocks_api_service/:/app/services/stocks_api_service
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     expose:
       - "4003"
     networks:
@@ -119,6 +129,10 @@ services:
     networks:
       - backend
 
+
 networks:
   backend:
     driver: bridge
+
+volumes:
+  target_cache:

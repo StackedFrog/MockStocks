@@ -1,37 +1,29 @@
-use crate::services::Result;
-use crate::services::stocks_service::{
+use crate::stocks_service::{ClientManager, Result};
+use crate::stocks_service::stocks_service::{
     HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult, fetch_historic_quotes,
     fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker,
 };
+use crate::yahoo_service::yahoo_service::YahooService;
+use axum::extract::State;
 use axum::{Router, extract::Query, response::Json, routing::get};
 use serde::Deserialize;
 
-/// Defines all routes available in the Stocks API service.
-///
-/// # Routes
-/// - `GET /stock`: Fetch latest quote for a stock symbol.
-/// - `GET /range`: Fetch historical quotes for a stock in a date range.
-/// - `GET /stocks`: Fetch latest quotes for multiple symbols (comma-separated).
-/// - `GET /history`: Fetch historical quotes between start and end dates.
-/// - `GET /ticker`: Search for tickers by company name or keyword.
-/// - `GET /trending`: Fetch trending stock quotes in the US market.
-pub fn routes() -> Router {
+pub fn routes(cm:ClientManager) -> Router {
     Router::new()
         .route("/stock", get(get_stock_price))
         .route("/range", get(get_range))
         .route("/stocks", get(get_multiple_stock_prices))
         .route("/history", get(get_historic_stock))
         .route("/ticker", get(get_tickers))
-    // .route("/trending", get(get_trending_quotes))
+        .route("/trending", get(get_trending_quotes))
+        .with_state(cm)
 }
 
-/// Query parameters for `/stock`, `/ticker` and `/stocks` endpoints.
 #[derive(Deserialize)]
 struct StockQuery {
     symbol: String,
 }
 
-/// Query parameters for `/range` endpoint.
 #[derive(Deserialize)]
 struct RangeQuery {
     symbol: String,
@@ -39,7 +31,6 @@ struct RangeQuery {
     interval: String,
 }
 
-/// Query parameters for `/history` endpoint.
 #[derive(Deserialize)]
 struct HistoricStockQuery {
     symbol: String,
@@ -47,81 +38,48 @@ struct HistoricStockQuery {
     end: String,
 }
 
-/// Handler for `GET /stock`
-///
-/// Fetches the latest quote for a single stock symbol.
-///
-/// **Query Parameters:**
-/// - `symbol` (required): The stock symbol (e.g., AAPL)
-///
-/// **Returns:** JSON with latest quote info.
-async fn get_stock_price(Query(params): Query<StockQuery>) -> Result<Json<LatestQuote>> {
-    let data = fetch_latest_quote(&params.symbol).await?;
+async fn get_stock_price(
+    State(cm): State<ClientManager>,
+    Query(params): Query<StockQuery>) -> Result<Json<LatestQuote>> {
+    let data = fetch_latest_quote(cm.client, &params.symbol).await?;
     Ok(Json(data))
 }
 
-/// Handler for `GET /range`
-///
-/// Fetches historical quotes for a symbol over a date range.
-///
-/// **Query Parameters:**
-/// - `symbol` (required): Stock symbol.
-/// - `range` (required): Date range (e.g., "6mo")
-/// - `ìnterval` (required): Data resolution (e.g., "30m")
-///
-/// **Returns:** JSON with historical quotes.
-async fn get_range(Query(params): Query<RangeQuery>) -> Result<Json<QuoteFromRange>> {
-    let data = fetch_quote_from_timerange(&params.symbol, &params.range, &params.interval).await?;
+async fn get_range(
+    State(cm): State<ClientManager>,
+    Query(params): Query<RangeQuery>) -> Result<Json<QuoteFromRange>> {
+    let data = fetch_quote_from_timerange(cm.client ,&params.symbol, &params.range, &params.interval).await?;
     Ok(Json(data))
 }
 
-/// Handler for `GET /stocks`
-///
-/// Fetches the latest quotes for multiple stock symbols (parallel fetch).
-///
-/// **Query Parameters:**
-/// - `symbol` (required): Comma-separated symbols (e.g., "AAPL,GOOG,MSFT")
-///
-/// **Returns:** JSON array of latest quotes.
 async fn get_multiple_stock_prices(
+    State(cm): State<ClientManager>,
     Query(params): Query<StockQuery>,
 ) -> Result<Json<Vec<LatestQuote>>> {
     let symbols: Vec<&str> = params.symbol.split(',').map(|s| s.trim()).collect();
-    let data = fetch_latest_quotes_parallel(&symbols).await?;
+    let data = fetch_latest_quotes_parallel(cm.client, &symbols).await?;
     Ok(Json(data))
 }
 
-/// Handler for `GET /history`
-///
-/// Fetches historical quotes between start and end dates.
-///
-/// **Query Parameters:**
-/// - `symbol` (required): Stock symbol.
-/// - `start` (required): Start date (RFC3339 format)
-/// - `end` (required): End date (RFC3339 format)
-///
-/// **Returns:** JSON with historical quotes.
 async fn get_historic_stock(
+    State(cm): State<ClientManager>,
     Query(params): Query<HistoricStockQuery>,
 ) -> Result<Json<HistoricQuotes>> {
-    let data = fetch_historic_quotes(&params.symbol, &params.start, &params.end).await?;
+    let data = fetch_historic_quotes(cm.client, &params.symbol, &params.start, &params.end).await?;
     Ok(Json(data))
 }
 
-/// Handler for `GET /ticker`
-///
-/// Searches for stock tickers by company name or keyword.
-///
-/// **Query Parameters:**
-/// - `string` (required): Search string (e.g., "Apple")
-///
-/// **Returns:** JSON array of matching tickers.
-async fn get_tickers(Query(params): Query<StockQuery>) -> Result<Json<Vec<TickerSearchResult>>> {
-    let data = fetch_ticker(&params.symbol).await?;
+async fn get_tickers(
+    State(cm): State<ClientManager>,
+    Query(params): Query<StockQuery>) -> Result<Json<Vec<TickerSearchResult>>> {
+    let data = fetch_ticker(cm.client,&params.symbol).await?;
     Ok(Json(data))
 }
 
-// async fn get_trending_quotes() -> Result<Json<Vec<LatestQuote>>> {
-//     let data = fetch_trending_quotes().await?;
-//     Ok(Json(data))
-// }
+async fn get_trending_quotes(
+    State(cm): State<ClientManager>,
+) -> Result<Json<Vec<String>>> {
+    let service = YahooService::new();
+    let data = service.get_trending_symbols().await?;
+    Ok(Json(data))
+}
