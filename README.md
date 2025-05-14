@@ -2,8 +2,9 @@
 <h1 align="center"> MockStocks </h1> <br>
 <p align="center">
 <a href="https://github.com/StackedFrog/StackedStocks">
-<img alt="MockStocks" title="MockStocks" src="https://place-hold.it/250" width="250">
+![mockstocks-modified](https://github.com/user-attachments/assets/27931d86-936b-45c3-be65-a876f57e8054)
 </a>
+
 </p>
 <p align="center">
 Trade stocks with real time stock graphs and don't loose real money!
