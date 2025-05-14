@@ -1,8 +1,7 @@
 
 <h1 align="center"> MockStocks </h1> <br>
 <p align="center">
-<a href="https://github.com/StackedFrog/StackedStocks">
-![mockstocks-modified](https://github.com/user-attachments/assets/27931d86-936b-45c3-be65-a876f57e8054)
+[![mockstocks-modified](https://github.com/user-attachments/assets/27931d86-936b-45c3-be65-a876f57e8054)](https://github.com/StackedFrog/StackedStocks)
 </a>
 
 </p>
