@@ -6,7 +6,6 @@ import { useApi } from "./../api_wrapper.jsx";
 import { useSearchParams } from 'react-router-dom';
 
 function TradingPage() {
-
   // TRADING PAGE LOGIC
 
   const {apiFetch} = useApi()

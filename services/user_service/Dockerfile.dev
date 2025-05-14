@@ -4,7 +4,13 @@ RUN cargo install watchexec-cli
 
 WORKDIR /app
 
-COPY . .
+COPY Cargo.toml Cargo.lock ./
+
+COPY shared/ shared/
+
+COPY services/ services/
+
+RUN cargo build -p auth_service
 
 WORKDIR /app/services/user_service
 

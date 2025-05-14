@@ -1,0 +1,37 @@
+import React, { useState } from "react"
+import { useApi } from ""
+
+
+function DisplayBalance(){
+    const {apiFetch} = useApi()
+    const cash = ""
+
+    const handleBalance = async (e) =>{
+        e.preventDefault()
+        try{
+            const response = await apiFetch("",{
+                method: "GET",
+                body: JSON.stringify(cash)
+            })
+            if (response.ok){
+                const data = await response.json();
+                console.log(data)
+            }
+            else{
+                console.error(err)
+                alert("Something went wrong.")
+            }
+        }
+        catch(err){
+            console.error(err)
+            alert("Something went wrong.")
+        }
+    }
+    return(
+        <>
+            <div>Balance: ${cash}SEK</div>
+        </>
+    )
+}
+
+export default DisplayBalance
