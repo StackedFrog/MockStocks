@@ -2,18 +2,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "rgb(255,255,255)",
-        text_primary: "rgb(15,15,15)",
-        accent_color: "rgb(245,245,245)",
-        pastel_purple: "rgb(189,169,233)",
-        pastel_blue: "rgb(59,50,255)",
-        pastel_yellow: "rgb(255,255,137)",
-        pastel_red: "rgb(255,59,59)",
-        pastel_pink: "#e7a1b0",
-        pastel_green: "rgb(138,255,138)",
-        pastel_grey: "rgb(200, 200, 200)",
-      },
+        'text': '#D7D9C9',
+        'background': '#1E1E1E',
+        'primary': '#303631',
+        'secondary': '#75846c',
+        'accent': '#702F2F',
+        'accent2': '#9D4141'
+       },
       fontFamily: {
+        sans: ['Inter', 'sans-serif'], // Inter = default sans font
       },
     },
   },
