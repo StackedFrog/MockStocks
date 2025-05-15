@@ -4,8 +4,8 @@ use crate::model::holdings::get_holding_by_symbol;
 use crate::model::transactions::Transaction;
 use crate::model::transactions::add_complete_transaction;
 use crate::model::transactions::get_all_transactions_by_user;
-use crate::model::user::delete_user_completely;
 use crate::model::user::User;
+use crate::model::user::delete_user_completely;
 use crate::model::{
     ModelManager,
     holdings::NewHolding,

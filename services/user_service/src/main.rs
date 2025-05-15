@@ -15,13 +15,14 @@ async fn main() {
     let user_routes = router::user_routes::routes(mm.clone());
     let admin_routes = router::admin_routes::routes(mm.clone());
 
-    let app = Router::new().merge(user_routes)
-    .nest("/admin", admin_routes)
-    .layer(
-        TraceLayer::new_for_http()
-            .make_span_with(tracing_propegation::propagate_tracing)
-            .on_response(DefaultOnResponse::new().include_headers(true)),
-    );
+    let app = Router::new()
+        .merge(user_routes)
+        .nest("/admin", admin_routes)
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(tracing_propegation::propagate_tracing)
+                .on_response(DefaultOnResponse::new().include_headers(true)),
+        );
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4004").await.unwrap();
 

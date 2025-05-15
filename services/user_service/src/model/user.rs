@@ -7,7 +7,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use super::holdings::delete_all_holdings;
-use super::transactions::{delete_all_transactions};
+use super::transactions::delete_all_transactions;
 
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct User {
@@ -27,9 +27,9 @@ pub enum UserType {
 }
 
 // get all users
-pub async fn get_all_users(pool : &Pool) -> Result<Vec<User>> {
+pub async fn get_all_users(pool: &Pool) -> Result<Vec<User>> {
     let query = "SELECT * FROM Users";
-    let users : Vec<User> = sqlx::query_as(query)
+    let users: Vec<User> = sqlx::query_as(query)
         .fetch_all(pool)
         .await
         .map_err(|_e| Error::FailedToFetchUsers)?;
@@ -87,10 +87,7 @@ pub async fn delete_user(pool: &mut PgConnection, id: &Uuid) -> Result<()> {
     return Ok(());
 }
 
-pub async fn delete_user_completely(
-    pool: &Pool,
-    user_id: &Uuid
-) -> Result<()> {
+pub async fn delete_user_completely(pool: &Pool, user_id: &Uuid) -> Result<()> {
     // begin transaction (sqlx)
     let mut tx = pool.begin().await.map_err(|_| Error::TxNotCreated)?;
 
@@ -103,5 +100,3 @@ pub async fn delete_user_completely(
 
     Ok(())
 }
-
-
