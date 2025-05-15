@@ -50,6 +50,15 @@ impl NewUser {
             role: UserType::User,
         }
     }
+
+    pub fn new_admin(email: String, username: String, pwd_hash: String) -> Self {
+        Self {
+            email,
+            username,
+            password: pwd_hash,
+            role: UserType::Admin,
+        }
+    }
 }
 
 #[derive(Debug, sqlx::Type, Deserialize, Serialize, Clone, Copy)]

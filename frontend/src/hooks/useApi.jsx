@@ -1,4 +1,4 @@
-import { useAuth } from "../components/contexts/AuthContext.jsx";
+import { useAuth } from "../contexts/AuthContext.jsx";
 import { useNavigate } from 'react-router-dom'
 
 // const apiCall = async (url, options = {}) => {
@@ -27,8 +27,6 @@ import { useNavigate } from 'react-router-dom'
 // 	return res;
 // }
 //
-
-
 
 export const useApi = () => {
 
@@ -103,31 +101,25 @@ export const useApi = () => {
 		if (res.ok){
 			const data = await res.json()
 			if(data.url){
-
 				window.location.href = data.url
 			}else{
 				setAccessToken(data.token)
 			}
 		}
-
-
 		return res
 	}
 
 	const apiUnAuth = async (url) => {
 		try {
-			await apiFetch( url, { //change port later!!!!!
+			await apiFetch( url, {
 				method: "POST",
 				credentials: "include"
 			})
 			setAccessToken(null)
-
 		} catch(err) {
 			console.error(err)
 			alert("Something went wrong.")
 		}
 	}
-
-
 	return { apiFetch, apiUnAuth , apiAuth}
 }

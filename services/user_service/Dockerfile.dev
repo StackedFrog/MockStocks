@@ -10,7 +10,7 @@ COPY shared/ shared/
 
 COPY services/ services/
 
-RUN cargo build -p auth_service
+RUN cargo build -p user_service
 
 WORKDIR /app/services/user_service
 

@@ -12,23 +12,43 @@ function Register( { setLogin }) {
         const [name, setName] = useState("")
         const [email, setEmail] = useState("")
         const [pwd, setPassword] = useState("")
+	const [confirmPwd, setConfirmPassword] = useState("");
+        const [error, setError] = useState("");
+
+  const validatePassword = (password) => {
+    return password.length >= 8;
+    // Optionally add more checks:
+    // /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password)
+  };
 
         const handleRegister = async (e) => {
                 e.preventDefault()
+		console.log("here")
+
+	    if (pwd !== confirmPwd) {
+	      setError("Passwords do not match");
+	      return;
+	    }
+
+	    if (!validatePassword(pwd)) {
+	      setError("Password must be at least 8 characters long");
+	      return;
+	    }
+
 
                 try {
                         const res = await apiAuth("/auth/register", JSON.stringify({email, name ,pwd}) )
                         if (res.ok){
                                 navigate("/trade")
-                        }
+                        } else {
+        			setError("Registration failed");
+      			}
 
 
                 } catch(err) {
                         console.error(err)
                         alert("Something went wrong.")
                 }
-
-
         }
 
         return (
@@ -41,19 +61,30 @@ function Register( { setLogin }) {
                 placeholder="Name"
                 onChange={(e)=>{setName(e.target.value)}}
                 className="w-full border border-black px-3 py-2 rounded outline-none focus:ring-0"
+		required
                 />
                 <input
                 type="email"
                 placeholder="Email"
                 onChange={(e)=>{setEmail(e.target.value)}}
                 className="w-full border border-black px-3 py-2 rounded outline-none focus:ring-0"
-                />
+                required
+		/>
                 <input
                 type="password"
                 placeholder="Password"
                 onChange={(e)=>{setPassword(e.target.value)}}
                 className="w-full border border-black px-3 py-2 rounded outline-none focus:ring-0"
-                />
+                required
+		/>
+		  <input
+		    type="password"
+		    placeholder="Confirm Password"
+		    onChange={(e) => setConfirmPassword(e.target.value)}
+		    className="w-full border border-black px-3 py-2 rounded outline-none focus:ring-0"
+		    required
+		  />
+        {error && <p className="text-red-600 text-sm">{error}</p>}
                 <button
                 type="submit"
                 className="w-full bg-black text-white py-2 rounded hover:bg-gray-900"

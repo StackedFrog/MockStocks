@@ -7,14 +7,13 @@ use yahoo_finance_api::YahooConnector;
 pub use self::error::{Error, Result};
 
 #[derive(Clone)]
-pub struct ClientManager{
-   pub client: Arc<YahooConnector>
+pub struct ClientManager {
+    pub client: Arc<YahooConnector>,
 }
 
-
-impl ClientManager{
-    pub fn new() -> Self{
+impl ClientManager {
+    pub fn new() -> Self {
         let provider = Arc::new(YahooConnector::new().unwrap());
-        Self{client: provider}
+        Self { client: provider }
     }
 }

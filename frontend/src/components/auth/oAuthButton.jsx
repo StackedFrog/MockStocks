@@ -1,4 +1,7 @@
-import { useApi } from "../../hooks/useApi.jsx";
+import { useApi } from "../../hooks/useApi.jsx"
+import React from 'react';
+import { FaGoogle } from 'react-icons/fa';
+
 
 function OAuthButton(){
 
@@ -6,23 +9,23 @@ function OAuthButton(){
 	const onRedirect = async () => {
 		try {
 			const res = await apiAuth("/auth/google")
-			// if (res.ok){
-			// 	const data = await res.json()
-			// 	window.location.href = data.url
-			// }
 		} catch(err) {
 			console.error(err)
 			alert("Something went wrong.")
 		}
 	}
 
+//
+  return (
+    <button
+      onClick={onRedirect}
+      className="flex items-center justify-center w-full px-4 py-2 mt-4 text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+    >
+      <FaGoogle className="w-5 h-5 mr-3" />
+      <span className="text-sm font-medium">Sign in with Google</span>
+    </button>
+  );
+};
 
-        return <button
-          onClick={onRedirect}
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-600 text-white font-bold py-2 px-4 m-2 rounded"
-        >
-      	Login with Google
-	</button>
-}
 
 export default OAuthButton

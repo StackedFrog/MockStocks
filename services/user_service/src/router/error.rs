@@ -1,6 +1,6 @@
 use crate::model;
 use axum::{http::StatusCode, response::IntoResponse};
-use tracing::error;
+use tracing::{error, info};
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Clone)]
@@ -13,7 +13,7 @@ pub enum Error {
     FailedToFetchStock,
     FailedToParseLatestQuote,
     FailedToParsePrice,
-    NotAuthorized
+    NotAuthorized,
 }
 
 impl From<model::Error> for Error {
@@ -29,8 +29,13 @@ impl IntoResponse for Error {
             error => format!("Error: {:?}", error),
         };
 
-        error!(err);
+        info!(err);
 
-        (StatusCode::INTERNAL_SERVER_ERROR, err).into_response()
+        let code = match self {
+            Error::NotAuthorized => StatusCode::FORBIDDEN,
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+
+        code.into_response()
     }
 }

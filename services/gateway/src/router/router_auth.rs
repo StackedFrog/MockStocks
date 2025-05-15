@@ -14,7 +14,10 @@ use axum::{
 use reqwest::RequestBuilder;
 use tracing::info;
 
-use super::{Error, Result, mw_auth};
+use super::{
+    Error, Result,
+    mw_auth::{self},
+};
 
 pub fn routes(state: AppState) -> Router {
     let user_router = Router::new()
@@ -32,13 +35,14 @@ pub fn routes(state: AppState) -> Router {
         .with_state(state)
 }
 
-pub async fn auth_proxy_admin(
+async fn auth_proxy_admin(
     state: State<AppState>,
     Path(path): Path<String>,
     req: Request<Body>,
 ) -> Result<Response> {
     let client = state.http_client.clone();
 
+    info!("{:?}", req);
     let auth_url = "http://auth:4002/admin/";
 
     let target_url = target_url(auth_url, path, req.uri());
@@ -57,7 +61,7 @@ pub async fn auth_proxy_admin(
     Ok(response)
 }
 
-pub async fn auth_proxy_user(
+async fn auth_proxy_user(
     state: State<AppState>,
     Path(path): Path<String>,
     req: Request<Body>,
@@ -82,7 +86,7 @@ pub async fn auth_proxy_user(
     Ok(response)
 }
 
-pub async fn auth_proxy(
+async fn auth_proxy(
     state: State<AppState>,
     Path(path): Path<String>,
     req: Request<Body>,

@@ -1,9 +1,10 @@
 use axum::{body::Body, extract::Request, http::response::Builder, response::Response};
 use http_body_util::BodyExt;
+use hyper::HeaderMap;
 use reqwest::{Client, RequestBuilder};
 use telemetry::tracing_propegation;
 
-use crate::router::mw_auth::Claims;
+use crate::token::token::Claims;
 
 use super::{Error, Result};
 
@@ -83,6 +84,13 @@ impl ServiceResponseBuilder {
 
     pub fn with_cookie(mut self) -> Self {
         if let Some(cookie) = self.response.headers().get("set-cookie") {
+            self.builder = self.builder.header("set-cookie", cookie.clone());
+        }
+        self
+    }
+
+    pub fn with_dash_cookie(mut self, headers: &HeaderMap) -> Self {
+        if let Some(cookie) = headers.get("set-cookie") {
             self.builder = self.builder.header("set-cookie", cookie.clone());
         }
         self

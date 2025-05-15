@@ -11,11 +11,13 @@ pub struct Settings {
     pub redirect_url: String,
     pub auth_url: String,
     pub token_url: String,
-    pub token_secret: String,
-    pub token_refresh_exp: u64,
-    pub token_access_exp: u64,
     pub postgres_password: String,
     pub postgres_db: String,
+    pub token_refresh_secret: String,
+    pub token_refresh_exp: u64,
+    pub token_access_secret: String,
+    pub token_access_exp: u64,
+    pub token_dash_secret: String,
 }
 
 impl Settings {

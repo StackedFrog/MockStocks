@@ -1,21 +1,53 @@
-import React, { useEffect } from 'react';
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import Telemetry from '../../../components/telemetry.jsx';
+import UserManagment from '../../../components/userManagment.jsx';
 
 function AdminPage() {
-  return (
-  <div className="flex flex-col items-center gap-3 p-4">
-    <h1 className="text-xl font-bold">Admin Panel!</h1>
-    <iframe
-					// src="http://localhost:3000/d-solo/opentelemetry-apm/opentelemetry-apm?orgId=1&var-app=otelcol-contrib&var-route=$__all&refresh=30s&panelId=2&__feature.dashboardSceneSolo"
-		src="http://localhost:3000/public-dashboards/65cfae64beaf4f188b753c56c0a15753"
-		width="100%"
-		height="800"
-		frameBorder="0">
-	</iframe>
-    <p className="">Trade stocks with real time stock graphs and don't loose real money!</p>
-    <Link className="mt-4 p-2 border rounded underline hover:bg-black hover:text-white hover:no-underline" to="/trade">Start Trading!</Link>
-  </div>
-  )
-}
+
+ // let [ telemetryView, setTelemetryView ] = useState(false)
+ const [activeTab, setActiveTab] = useState('userManagement');
+
+
+  // Function to handle tab click
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
+
+ return (
+    <div className="p-6 space-y-4">
+      <div className="flex space-x-4 mb-6">
+        {/* Tab Buttons */}
+        <button
+          onClick={() => handleTabClick('userManagement')}
+          className={`px-4 py-2 text-sm font-semibold rounded-lg focus:outline-none ${activeTab === 'userManagement' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+        >
+          User Management
+        </button>
+        <button
+          onClick={() => handleTabClick('stats')}
+          className={`px-4 py-2 text-sm font-semibold rounded-lg focus:outline-none ${activeTab === 'stats' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+        >
+          Stats
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'userManagement' && (
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h3 className="text-xl font-semibold mb-4">User Management</h3>
+		<UserManagment />
+        </div>
+      )}
+
+      {activeTab === 'stats' && (
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h3 className="text-xl font-semibold mb-4">Stats</h3>
+		<Telemetry  />
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default AdminPage

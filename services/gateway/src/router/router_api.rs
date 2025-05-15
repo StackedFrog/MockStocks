@@ -10,13 +10,19 @@ use axum::{
     response::Response,
     routing::any,
 };
+use tracing::info;
 
 use super::{Error, Result};
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
+        .route("/api/user/{:t}/delete_account", any(forbidden_handler))
         .route("/api/{:service}/{*path}", any(api_proxy))
         .with_state(state)
+}
+
+async fn forbidden_handler() -> Error {
+    Error::ServiceNotAvailable
 }
 
 async fn api_proxy(

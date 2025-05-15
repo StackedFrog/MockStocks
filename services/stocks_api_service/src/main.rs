@@ -1,6 +1,6 @@
-use stocks_service::ClientManager;
 use ::telemetry::tracing_propegation;
 use axum::Router;
+use stocks_service::ClientManager;
 use telemetry::telemetry;
 use tower_http::{
     cors::CorsLayer,

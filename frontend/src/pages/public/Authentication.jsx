@@ -6,8 +6,14 @@ import Button from '../../components/ui/Button.jsx';
 
 
 function Authentication() {
+	const [login, setLogin] = useState(true);
+
+
+
 	return (
-		<div></div>
+		<div>
+		 {login ? <Login setLogin={setLogin}/> : <Register setLogin={setLogin}/>}
+		</div>
 	)
 }
 

@@ -80,8 +80,8 @@ function TradingPage() {
 
 					const stock = results.find(s => s.symbol === symbol);
 					if (stock) {
-						handleSelectStock(stock.symbol, stock.name); 
-					} 
+						handleSelectStock(stock.symbol, stock.name);
+					}
 				} catch (err) {
 					console.error('Error fetching stock info from symbol param:', err);
 				}
@@ -96,12 +96,6 @@ function TradingPage() {
 	// TRADING PAGE CONTENT
 
 		<div className="bg-[#141414] min-h-screen p-4">
-			<nav className="flex justify-end gap-4 font-bold">
-				<Link className="text-white underline hover:no-underline" to="/">
-          Home
-				</Link>
-				<a className="text-white underline hover:no-underline hover:cursor-pointer" onClick={() => {setStockSymbol(null)}}>Search</a>
-			</nav>
 
 			{stockSymbol ?
 				(
