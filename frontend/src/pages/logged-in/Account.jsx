@@ -1,6 +1,6 @@
 import React from "react";
-import { useApi } from "../api_wrapper.jsx";
-import SideNav from './components/SideNav.jsx'
+import { useApi } from "../../hooks/useApi.jsx";
+import SideNav from "../../components/SideNav.jsx";
 
 function DisplayProfile(){
     // const {apiFetch} = useApi();

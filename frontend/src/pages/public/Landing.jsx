@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Button from '../../components/ui/Button.jsx';
-import { useAuth } from '../../components/contexts/AuthContext.jsx';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 
 
 function Landing() {
