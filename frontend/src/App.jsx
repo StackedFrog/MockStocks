@@ -1,8 +1,8 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import SideNav from './components/layout/SideNav.jsx'
 import LandingPage from './pages/public/Landing.jsx';
-import TradingPage from './pages/TradingPage.jsx';
-import DashboardPage from "./pages/Dashboard.jsx";
+import TradingPage from './pages/logged-in/TradingPage.jsx';
+import DashboardPage from "./pages/logged-in/Dashboard.jsx";
 import AdminPage from './pages/logged-in/admin/AdminPage.jsx'
 import NotFound from './pages/public/NotFound.jsx';
 import { useAuth } from './components/contexts/AuthContext.jsx';
