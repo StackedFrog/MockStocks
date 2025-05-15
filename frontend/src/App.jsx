@@ -5,7 +5,7 @@ import TradingPage from './pages/logged-in/TradingPage.jsx';
 import DashboardPage from "./pages/logged-in/Dashboard.jsx";
 import AdminPage from './pages/logged-in/admin/AdminPage.jsx'
 import NotFound from './pages/public/NotFound.jsx';
-import { useAuth } from './components/contexts/AuthContext.jsx';
+import { useAuth } from './contexts/AuthContext.jsx';
 import UserNavBar from './components/layout/UserNavBar.jsx';
 import RecentTrades from './components/trading/RecentTrades.jsx';
 import About from './pages/public/About.jsx';

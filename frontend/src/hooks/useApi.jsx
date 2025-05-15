@@ -1,4 +1,4 @@
-import { useAuth } from "../components/contexts/AuthContext.jsx";
+import { useAuth } from "../contexts/AuthContext.jsx";
 import { useNavigate } from 'react-router-dom'
 
 // const apiCall = async (url, options = {}) => {
