@@ -42,7 +42,8 @@ function AppLayout(){
 			const res = await apiFetch("api/user/info", {method: "Get"})
 			if (res.ok){
 				const data = await res.json()
-				setUserInfo(data)
+				console.log(data)
+			setUserInfo(data)
 		}
 	}
 

@@ -35,9 +35,9 @@ function SideNav( {userInfo} ) {
         {navItems.map((item) => (
           <NavItem key={item.name} to={item.href} icon={item.icon} label={item.name} />
         ))}
-      </nav>
-	{userInfo.role === "admin"? <NavItem key={"Admin"} to={"/admin"} icon={ MdOutlineAdminPanelSettings} label={"Admin"} />
-		:null}
+
+	{userInfo.role === "Admin"? <NavItem key={"Admin"} to={"/admin"} icon={ MdOutlineAdminPanelSettings} label={"Admin"} />:null}
+	</nav>
 
       {/* Bottom nav and logout */}
       <div className="px-2 space-y-3">
