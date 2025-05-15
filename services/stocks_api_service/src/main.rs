@@ -1,6 +1,6 @@
-use stocks_service::ClientManager;
 use ::telemetry::tracing_propegation;
 use axum::Router;
+use stocks_service::ClientManager;
 use telemetry::telemetry;
 use tower_http::{
     cors::CorsLayer,
@@ -20,7 +20,6 @@ async fn main() {
     // for testing, remove later
     let origin = ["http://localhost:5173".parse().unwrap()];
     let cors = CorsLayer::new().allow_origin(origin);
-
 
     let app = Router::new()
         .merge(router::routes_stocks::routes(cm))
