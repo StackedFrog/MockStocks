@@ -20,7 +20,7 @@ const handleLogin = async (e) => {
         try {
                 const res = await apiAuth("/auth/login", JSON.stringify({ email, pwd }))
                 if (res.ok){
-                        navigate("/trade")
+                        navigate("/dashboard")
                 }
 
                 else {
@@ -60,7 +60,7 @@ return (
         </button>
         </form>
         < OAuthButton  />
-        <p 
+        <p
         className={`text-sm text-center mt-4 transition-all duration-300 ${
                 loginFailed ? "text-red-500 animate-pulse" : "text-gray-700"
         }`}
