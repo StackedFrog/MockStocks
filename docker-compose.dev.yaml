@@ -4,14 +4,16 @@ services:
     environment:
       - GF_SECURITY_ALLOW_EMBEDDING=true
       - GF_SECURITY_COOKIE_SAMESITE=none
+      - GF_SERVER_ROOT_URL=http://localhost:4001/auth/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
     expose:
       - "4317"
       - "4318"
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/dashboards:/etc/grafana/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning/dashboards:/otel-lgtm/grafana/conf/provisioning/dashboards
     networks:
       - backend
 

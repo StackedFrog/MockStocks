@@ -1,4 +1,5 @@
 {
+
   "annotations": {
     "list": [
       {
@@ -19,7 +20,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -80,7 +81,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(service) (request_counter_total{service_name=\"Gateway\"})",
+          "expr": "sum by(service_name) (request_counter_total{service_name=\"Gateway\"})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -89,20 +90,6 @@
           "range": true,
           "refId": "A",
           "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(traces_spanmetrics_latency_count{span_kind=\"SPAN_KIND_SERVER\", service_name=\"$app\", http_route=~\"$route\"}) by(service_name)",
-          "hide": false,
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "B"
         }
       ],
       "title": "Total Request",
@@ -539,7 +526,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum(rate(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\", service=\"Gateway\"}[3m]) * 60)",
+          "expr": "sum(rate(request_counter_total{service_name=\"Gateway\"}[3m])) * 60",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1208,7 +1195,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "OpenTelemetry APM",
-  "uid": "opentelemetry-apm",
-  "version": 11
+  "uid": "gateway-metrics",
+  "title": "Telemetry",
+  "version": 1
 }
