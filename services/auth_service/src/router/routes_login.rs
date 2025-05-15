@@ -1,6 +1,7 @@
 use super::{Error, Result};
 use crate::{
     ModelManager,
+    config::Settings,
     crypt::{self, token},
     jwt::{self, token_util::TokenData},
     model::users_model::{
@@ -92,7 +93,8 @@ async fn access_token_handler(
         .ok_or(Error::MissingRefreshToken)?;
 
     let refresh_token = refresh_token_cookie.value();
-    let claims = token::validate_signature(refresh_token)?;
+
+    let claims = token::validate_signature_refresh(refresh_token)?;
 
     let (refresh_token_new, access_token) = jwt::rotate_tokens(claims, mm).await?;
 

@@ -3,6 +3,7 @@ use jsonwebtoken::{
     get_current_timestamp,
 };
 use serde::{Deserialize, Serialize};
+use tracing::info;
 use uuid::Uuid;
 
 use crate::{config::Settings, model::users_model::UserType};
@@ -35,21 +36,19 @@ impl Claims {
     }
 }
 
-pub fn validate_signature(token: &str) -> Result<TokenData<Claims>> {
+pub fn validate_signature_refresh(token: &str) -> Result<TokenData<Claims>> {
     let settings = Settings::get();
-    let secret = &settings.token_secret;
+    let secret = &settings.token_refresh_secret;
     decode::<Claims>(
         token,
         &DecodingKey::from_secret(secret.as_ref()),
         &Validation::new(Algorithm::HS256),
     )
-    .map_err(|_| Error::FailedToValidateToken) // lambda, returns claims or error
+    .map_err(|_e| Error::FailedToValidateToken) // lambda, returns claims or error
     // if cannot decode, throw error (fail to validate, mapped into error types)
 }
 
-pub fn create_token(claims: &Claims) -> Result<String> {
-    let settings = Settings::get();
-    let secret = &settings.token_secret;
+pub fn create_token(claims: &Claims, secret: String) -> Result<String> {
     encode(
         &Header::default(),
         claims,

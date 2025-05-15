@@ -27,7 +27,7 @@ pub type Client = oauth2::Client<
 #[derive(Clone, Debug)]
 pub struct OauthManager {
     oauth_client: Client,
-    api_client: reqwest::Client,
+    pub api_client: reqwest::Client,
     token_client: reqwest::Client,
 }
 

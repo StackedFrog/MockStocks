@@ -1,6 +1,9 @@
 use ::telemetry::tracing_propegation;
 use axum::Router;
-use model::ModelManager;
+use model::{
+    ModelManager,
+    users_model::{NewUser, add_user},
+};
 use telemetry::telemetry;
 use tower_cookies::CookieManagerLayer;
 use tower_http::trace::{DefaultOnResponse, TraceLayer};
@@ -21,6 +24,12 @@ async fn main() {
 
     let router_user = router::routes_user::routes(mm.clone());
     let router_admin = router::routes_admin::routes(mm.clone());
+
+    let pwd = crypt::pwd::encrypt_pwd("pwd".to_string()).unwrap();
+
+    let user = NewUser::new_admin("test@test".to_string(), "admin".to_string(), pwd);
+
+    let _ = add_user(&mm.pool, user).await;
 
     let app = Router::new()
         .merge(router::routes_login::routes(mm))
