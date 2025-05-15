@@ -7,6 +7,20 @@ function DisplayProfile(){
     const email = "";
     const cash = "";
 
+    const handleAccount = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await apiFetch("", {
+                method: "GET",
+                body: JSON.stringify(name)
+            })
+            
+        } 
+        catch (error) {
+            
+        }
+    }
+
     return(
         <>
             <div>
