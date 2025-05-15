@@ -84,6 +84,7 @@ async fn delete_user_handler(
     mm.oauth_manager
         .api_client
         .post("http://user:4004/admin/delete_account")
+        .header("x-user-id", admin_id.to_string())
         .headers(headers)
         .json(&deletion_payload)
         .send()
