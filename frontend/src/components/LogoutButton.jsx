@@ -9,7 +9,7 @@ function LogoutButton(){
 
 	const onLogout = async () => {
 		await apiUnAuth("/auth/user/logout")
-		navigate("/")
+		// navigate("/")
 	}
 
         return <button

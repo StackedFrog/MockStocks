@@ -23,11 +23,10 @@ export const AuthProvider = ({ children }) => {
 				console.log("new token ", data.token)
 				setAccessToken(data.token)
 				return data.token
-				// const decoded = jwtDecode(data.token);
-				// console.log(decoded)
 			}else{
 				setAccessToken(null)
 				console.log("failed to get accessToken")
+
 				// maybe redirect user somewhere?
 				return null
 			}
@@ -40,7 +39,6 @@ export const AuthProvider = ({ children }) => {
 			refreshPromise = null
 			}
 	})()
-
 		return refreshPromise
 	}
 

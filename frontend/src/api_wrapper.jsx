@@ -28,8 +28,6 @@ import { useNavigate } from 'react-router-dom'
 // }
 //
 
-
-
 export const useApi = () => {
 
 	const { accessToken, refreshAccessToken, setAccessToken} = useAuth()
@@ -109,8 +107,6 @@ export const useApi = () => {
 				setAccessToken(data.token)
 			}
 		}
-
-
 		return res
 	}
 
@@ -121,13 +117,10 @@ export const useApi = () => {
 				credentials: "include"
 			})
 			setAccessToken(null)
-
 		} catch(err) {
 			console.error(err)
 			alert("Something went wrong.")
 		}
 	}
-
-
 	return { apiFetch, apiUnAuth , apiAuth}
 }

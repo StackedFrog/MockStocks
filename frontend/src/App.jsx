@@ -25,6 +25,7 @@ function App() {
         <Route path="/trade" element={<TradingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/recent" element={<TradingPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
