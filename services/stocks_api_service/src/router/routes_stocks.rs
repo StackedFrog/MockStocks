@@ -1,8 +1,8 @@
-use crate::stocks_service::{ClientManager, Result};
 use crate::stocks_service::stocks_service::{
     HistoricQuotes, LatestQuote, QuoteFromRange, TickerSearchResult, fetch_historic_quotes,
     fetch_latest_quote, fetch_latest_quotes_parallel, fetch_quote_from_timerange, fetch_ticker,
 };
+use crate::stocks_service::{ClientManager, Result};
 use crate::yahoo_service::yahoo_service::YahooService;
 use axum::extract::State;
 use axum::{Router, extract::Query, response::Json, routing::get};
