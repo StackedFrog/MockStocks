@@ -1,8 +1,43 @@
+import { useApi } from "./../api_wrapper.jsx";
 
 function OngoingTrade() {
-  // mock function to buy and sell
+  const {apiFetch} = useApi()
+  
   const buy = () => {}
   const sell = () => {}
+
+  async function sellStock(symbol, amount) {
+    const response = await apiFetch('/api/sale', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ symbol, balance: amount }),
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`Sale failed: ${err}`);
+    }
+    console.log('Sale successful');
+  }
+
+  async function purchaseStock(symbol, amount) {
+    const response = await apiFetch('/api/purchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // assume auth header is injected elsewhere
+      },
+      body: JSON.stringify({ symbol, balance: amount }),
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`Purchase failed: ${err}`);
+    }
+    console.log('Purchase successful');
+  }
 
   return (
       <div className="flex justify-center gap-4 mt-5">
