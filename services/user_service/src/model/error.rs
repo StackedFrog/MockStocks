@@ -15,5 +15,5 @@ pub enum Error {
     TxFailed,
     FailedToFetchRole,
     TransactionsNotDeleted,
-    HoldingsNotDeleted
+    HoldingsNotDeleted,
 }

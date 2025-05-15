@@ -20,10 +20,31 @@ async fn test_server() -> Result<()> {
 
     let cli = httpc_test::new_client("http://localhost:4001").unwrap();
     let res = cli
-        .do_post("/auth/login", json!({"email":"svenarne.lindstroem@gmail.com", "pwd":"pwd"}))
+        .do_post(
+            "/auth/login",
+            json!({"email":"svenarne.lindstroem@gmail.com", "pwd":"pwd"}),
+        )
         .await?;
 
     res.print().await?;
+
+    let body: TokenPayload = res.json_body_as()?;
+    let token = body.token;
+    let access_token = format!("Bearer {}", token);
+
+    let client = cli.reqwest_client();
+
+    let res3 = client
+        .get(format!(
+            "{}/api/stocks_api/stocks?symbol=AAPL,MSFT",
+            gateway_url
+        ))
+        .header(header::AUTHORIZATION, access_token)
+        .send()
+        .await
+        .unwrap();
+
+    println!("{:?}", res3);
 
     //    let res = cli.do_post("/auth/user/change_pwd", json!({"email":"test@me2344", "pwd":"pwd2"}))
     //        .await?.print().await?;
@@ -37,21 +58,6 @@ async fn test_server() -> Result<()> {
     //  res.print()
     //     .await?;
     //
-    let body: TokenPayload = res.json_body_as()?;
-
-    let token = body.token;
-
-    let access_token = format!("Bearer {}", token);
-
-    let client = cli.reqwest_client();
-
-    let res3 = client
-        .get(format!("{}/api/stocks_api/stocks?symbol=AAPL,MSFT", gateway_url))
-        .header(header::AUTHORIZATION, access_token)
-        .send()
-        .await
-        .unwrap();
-    println!("{:?}",res3);
 
     // println!("----- {:?}", res3);
     //

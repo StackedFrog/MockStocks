@@ -14,7 +14,7 @@ services:
       - "4004"
     networks:
       - backend
- 
+
   gateway:
     build:
       context: .

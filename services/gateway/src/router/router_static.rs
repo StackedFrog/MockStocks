@@ -1,14 +1,12 @@
 use axum::{
     Router,
     body::Body,
-    extract::{Path, Request, State},
+    extract::{Request, State},
     handler::HandlerWithoutStateExt,
     http::StatusCode,
     response::Response,
     routing::any,
 };
-use reqwest::get;
-use tower::MakeService;
 use tower_http::services::ServeDir;
 use tracing::info;
 

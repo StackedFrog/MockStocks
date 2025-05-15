@@ -25,7 +25,8 @@ module.exports = {
 			},
 			fontFamily: {
 				text: ['"JetBrains Mono"', 'monospace'],
-				heading: ['"Rubik Mono One"', 'sans-serif']
+				heading: ['"Rubik Mono One"', 'sans-serif'],
+                                sans: ['Inter', 'sans-serif'], // Inter = default sans font
 			},
 		},
 	},

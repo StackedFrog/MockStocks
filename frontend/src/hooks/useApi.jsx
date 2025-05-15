@@ -28,8 +28,6 @@ import { useNavigate } from 'react-router-dom'
 // }
 //
 
-
-
 export const useApi = () => {
 
 	const { accessToken, refreshAccessToken, setAccessToken} = useAuth()
@@ -103,31 +101,25 @@ export const useApi = () => {
 		if (res.ok){
 			const data = await res.json()
 			if(data.url){
-
 				window.location.href = data.url
 			}else{
 				setAccessToken(data.token)
 			}
 		}
-
-
 		return res
 	}
 
 	const apiUnAuth = async (url) => {
 		try {
-			await apiFetch( url, { //change port later!!!!!
+			await apiFetch( url, {
 				method: "POST",
 				credentials: "include"
 			})
 			setAccessToken(null)
-
 		} catch(err) {
 			console.error(err)
 			alert("Something went wrong.")
 		}
 	}
-
-
 	return { apiFetch, apiUnAuth , apiAuth}
 }
