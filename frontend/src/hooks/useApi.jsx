@@ -101,7 +101,6 @@ export const useApi = () => {
 		if (res.ok){
 			const data = await res.json()
 			if(data.url){
-
 				window.location.href = data.url
 			}else{
 				setAccessToken(data.token)
@@ -112,7 +111,7 @@ export const useApi = () => {
 
 	const apiUnAuth = async (url) => {
 		try {
-			await apiFetch( url, { //change port later!!!!!
+			await apiFetch( url, {
 				method: "POST",
 				credentials: "include"
 			})

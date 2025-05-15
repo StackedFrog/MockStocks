@@ -1,4 +1,4 @@
-import { useApi } from "./../api_wrapper.jsx"
+import { useApi } from "../../hooks/useApi.jsx"
 import React from 'react';
 import { FaGoogle } from 'react-icons/fa';
 

@@ -1,8 +1,8 @@
 import React from "react";
-import { useApi } from "../api_wrapper.jsx";
+// import { useApi } from "../api_wrapper.jsx";
 
 function DisplayProfile(){
-    const {apiFetch} = useApi();
+    // const {apiFetch} = useApi();
     const name = "";
     const email = "";
     const cash = "";
@@ -18,3 +18,6 @@ function DisplayProfile(){
         </>
     )
 }
+
+
+export default DisplayProfile;

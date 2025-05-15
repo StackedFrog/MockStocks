@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
-import UserManagment from '../components/userManagment.jsx';
-import Telemetry from '../components/telemetry.jsx';
+import Telemetry from '../../../components/telemetry.jsx';
+import UserManagment from '../../../components/userManagment.jsx';
 
 function AdminPage() {
 
@@ -52,23 +51,3 @@ function AdminPage() {
 };
 
 export default AdminPage
-
-//
-//   return (
-//   <div className="flex flex-col items-center gap-3 p-4">
-//     <h1 className="text-xl font-bold">Admin Panel!</h1>
-// 	<button
-// 	onClick={ () => setTelemetryView(!telemetryView) }
-//             className="w-full bg-black text-white py-2 rounded hover:bg-gray-900">
-//           	Change
-//           </button>
-// 	{ telemetryView ?   : <UserManagment />}
-//   </div>
-//   )
-// }
-//
-//
-//
-//
-
-
