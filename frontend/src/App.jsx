@@ -20,9 +20,10 @@ function App() {
   return (
     <div>
       {/* conditionally render nav bar */}
-      {isDefaultPath ? <SideNav /> : null}
+      {isDefaultPath ? null : <SideNav></SideNav> }
       <Routes>
         <Route path="/" element={<LangingPage />} />
+        <Route path="/account" element={<TradingPage />} />
         <Route path="/trade" element={<TradingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/recent" element={<RecentTrades />} />
