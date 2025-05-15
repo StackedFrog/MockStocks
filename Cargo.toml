@@ -1,8 +1,8 @@
 [workspace]
 resolver = "3"
 members = [
-	"services/auth_service",
 	"services/gateway",
+	"services/auth_service",
 	"shared/_dev_utils",
 	"shared/telemetry",
 	"shared/shared_utils",

@@ -13,6 +13,7 @@ pub enum Error {
     FailedToFetchStock,
     FailedToParseLatestQuote,
     FailedToParsePrice,
+    NotAuthorized
 }
 
 impl From<model::Error> for Error {

@@ -13,14 +13,14 @@ pub struct MetricsLayer {
 
 impl MetricsLayer {
     pub fn new() -> Arc<Self> {
-        let meter = global::meter("test_global");
+        let meter = global::meter("gateway_metrics");
         let request_counter = meter
-            .u64_counter("test_123")
+            .u64_counter("request_counter")
             .with_description("total_numbers_of_requests")
             .build();
 
         let request_duration = meter
-            .f64_histogram("test_Histogram_123")
+            .f64_histogram("request_timer")
             .with_unit("s")
             .with_description("http quest duration")
             .with_boundaries(vec![0.0, 0.5, 1.0, 1.5, 2.0])
@@ -50,7 +50,7 @@ impl MetricsLayer {
 
     pub async fn layer(self: Arc<Self>, req: Request, next: Next) -> Response {
         let method = req.method().clone().to_string();
-        let path = req.uri().to_string();
+        let path = req.uri().path().to_string();
         let start = Instant::now();
 
         let response = next.run(req).await;

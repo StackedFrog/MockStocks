@@ -1,4 +1,20 @@
 services:
+  lgtm:
+    image: grafana/otel-lgtm
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_SECURITY_COOKIE_SAMESITE=none
+    expose:
+      - "4317"
+      - "4318"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/etc/grafana/dashboards
+    networks:
+      - backend
+
   redis:
     image: redis
     env_file: ".env"
@@ -34,8 +50,11 @@ services:
       dockerfile: services/auth_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - /app/target
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
+      - ./services/auth_service/:/app/services/auth_service
     expose:
       - "4002"
     networks:
@@ -52,38 +71,39 @@ services:
       dockerfile: services/gateway/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - /app/target
+      - ./services/gateway/:/app/services/gateway
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     ports:
       - "4001:4001"
     networks:
       - backend
-
   user:
     build:
       context: .
       dockerfile: services/user_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - /app/target
-    expose:
-      - "4004"
-    networks:
-      - backend
-    depends_on:
-      db:
-        condition: service_healthy   
-
-  lgtm:
-    image: grafana/otel-lgtm
+      - ./services/user_service/:/app/services/user_service
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     expose:
       - "4317"
       - "4318"
     ports:
       - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/etc/grafana/dashboards
     networks:
       - backend
+    depends_on:
+      db:
+        condition: service_healthy
 
   stocks_api_service:
     build:
@@ -91,8 +111,11 @@ services:
       dockerfile: services/stocks_api_service/Dockerfile.dev
     env_file: ".env"
     volumes:
-      - .:/app
-      - /app/target
+      - ./services/stocks_api_service/:/app/services/stocks_api_service
+      - ./shared/:/app/shared
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - target_cache:/app/target
     expose:
       - "4003"
     networks:
@@ -113,6 +136,10 @@ services:
     networks:
       - backend
 
+
 networks:
   backend:
     driver: bridge
+
+volumes:
+  target_cache:

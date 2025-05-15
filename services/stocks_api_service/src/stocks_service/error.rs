@@ -14,7 +14,7 @@ pub enum Error {
     FailedToExtractQuote,
     TooManySymbols,
     FailedtoFetchMultipleQuotes,
-    FailedToParseDateTime,
+    FailedToParse,
     FailedToSearchForTicker,
 }
 
@@ -32,7 +32,7 @@ impl IntoResponse for Error {
             Error::FailedToExtractQuote => "Failed to process data",
             Error::TooManySymbols => "Too many symbols requested (max: 10)",
             Error::FailedtoFetchMultipleQuotes => "Failed to fetch multiple quotes",
-            Error::FailedToParseDateTime => "Invalid date format",
+            Error::FailedToParse => "Failed to parse the data.",
             Error::FailedToSearchForTicker => "Failed to search for ticker",
         };
 

@@ -9,7 +9,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use super::holdings::{NewHolding, add_holding, update_quantity};
-use super::user::update_balance;
+use super::user::{self, update_balance};
 
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct Transaction {
@@ -106,4 +106,15 @@ pub async fn add_complete_transaction(
     tx.commit().await.map_err(|_| Error::TxFailed)?;
 
     Ok(())
+}
+
+pub async fn delete_all_transactions(pool: &mut PgConnection, user_id: &Uuid) -> Result<()>{
+    let query = "DELETE FROM Transactions WHERE user_id = $1";
+    sqlx::query(query)
+        .bind(user_id)
+        .execute(pool)
+        .await
+        .map_err(|_e| Error::TransactionsNotDeleted)?;
+
+    return Ok(());
 }

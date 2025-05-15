@@ -4,6 +4,7 @@ use crate::model::holdings::get_holding_by_symbol;
 use crate::model::transactions::Transaction;
 use crate::model::transactions::add_complete_transaction;
 use crate::model::transactions::get_all_transactions_by_user;
+use crate::model::user::delete_user_completely;
 use crate::model::user::User;
 use crate::model::{
     ModelManager,
@@ -11,6 +12,7 @@ use crate::model::{
     transactions::{NewTransaction, TransactionType},
     user::get_user_by_id,
 };
+use axum::routing::delete;
 use axum::{
     Json, Router,
     extract::State,
@@ -32,6 +34,7 @@ pub fn routes(mm: ModelManager) -> Router {
         .route("/info", get(user_info_handler))
         .route("/holdings", get(holdings_handler))
         .route("/transactions", get(transactions_handler))
+        .route("/delete_account", delete(delete_account_handler))
         .with_state(mm)
 }
 
@@ -150,4 +153,11 @@ async fn transactions_handler(
     let transactions = get_all_transactions_by_user(&mm.pool, user_id).await?;
 
     Ok(Json(transactions))
+}
+
+async fn delete_account_handler(ctx: Ctx, State(mm): State<ModelManager>) -> Result<()> {
+    let user_id = ctx.user_id();
+    delete_user_completely(&mm.pool, user_id).await?;
+
+    Ok(())
 }
