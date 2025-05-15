@@ -1,5 +1,4 @@
 use std::sync::Arc;
-
 use super::{ClientManager, Error, Result};
 use chrono::{DateTime, Local};
 use futures::future::try_join_all;
@@ -44,6 +43,7 @@ pub async fn fetch_latest_quote(
     provider: Arc<YahooConnector>,
     symbol: &str,
 ) -> Result<LatestQuote> {
+
     // YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
@@ -140,6 +140,7 @@ pub async fn fetch_ticker(
     provider: Arc<YahooConnector>,
     search_term: &str,
 ) -> Result<Vec<TickerSearchResult>> {
+
     // let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider

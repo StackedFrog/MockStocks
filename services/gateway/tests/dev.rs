@@ -58,6 +58,7 @@ async fn test_server() -> Result<()> {
     //  res.print()
     //     .await?;
     //
+
     // println!("----- {:?}", res3);
     //
     //     // cli.do_post("/auth/refresh", json!({"email":"test@me2344", "pwd":"pwd"}))

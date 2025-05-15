@@ -21,6 +21,7 @@ async fn main() {
     let origin = ["http://localhost:5173".parse().unwrap()];
     let cors = CorsLayer::new().allow_origin(origin);
 
+
     let app = Router::new()
         .merge(router::routes_stocks::routes(cm))
         .layer(
