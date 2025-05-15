@@ -5,8 +5,6 @@ import { useApi } from "./../api_wrapper"
 function DisplayName(){
     const {apiFetch} = useApi()
     const name = ""
-    const email = ""
-    const cash = ""
 
 
     const handleProfile = async (e) =>{
@@ -14,7 +12,7 @@ function DisplayName(){
         try{
             const response = await apiFetch("",{
                 method: "GET",
-                body: JSON.stringify(name, email, cash)
+                body: JSON.stringify(name)
             })
             if (response.ok){
                 const data = await response.json();
@@ -33,15 +31,7 @@ function DisplayName(){
     return(
         <>
             <div>
-                <div>
-                    <div>Name: ${name}</div>
-                    <div>Email: ${email}</div>
-                    <div>Balance: ${cash}</div>
-                </div>
-                <div>
-                    <div>Delete account</div>
-                    <div>Log Out</div>
-                </div>
+                    <div>Welcome, ${name}</div>
             </div>
         </>
     )
