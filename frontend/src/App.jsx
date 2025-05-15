@@ -18,7 +18,6 @@ function App() {
 
 	const isDefaultPath = defaultNavPaths.includes(location.pathname);
 
-
 	return (
 		<div>
 			{/* conditionally render nav bar */}
