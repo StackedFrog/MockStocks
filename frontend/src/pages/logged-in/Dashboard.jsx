@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useApi } from "../api_wrapper.jsx";
-import StockCard from "../components/StockCard.jsx";
+import { useApi } from "../hooks/useApi.jsx";
+import StockCard from "../components/trading/StockCard.jsx";
 
 function DashboardPage () {
 	const {apiFetch} = useApi();

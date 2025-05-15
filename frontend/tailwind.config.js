@@ -10,7 +10,8 @@ module.exports = {
 				'accent2': '#9D4141'
 			},
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'], // Inter = default sans font
+				text: ['"JetBrains Mono"', 'monospace'],
+				heading: ['"Rubik Mono One"', 'sans-serif']
 			},
 		},
 	},

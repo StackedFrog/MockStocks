@@ -1,5 +1,5 @@
 import { Link  } from 'react-router-dom'
-import LogoutButton from './LogoutButton'
+import LogoutButton from '../auth/LogoutButton'
 
 function UserNavBar() {
   return (

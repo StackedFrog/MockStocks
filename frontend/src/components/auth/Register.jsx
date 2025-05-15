@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useApi } from "./../api_wrapper.jsx"
-import { useNavigate } from 'react-router-dom'
+import { useApi } from "../../hooks/useApi.jsx";
+import { useNavigate } from 'react-router-dom';
 
 function Register( { setLogin }) {
         useEffect(() => {

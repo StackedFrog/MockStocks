@@ -1,4 +1,4 @@
-import { useApi } from "./../api_wrapper.jsx"
+import { useApi } from "../../api_wrapper.jsx"
 import { useNavigate } from 'react-router-dom'
 
 
