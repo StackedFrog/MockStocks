@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useApi } from "./../api_wrapper.jsx"
-import OAuthButton from "../components/oAuthButton.jsx";
+import { useApi } from "../../hooks/useApi.jsx"
+import OAuthButton from "./oAuthButton.jsx";
 import { useNavigate } from 'react-router-dom'
 
 function Login( { setLogin }) {

@@ -18,6 +18,7 @@ impl YahooService {
             .header("Accept-Encoding", "gzip, deflate, br");
 
         let mut res = req.await.map_err(|_| Error::FailedToFetch)?;
+
         let response: Value = res.body_json().await.map_err(|_| Error::FailedToParse)?;
 
         let symbols = response["finance"]["result"][0]["quotes"]
