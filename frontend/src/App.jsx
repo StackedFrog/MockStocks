@@ -3,7 +3,7 @@ import LandingPage from './pages/public/Landing.jsx';
 import TradingPage from './pages/logged-in/TradingPage.jsx';
 import DashboardPage from "./pages/logged-in/Dashboard.jsx";
 import NotFound from './pages/public/NotFound.jsx';
-import { useAuth } from './components/contexts/AuthContext.jsx';
+import { useAuth } from './contexts/AuthContext.jsx'
 import RecentTrades from './components/trading/RecentTrades.jsx';
 import About from './pages/public/About.jsx';
 import Authentication from './pages/public/Authentication.jsx';
@@ -25,6 +25,7 @@ function App() {
       	{/* Route with no layout (no SideNav) */}
       	<Route path="/" element={<LandingPage />} />
 			<Route path="/login" element={<Authentication />} />
+			<Route path="/about" element={<About />}></Route>
       	{/* All other routes with layout */}
       	<Route path="/*" element={<AppLayout />} />
     	</Routes>
