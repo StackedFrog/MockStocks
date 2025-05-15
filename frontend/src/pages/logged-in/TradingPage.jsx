@@ -12,6 +12,7 @@ function TradingPage() {
   const [stockData, setStockData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // FETCH STOCK DATA
   const handleSelectStock = async (symbol, name) => {
     setStockSymbol(symbol);
     setStockName(name);
@@ -49,6 +50,7 @@ function TradingPage() {
             );
             if (!res.ok) throw new Error('Stock not found');
             const results = await res.json();
+            // check if stock symbol is valid
             const stock = results.find(s => s.symbol === symbolParam);
             if (stock) handleSelectStock(stock.symbol, stock.name);
           } catch (err) {
@@ -57,51 +59,53 @@ function TradingPage() {
         })();
       }
     }
-
-    // fetch every 300ms
-		const debounceTimeout = setTimeout(fetchStocks, 300);
-		return () => clearTimeout(debounceTimeout);
+    const debounceTimeout = setTimeout(fetchStocks, 300);
+    return () => clearTimeout(debounceTimeout);
   }, [searchParams, stockSymbol]);
 
   return (
     <div className="bg-[#141414] min-h-screen p-4">
-      <nav className="flex justify-end gap-4 font-bold">
-        <Link className="text-white underline hover:no-underline" to="/">
-          Home
-        </Link>
-        <button
-          className="text-white underline hover:no-underline hover:cursor-pointer"
-          onClick={() => setSearchParams()}
-        >
-          Search
-        </button>
-      </nav>
 
+    // NAV
+    <nav className="flex justify-end gap-4 font-bold">
+    <Link className="text-text underline hover:no-underline" to="/">
+    Home
+    </Link>
+    <button
+    className="text-text underline hover:no-underline hover:cursor-pointer"
+    onClick={() => setSearchParams()}
+    >
+    Search
+    </button>
+    </nav>
 
-      {searchParams?.size === 0 ? (
+    {searchParams?.size === 0 ? (
+
       <div className="">
-        <h1 className="text-4xl font-bold m-3" >Search for a stock</h1>
+        <h1 className="flex justify-center text-text text-6xl font-bold m-3" >Search for a stock</h1>
         <StocksSearchBar onSelect={handleSelectStock} />
       </div>
 
-      ) : (
+    ) : (
 
-        <>
-          <div className="z-20 absolute top-1 left-1 w-[50%]">
-            <StocksSearchBar onSelect={handleSelectStock} />
-          </div>
+      <div>
+        <div className="z-20 absolute top-1 left-1 w-[50%]">
+          <StocksSearchBar onSelect={handleSelectStock} />
+        </div>
           <h2 className="text-center text-xl text-white font-bold mt-20">
-            {stockName}
-          </h2>
-          <TradingChart
-            data={stockData}
-            symbol={stockSymbol}
-            colors={{ backgroundColor: '#141414', textColor: '#fff' }}
-          />
-          <BuyingAndSelling />
-        </>
-      )}
+          {stockName}
+        </h2>
+        <TradingChart
+          data={stockData}
+          symbol={stockSymbol}
+          colors={{ backgroundColor: '#141414', textColor: '#fff' }}
+        />
+        <BuyingAndSelling />
+      </div>
+
+    )}
     </div>
+
   );
 }
 

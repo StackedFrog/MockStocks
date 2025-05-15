@@ -1,11 +1,33 @@
+<<<<<<< HEAD:frontend/src/components/trading/StocksSearchBar.jsx
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi.jsx';
+=======
+import React, { useState, useEffect, useRef } from 'react';
+import { useApi } from '../api_wrapper.jsx';
+>>>>>>> 9bd95c6 (search bar cleared when unfocused):frontend/src/components/StocksSearchBar.jsx
 
 export function StocksSearchBar({ onSelect, initialSymbol }) {
   const { apiFetch } = useApi();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const divRef = useRef(null);
 
+  // EVENTLISTENER FOR CLICK OUTSIDE DIV
+  useEffect(() => {
+    // Define the click event handler
+    const handleClickOutside = (event) => {
+      if (divRef.current && !divRef.current.contains(event.target)) {
+        setSearchTerm("")
+      }}
+    document.addEventListener('click', handleClickOutside);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
+  // FETCH STOCK NAMES
   useEffect(() => {
     if (!searchTerm) {
       setSearchResults([]);
@@ -33,14 +55,14 @@ export function StocksSearchBar({ onSelect, initialSymbol }) {
   const handleChange = e => setSearchTerm(e.target.value);
 
   const handleSelect = (symbol, name) => {
+    // triggers FETCH STOCK NAMES
     setSearchTerm('');
     setSearchResults([]);
     onSelect(symbol, name);
   };
 
   return (
-    <div className="flex justify-center items-center flex-col mt-4 p-4 text-white"
-        onBlur={() => {console.log("Heolo")}}
+    <div ref={divRef} className="flex justify-center items-center flex-col mt-4 p-4 text-white"
     >
       <input
         type="text"
@@ -55,6 +77,7 @@ export function StocksSearchBar({ onSelect, initialSymbol }) {
             <button
               key={stock.symbol}
               onClick={() => handleSelect(stock.symbol, stock.name)}
+              onBlur={() => {setSearchTerm("")}}
               className="w-full text-left p-2 hover:bg-gray-600 text-white"
             >
               {stock.name} ({stock.symbol})
