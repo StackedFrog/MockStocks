@@ -4,7 +4,9 @@ use std::sync::OnceLock;
 
 #[derive(Deserialize, Clone)]
 pub struct Settings {
-    pub token_secret: String,
+    pub token_refresh_secret: String,
+    pub token_access_secret: String,
+    pub token_dash_secret: String,
 }
 
 impl Settings {
