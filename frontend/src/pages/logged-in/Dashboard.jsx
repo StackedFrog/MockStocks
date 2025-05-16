@@ -30,13 +30,18 @@ function DashboardPage () {
         return (
 
                 <div className="px-4 py-6 bg-background">
-                <h1 className="font-heading text-secondary text-3xl my-6">Your Holdings</h1>
+                <h1 className="font-heading text-secondary text-3xl mb-6">Your Holdings</h1>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {userHoldings && userHoldings.map((holding) => (
-                        <div key={holding.symbol + holding.user_id} className="col-span-1">
-                        <StockCard symbol={holding.symbol} />
-                        </div>
-                ))}
+                {userHoldings && userHoldings.length > 0 ? (
+                        userHoldings.map((holding) => (
+                                <div key={holding.symbol + holding.user_id} className="col-span-1">
+                                <StockCard symbol={holding.symbol} />
+                                </div>
+                        ))
+                ) : (
+                        <span className="text-primary font-text">It's empty here...</span>
+                )}
+
                 </div>
 
                 <h1 className="font-heading text-secondary text-3xl my-6 mt-12">Trending Stocks</h1>

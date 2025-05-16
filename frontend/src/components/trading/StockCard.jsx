@@ -87,11 +87,11 @@ function StockCard({ symbol }) {
                 className={"border border-black px-3 py-2 rounded outline-none focus:ring-0 flex flex-col items-center bg-primary rounded-lg cursor-pointer"}
                 >
                 <span className="font-heading text-secondary">{symbol}</span>
-                { stockInfo ? (<span className="text-secondary">{stockInfo.current.toFixed(2)} USD</span>) : ( <span></span> )}
+                { stockInfo ? (<span className="text-secondary font-text text-sm sm:text-base">{stockInfo.current.toFixed(2)} USD</span>) : ( <span></span> )}
                 <div className="flex items-center w-full">
-                { stockInfo ? (<span className={`${stockInfo.increase >= 0 ? "text-stock-positive" : "text-stock-negative"} flex-1 text-end pr-1`}>{stockInfo.increase >= 0 ? "+" : ""}{stockInfo.increase.toFixed(2)}</span>) : ( <span></span> )}
-                <span className="px-1 text-secondary">|</span>
-                { stockInfo ? (<span className={`${stockInfo.percentage >= 0 ? "text-stock-positive" : "text-stock-negative"} flex-1 text-start pl-1`}>{stockInfo.increase >= 0 ? "+" : ""}{stockInfo.percentage.toFixed(2)}%</span>) : ( <span></span> )}
+                { stockInfo ? (<span className={`${stockInfo.increase >= 0 ? "text-stock-positive" : "text-stock-negative"} flex-1 text-end pr-1 font-text text-xs sm:text-base`}>{stockInfo.increase >= 0 ? "+" : ""}{stockInfo.increase.toFixed(2)}</span>) : ( <span></span> )}
+                <span className="px-0.5 sm:px-1 text-secondary font-text">|</span>
+                { stockInfo ? (<span className={`${stockInfo.percentage >= 0 ? "text-stock-positive" : "text-stock-negative"} flex-1 text-start pl-1 font-text text-xs sm:text-base`}>{stockInfo.increase >= 0 ? "+" : ""}{stockInfo.percentage.toFixed(2)}%</span>) : ( <span></span> )}
                 </div>
                 { chartData ? ( <Line options={options} data={chartData} /> ) : ( <p></p> )}
                 </div>
