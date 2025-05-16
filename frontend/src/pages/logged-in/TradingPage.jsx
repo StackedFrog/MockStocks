@@ -19,51 +19,6 @@ function TradingPage() {
     setSearchParams({ symbol });
   }
 
-  //   try {
-  //     const response = await apiFetch(
-  //       `/api/stocks_api/range?symbol=${encodeURIComponent(symbol)}&range=10m&interval=1m`
-  //     );
-  //     if (!response.ok) throw new Error('Network response was not ok');
-  //     const data = await response.json();
-  //     const formatted = data.quotes.map(q => ({
-  //       time: q.timestamp,
-  //       open: q.open,
-  //       high: q.high,
-  //       low: q.low,
-  //       close: q.close
-  //     }));
-  //     setStockData(formatted);
-  //   } catch (err) {
-  //     console.error('Error fetching stock data:', err);
-  //     setStockData([]);
-  //   }
-  // };
-  //
-  // // Load from URL param
-  // useEffect(() => {
-  //   const fetchStocks = () => {
-  //     const symbolParam = searchParams.get('symbol');
-  //     if (symbolParam && symbolParam !== stockSymbol) {
-  //       (async () => {
-  //         try {
-  //           const res = await apiFetch(
-  //             `/api/stocks_api/ticker?symbol=${encodeURIComponent(searchParams.get('symbol'))}`
-  //           );
-  //           if (!res.ok) throw new Error('Stock not found');
-  //           const results = await res.json();
-  //           // check if stock symbol is valid
-  //           const stock = results.find(s => s.symbol === symbolParam);
-  //           if (stock) handleSelectStock(stock.symbol, stock.name);
-  //         } catch (err) {
-  //           console.error('Error loading stock from URL:', err);
-  //         }
-  //       })();
-  //     }
-  //   }
-  //   const debounceTimeout = setTimeout(fetchStocks, 300);
-  //   return () => clearTimeout(debounceTimeout);
-  // }, [searchParams, stockSymbol, apiFetch]);
-  //
   return (
     <div className="bg-[#141414] min-h-screen p-4">
 
