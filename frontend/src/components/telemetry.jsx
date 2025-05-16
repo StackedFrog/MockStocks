@@ -26,7 +26,7 @@ function Telemetry() {
 
 return (<div>
 { ready ? <iframe
-	src="/auth/grafana/d/gateway-metrics/telemetry"
+	src="/auth/grafana/d/gateway-metrics/telemetry?kiosk"
 			width="100%"
 		height="1200"
 		frameBorder="0">
