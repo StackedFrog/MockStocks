@@ -7,7 +7,7 @@
 
 </p>
 <p align="center">
-Trade stocks with real time stock graphs and don't loose real money!
+MockStocks is a hands-on platform where you can practice trading stocks with real-time market data — no real money involved.
 </p>
 
 <!--p align="center">
@@ -36,7 +36,7 @@ Trade stocks with real time stock graphs and don't loose real money!
 )](https://github.com/StackedFrog/StackedStocks/blob/main/LICENSE)
 
 
-Insert intro here!
+MOCK STOCKS is a hands-on platform where you can practice trading stocks with real-time market data — no real money involved. It’s built to help you learn how the stock market works, experiment with strategies, and get comfortable before jumping into actual trading. Whether you’re new or just want to sharpen your skills, our website makes it simple and risk-free.
 
 <!-- <p align="center"> -->
 <!-- <img src = "overwiew image" width=350> -->
@@ -46,7 +46,10 @@ Insert intro here!
 
 How you can use MockStocks:
 
-* add usecases
+* Create accounts for multiple users
+* Get access to real time market data
+* Gain experience and get to know the stock market
+* Most importantly it's risk free, no real money involved
 
 <p align="center">
 <!-- <img src = "" width=700> -->
