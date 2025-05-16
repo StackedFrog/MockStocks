@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useApi } from "./../api_wrapper"
+import { useApi } from "../../hooks/useApi.jsx"
 
 
 function DisplayName(){
@@ -10,7 +10,7 @@ function DisplayName(){
     const handleProfile = async (e) =>{
         e.preventDefault()
         try{
-            const response = await apiFetch("",{
+            const response = await apiFetch("/api/user/info",{
                 method: "GET",
                 body: JSON.stringify(name)
             })
@@ -31,7 +31,7 @@ function DisplayName(){
     return(
         <>
             <div>
-                    <div>Welcome, ${name}</div>
+                    <div>Welcome, {name}</div>
             </div>
         </>
     )

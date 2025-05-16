@@ -16,6 +16,7 @@ mod oauth;
 mod router;
 mod utils;
 
+
 #[tokio::main]
 async fn main() {
     telemetry::init_telemetry("Auth");
