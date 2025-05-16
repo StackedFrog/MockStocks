@@ -1,7 +1,54 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useApi } from '../../hooks/useApi.jsx';
 import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
 
-const CandleChart = ({ data, colors = {} }) => {
+
+
+export const TradingChart = ({ symbol, colors }) => {
+  const { apiFetch } = useApi();
+  const [stockName, setStockName] = useState(null);
+  const [stockData, setStockData] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const fetchTrades = async () => {
+      try {
+        const response = await apiFetch(
+          `/api/stocks_api/range?symbol=${encodeURIComponent(searchParams.get('symbol'))}&range=10h&interval=10m`
+        )
+        if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
+
+
+        const data = await response.json()
+        const formatted = data.quotes.map(q => ({
+          time: q.timestamp,
+          open: q.open,
+          high: q.high,
+          low: q.low,
+          close: q.close
+        }))
+        console.log(formatted)
+        setStockData(formatted)
+      } catch (err) {
+        console.error(`Fetch error in TradingChart component: ${err}`)
+      }
+    }
+
+    // fetches trading data every 300ms
+    const fetchLoop = setInterval(() => {
+      fetchTrades()
+    }, 1000);
+
+    // cleanUp fetchLoop on unmount
+    return () => clearInterval(fetchLoop)
+  }, [])
+
+  return <TradingviewApiChart data={stockData} colors={colors} />;
+};
+
+
+const TradingviewApiChart = ({ data, colors = {} }) => {
   const {
     backgroundColor = 'rgb(15,15,15)',
     textColor         = 'white',
@@ -49,8 +96,3 @@ const CandleChart = ({ data, colors = {} }) => {
   return <div ref={chartContainerRef} />;
 };
 
-export const TradingChart = ({ data, symbol, colors }) => {
-  return <CandleChart data={data} colors={colors} />;
-};
-
-export default TradingChart;
