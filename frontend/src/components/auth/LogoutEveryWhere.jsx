@@ -1,9 +1,7 @@
-import { useApi } from "../../api_wrapper.jsx"
+import { useApi } from "../../hooks/useApi.jsx"
 import { useNavigate } from 'react-router-dom'
 
-
-function LogoutButtonEveryWhere(){
-
+function LogoutEveryWhere() {
 	const navigate = useNavigate()
 	const {apiUnAuth} = useApi()
 
@@ -12,12 +10,16 @@ function LogoutButtonEveryWhere(){
 		navigate("/")
 	}
 
-        return <button
-          onClick={onLogout}
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-600 text-white font-bold py-2 px-4 m-2 rounded"
-        >
-          Logout of all Devices
-	</button>
+        return (
+		<button
+			type= "button"
+			onClick={onLogout}
+			className={`h-15 lg:w-[20vw] px-5 py-3 mx-0 my-2.5 rounded-lg font-heading text-text bg-accent flex items-center justify-center
+                hover:bg-primary active:bg-primary hover:cursor-pointer transition-colors duration-200`}
+		>
+			<span>Log out all devices</span>
+		</button>
+	)
 }
 
-export default LogoutButtonEveryWhere
+export default LogoutEveryWhere

@@ -2,9 +2,9 @@ import React, { useState } from "react"
 import { useApi } from "../../hooks/useApi.jsx"
 
 
-function DisplayName(){
+function DisplayName(user){
     const {apiFetch} = useApi()
-    const name = ""
+    const name = user.username ?? "";
 
 
     const handleProfile = async (e) =>{
@@ -30,8 +30,8 @@ function DisplayName(){
     }
     return(
         <>
-            <div className="text-text bg-primary p-2 rounded-lg ">
-                    <div>Welcome, Long ass name {name}</div>
+            <div className="text-background bg-primary p-2 rounded-lg ">
+                    <div>Welcome,{name}</div>
             </div>
         </>
     )

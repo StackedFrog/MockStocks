@@ -2,9 +2,9 @@ import React, { useState } from "react"
 import { useApi } from "../../hooks/useApi.jsx"
 
 
-function DisplayBalance(){
+function DisplayBalance(user){
     const {apiFetch} = useApi()
-    const cash = ""
+    const cash = user.balance ?? "!";
 
     const handleBalance = async (e) =>{
         e.preventDefault()
@@ -29,7 +29,7 @@ function DisplayBalance(){
     }
     return(
         <>
-            <div className = "text-text bg-primary p-2 rounded-lg ">
+            <div className = "text-background bg-primary p-2 rounded-lg ">
                 <span>Balance: {cash}USD</span>
             </div>
         </>

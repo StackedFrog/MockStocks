@@ -1,21 +1,27 @@
 import React from "react";
 import { useApi } from "../../hooks/useApi.jsx";
-import SideNav from "../../components/SideNav.jsx";
 import Button from "../../components/ui/Button.jsx";
-import { FiUser } from "react-icons/fi";
 import DisplayBalance from "../../components/layout/DisplayBalance.jsx";
 import DisplayName from "../../components/layout/ProfileDisplay.jsx";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { useState } from "react";
+import LogoutEveryWhere from "../../components/auth/LogoutEveryWhere.jsx"
+// import { LogoutEveryWhere } from "../../components/auth/LogoutEveryWhere.jsx"
 
 function DisplayProfile({user}){
+    console.log();
+    
     const {apiFetch} = useApi();
-    const name = user.username ?? "";
+    let [name, setName] = useState(user.username) ?? "";
     const cash = user.balance ?? "";
     const [isEdit, setEdit] = useState(false);
 
     const editClick = () => {
         setEdit(true)
+    }
+    const save = (e) => {
+        e.preventDefault();
+        setEdit(false)
     }
 
     const handleAccount = async (e) =>{
@@ -52,35 +58,29 @@ function DisplayProfile({user}){
                 </div>
                 <div className="bg-primary rounded-lg p-8 sm:flex-col ">
                     <div className="flex justify-between">                
-                        <div className = "flex flex-col justify-start text-text bg-primary">
-                            <div>Name: {isEdit ? (<input type = "text" onChange={(e) => setName(e.target.value)} value = {name}></input>): (<span>{name}</span>)}</div>
+                        <div className = "flex flex-col justify-start text-background bg-primary">
+                            <form onSubmit={save}><div>Name: {isEdit ? (<input className="underline" type = "text" onChange={(e) => setName(e.target.value)}value = {name}></input>): (<span>{name}</span>)}</div></form>
                             <div>Balance: {cash}</div>
                         </div>
-                        <div className="flex flex-col justify-start text-text ">
+                        <div className="flex flex-col justify-start text-text gap-1">
                             <BiSolidEditAlt onClick={editClick}
                             style={{
-                                color: "#eaecea"
+                                color: "#0b0d0b",
+                                height: "1.2em",
+                                width: "1.2em"
                             }}/>
                         </div>
                     </div>
                 </div>
                 <div className = "flex flex-col py-3 bg-background">
-                        <Button className=""text = "Log out all accounts"></Button>
-                        <Button className="" text= "Delete profile"></Button>
+                        <LogoutEveryWhere/>
+                        <Button className="bg-accent2"text = "Delete account"></Button>
                 </div>
             </div>
         </>
     )
 }
-function EditName(){
-    const [name, setName] = useState("");
 
-    
-}
-const save = (e) => {
-    e.preventDefault();
-    setEdit(false)
-}
 
 
 export default DisplayProfile;
