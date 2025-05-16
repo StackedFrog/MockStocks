@@ -49,8 +49,9 @@ const CandleChart = ({ data, colors = {} }) => {
   return <div ref={chartContainerRef} />;
 };
 
-export const TradingChart = ({ data, symbol, colors }) => {
-  return <CandleChart data={data} colors={colors} />;
+export const TradingChart = ({ data, symbol, colors, hideChart}) => {
+        if (hideChart.hideChart) return null;
+        return <CandleChart data={data} colors={colors} />;
 };
 
 export default TradingChart;

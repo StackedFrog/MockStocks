@@ -8,7 +8,7 @@ function AdminPage() {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
-    <div className=" flex flex-col p-6 bg-background text-text font-text">
+    <div className="flex flex-col p-2 sm:p-6 bg-background text-text font-text">
       {/* Tabs */}
       <div className="flex pl-4 gap-4 border-border mb-6">
         <button
