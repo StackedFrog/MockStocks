@@ -1,53 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Telemetry from '../../../components/telemetry.jsx';
 import UserManagment from '../../../components/userManagment.jsx';
 
 function AdminPage() {
+  const [activeTab, setActiveTab] = useState('userManagement');
 
- // let [ telemetryView, setTelemetryView ] = useState(false)
- const [activeTab, setActiveTab] = useState('userManagement');
+  const handleTabClick = (tab) => setActiveTab(tab);
 
-
-  // Function to handle tab click
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
-
-
- return (
-    <div className="p-6 space-y-4">
-      <div className="flex space-x-4 mb-6">
-        {/* Tab Buttons */}
+  return (
+    <div className=" flex flex-col p-6 bg-background text-text font-text">
+      {/* Tabs */}
+      <div className="flex gap-4 border-b border-border mb-6">
         <button
           onClick={() => handleTabClick('userManagement')}
-          className={`px-4 py-2 text-sm font-semibold rounded-lg focus:outline-none ${activeTab === 'userManagement' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+          className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+            activeTab === 'userManagement'
+              ? 'bg-white dark:bg-gray-900 border border-b-0 border-border text-primary'
+              : 'bg-muted text-muted-foreground hover:bg-accent dark:hover:bg-gray-800'
+          }`}
         >
           User Management
         </button>
         <button
           onClick={() => handleTabClick('stats')}
-          className={`px-4 py-2 text-sm font-semibold rounded-lg focus:outline-none ${activeTab === 'stats' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+          className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+            activeTab === 'stats'
+              ? 'bg-white dark:bg-gray-900 border border-b-0 border-border text-primary'
+              : 'bg-muted text-muted-foreground hover:bg-accent dark:hover:bg-gray-800'
+          }`}
         >
           Stats
         </button>
+
       </div>
-
-      {/* Tab Content */}
-      {activeTab === 'userManagement' && (
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">User Management</h3>
-		<UserManagment />
-        </div>
-      )}
-
-      {activeTab === 'stats' && (
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Stats</h3>
-		<Telemetry  />
-        </div>
-      )}
-    </div>
+	{/* Panel */}
+	<div className="w-full bg-background border border-border shadow-lg rounded-2xl p-4 sm:p-6 transition-all">
+	  {activeTab === 'userManagement' && <UserManagment />}
+	  {activeTab === 'stats' && (
+	    <>
+	      <h3 className="text-xl font-semibold mb-4">Stats</h3>
+	      <Telemetry />
+	    </>
+	  )}
+	</div>
+	</div>
   );
-};
+}
 
-export default AdminPage
+export default AdminPage;

@@ -1,8 +1,8 @@
-use std::sync::Arc;
 use super::{ClientManager, Error, Result};
 use chrono::{DateTime, Local};
 use futures::future::try_join_all;
 use serde::Serialize;
+use std::sync::Arc;
 use time::{OffsetDateTime, format_description::well_known::Rfc3339};
 use yahoo_finance_api::{Quote, YahooConnector};
 
@@ -43,7 +43,6 @@ pub async fn fetch_latest_quote(
     provider: Arc<YahooConnector>,
     symbol: &str,
 ) -> Result<LatestQuote> {
-
     // YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider
@@ -140,7 +139,6 @@ pub async fn fetch_ticker(
     provider: Arc<YahooConnector>,
     search_term: &str,
 ) -> Result<Vec<TickerSearchResult>> {
-
     // let provider = YahooConnector::new().map_err(|_| Error::ApiConnectorFailure)?;
 
     let response = provider

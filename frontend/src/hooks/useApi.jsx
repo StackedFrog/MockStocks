@@ -1,19 +1,20 @@
 import { useAuth } from "../contexts/AuthContext.jsx";
 import { useNavigate } from 'react-router-dom'
 
-// const apiCall = async (url, options = {}) => {
-// 	const headers = {
-// 		...options.headers,
-// 		...(accessToken ? { Authorization: `Bearer ${accessToken}` }: {}),
-// 		"Content-Type": 'application/json',
-// 	}
-//
-// 	let res = await fetch(url, {
-// 		...options,
-// 		headers
-// 	})
-// 	return res
-// 	}
+const apiCall = async (url, options = {}, token) => {
+
+	const headers = {
+		...options.headers,
+		...({ Authorization: `Bearer ${token}` }),
+		"Content-Type": 'application/json',
+	}
+
+	let res = await fetch(url, {
+		...options,
+		headers
+	})
+	return res
+}
 
 // const apiFetch = async (url, options = {}) => {
 //
@@ -27,34 +28,41 @@ import { useNavigate } from 'react-router-dom'
 // 	return res;
 // }
 //
+//
+//
+
+
 
 export const useApi = () => {
 
 	const { accessToken, refreshAccessToken, setAccessToken} = useAuth()
 	const navigate = useNavigate()
 
-	const apiFetch = async (url, options = {}) => {
 
+
+	const getToken = async () => {
 		let token = accessToken
 
 		if (!token){
 			token = await refreshAccessToken()
-			if (!token){
-				navigate("/")
-				return
-			}
 		}
 
-		const headers = {
-			...options.headers,
-			...({ Authorization: `Bearer ${token}` }),
-			"Content-Type": 'application/json',
+		return token
+
+	}
+
+
+	const apiFetch = async (url, options = {}, redirect = true) => {
+
+		let token = await getToken()
+
+		if (!token){
+			redirect && navigate("/")
+			return
 		}
 
-		let res = await fetch(url, {
-			...options,
-			headers
-		})
+		const res = await apiCall(url, options, token)
+
 
 		if (res.status === 403){
 			console.log("missing privilige")
@@ -65,22 +73,14 @@ export const useApi = () => {
 		if (res.status === 401){
 			token = await refreshAccessToken()
 			if (!token){
-				navigate("/")
+				redirect && navigate("/")
 				return
 			}
-			const headers = {
-				...options.headers,
-				...({ Authorization: `Bearer ${token}` }),
-				"Content-Type": 'application/json',
-			}
 
-			let res = await fetch(url, {
-				...options,
-				headers
-			})
+			const res = await apiCall(url, options, token)
 
 			if(res.status === 401){
-				navigate("/")
+			        redirect && navigate("/")
 				return
 			}
 		}
@@ -121,5 +121,6 @@ export const useApi = () => {
 			alert("Something went wrong.")
 		}
 	}
+
 	return { apiFetch, apiUnAuth , apiAuth}
 }

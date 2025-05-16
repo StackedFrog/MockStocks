@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
 import Button from '../../components/ui/Button.jsx';
 import TeamMemberCard from '../../components/ui/TeamMemberCard.jsx';
 
@@ -18,7 +17,7 @@ function About() {
 	useEffect(() => {
 		async function fetchUsers() {
 			const fetchedUsers = await Promise.all(
-				usernames.map(u => 
+				usernames.map(u =>
 					fetch(`https://api.github.com/users/${u}`).then(res => res.json())
 				)
 			);
@@ -32,7 +31,7 @@ function About() {
 			<div className='w-[80%] sm:w-[60%] lg:w-[40%] text-center sm:flex sm:flex-col sm:items-center'>
 				<p className='text-text font-text pb-2'>
 					<span className='font-heading'>MOCK STOCKS</span> is a project developed for the Full-Stack Development course
-					taught during the 2025 Spring semester at Kristianstad University for the Software Development 
+					taught during the 2025 Spring semester at Kristianstad University for the Software Development
 					Bachelor's programme.
 				</p>
 				<Button text="Back to Home" to="/" className='sm:w-[40%]'></Button>
