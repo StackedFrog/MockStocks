@@ -1,6 +1,5 @@
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
-use crate::router::user_routes::TransactionPayload;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
 use serde::Serialize;
@@ -17,14 +16,16 @@ pub struct Transaction {
     user_id: Uuid,
     date: DateTime<Utc>,
     symbol: String,
-    transaction_type: TransactionType,
-    quantity: Decimal,
+    pub price: f64,
+    pub transaction_type: TransactionType,
+    pub quantity: Decimal,
 }
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct NewTransaction {
     pub user_id: Uuid,
     pub symbol: String,
+    pub price: f64,
     pub transaction_type: TransactionType,
     pub quantity: Decimal,
 }
@@ -42,12 +43,14 @@ impl NewTransaction {
     pub fn new(
         user_id: &Uuid,
         symbol: String,
+        price: f64,
         transaction_type: TransactionType,
         quantity: Decimal,
     ) -> Self {
         Self {
             user_id: user_id.clone(),
             symbol,
+            price,
             transaction_type,
             quantity,
         }
@@ -65,12 +68,25 @@ pub async fn get_all_transactions_by_user(pool: &Pool, user_id: &Uuid) -> Result
     return Ok(transactions);
 }
 
+pub async fn get_transactions_by_symbol(pool: &Pool, user_id: &Uuid, symbol: &String) -> Result<Vec<Transaction>> {
+    let query = "SELECT * FROM Transactions WHERE user_id = $1 AND symbol = $2";
+    let transactions = sqlx::query_as(query)
+        .bind(user_id)
+        .bind(symbol)
+        .fetch_all(pool)
+        .await
+        .map_err(|_e| Error::UserIDNotFound)?;
+
+    return Ok(transactions);
+}
+
 pub async fn add_transaction(pool: &mut PgConnection, transaction: NewTransaction) -> Result<()> {
-    let query = "INSERT INTO Transactions (user_id, date, symbol, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5)";
+    let query = "INSERT INTO Transactions (user_id, date, symbol, price, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5, $6)";
     sqlx::query(query)
         .bind(transaction.user_id)
         .bind(Utc::now())
         .bind(transaction.symbol)
+        .bind(transaction.price)
         .bind(transaction.transaction_type)
         .bind(transaction.quantity)
         .execute(pool)
