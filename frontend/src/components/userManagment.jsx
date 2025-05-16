@@ -61,7 +61,7 @@ function UserCard({ user, fetchUsers }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md p-6 w-full sm:w-72 relative">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md p-6 w-full sm:w-72">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{user.username}</h2>

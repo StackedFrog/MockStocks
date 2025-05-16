@@ -2,7 +2,7 @@
 <h1 align="center"> MockStocks </h1> <br>
 <p align="center">
 <a href="https://github.com/StackedFrog/StackedStocks">
-<img alt="MockStocks" title="MockStocks" src="https://github.com/StackedFrog/MockStocks/blob/main/view/mockstocks-round.png?raw=true" width="250">
+<img alt="MockStocks" title="MockStocks" src="https://github.com/StackedFrog/MockStocks/blob/main/frontend/public/mockstocks-round.png?raw=true" width="250">
 </a>
 
 </p>
