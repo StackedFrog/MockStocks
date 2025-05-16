@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import Register from "../../components/auth/Register.jsx";
-import Login from "../../components/auth/Login.jsx";
+import RegisterForm from "../../components/auth/RegisterForm.jsx";
+import LoginForm from "../../components/auth/LoginForm.jsx";
+import Button from '../../components/ui/Button.jsx';
 
 function Authentication() {
-  const [login, setLogin] = useState(true);
+	const [login, setLogin] = useState(true);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-text font-text">
-      {login ? <Login setLogin={setLogin} /> : <Register setLogin={setLogin} />}
-    </div>
-  );
+	return (
+		<div className="min-h-screen flex flex-col items-center justify-center bg-background text-text font-text">
+			<Button text="Back to Home" to="/" className='sm:w-[40%] fixed top-0 left-2 max-w-[300px]'></Button>
+			{login ? <LoginForm setLogin={setLogin} /> : <RegisterForm setLogin={setLogin} />}
+		</div>
+	);
 }
 
 export default Authentication;
