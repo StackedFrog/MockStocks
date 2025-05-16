@@ -11,8 +11,6 @@ import AdminPage from './pages/logged-in/admin/AdminPage.jsx';
 import { useEffect, useState } from "react";
 import { useApi } from './hooks/useApi.jsx';
 import About from './pages/public/About.jsx';
-import Test from './pages/Test.jsx';
-
 
 function App() {
 
@@ -22,7 +20,6 @@ function App() {
 			{/* Route with no layout (e.g. Login, Register, Landing) */}
 			<Route path="/" element={<LandingPage />} />
 			<Route path="/login" element={<Authentication />} />
-			<Route path="/test" element={<Test />} />
 			{userInfo ? <></> : <Route path="/about" element={<About />}/>}
 
 			{/* Authenticated Routes with layout */}
