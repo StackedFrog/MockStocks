@@ -5,15 +5,18 @@ import Button from "../../components/ui/Button.jsx";
 import { FiUser } from "react-icons/fi";
 import DisplayBalance from "../../components/layout/DisplayBalance.jsx";
 import DisplayName from "../../components/layout/ProfileDisplay.jsx";
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-
+import { BiSolidEditAlt } from "react-icons/bi";
+import { useState } from "react";
 
 function DisplayProfile({user}){
     const {apiFetch} = useApi();
-    const name = "";
-    const email = "";
-    const cash = "";
-    const account = {icon: FiUser}
+    const name = user.username ?? "";
+    const cash = user.balance ?? "";
+    const [isEdit, setEdit] = useState(false);
+
+    const editClick = () => {
+        setEdit(true)
+    }
 
     const handleAccount = async (e) =>{
         e.preventDefault()
@@ -50,10 +53,15 @@ function DisplayProfile({user}){
                 <div className="bg-primary rounded-lg p-8 sm:flex-col ">
                     <div className="flex justify-between">                
                         <div className = "flex flex-col justify-start text-text bg-primary">
-                            <div>Name: {name}</div>
+                            <div>Name: {isEdit ? (<input type = "text" onChange={(e) => setName(e.target.value)} value = {name}></input>): (<span>{name}</span>)}</div>
                             <div>Balance: {cash}</div>
                         </div>
-                        
+                        <div className="flex flex-col justify-start text-text ">
+                            <BiSolidEditAlt onClick={editClick}
+                            style={{
+                                color: "#eaecea"
+                            }}/>
+                        </div>
                     </div>
                 </div>
                 <div className = "flex flex-col py-3 bg-background">
@@ -66,11 +74,8 @@ function DisplayProfile({user}){
 }
 function EditName(){
     const [name, setName] = useState("");
-    const [isEdit, setEdit] = useState(false);
 
-    const editClick = () => {
-        setEdit(true)
-    }
+    
 }
 const save = (e) => {
     e.preventDefault();
