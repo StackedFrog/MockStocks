@@ -4,7 +4,7 @@ import BuyingAndSelling from '../../components/trading/BuyingAndSelling.jsx';
 import { useApi } from "../../hooks/useApi.jsx";
 import { useSearchParams } from 'react-router-dom';
 
-function TradingPage() {
+function TradingPage( hideChart ) {
 	// TRADING PAGE LOGIC
 
 	const {apiFetch} = useApi()
@@ -132,7 +132,6 @@ function TradingPage() {
 						</div>
 
 						<h2 className="flex justify-center m-2 text-xl text-white font-bold">{stockName}</h2>
-                                                <div className="z-0">
 						<TradingChart
 							data={stockData}
 							symbol={stockSymbol}
@@ -140,8 +139,8 @@ function TradingPage() {
 								backgroundColor: '#141414',
 								textColor:       '#fff',
 							}}
+                                                        hideChart={hideChart}
 						/>
-                                                </div>
 						<BuyingAndSelling />
 					</>
 
