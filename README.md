@@ -48,6 +48,7 @@ Whether you’re new or just want to sharpen your skills, our website makes it s
 
 How you can use MockStocks:
 
+* Simple to use website
 * Create accounts for multiple users
 * Get access to real time market data
 * Gain experience and get to know the stock market
