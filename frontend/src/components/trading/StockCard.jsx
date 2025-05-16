@@ -84,7 +84,7 @@ function StockCard({ symbol }) {
         return (
                 <div 
                 onClick={routeChange}
-                className={"border border-black px-3 py-2 rounded outline-none focus:ring-0 flex flex-col items-center bg-primary rounded-lg cursor-pointer"}
+                className={"border border-black px-3 py-2 rounded outline-none focus:ring-0 flex flex-col items-center bg-primary rounded-lg cursor-pointer hover:bg-accent"}
                 >
                 <span className="font-heading text-secondary">{symbol}</span>
                 { stockInfo ? (<span className="text-secondary font-text text-sm sm:text-base">{stockInfo.current.toFixed(2)} USD</span>) : ( <span></span> )}
