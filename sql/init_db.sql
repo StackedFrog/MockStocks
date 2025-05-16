@@ -15,14 +15,15 @@ CREATE TABLE Transactions (
     transaction_id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES Users(user_id),
     date TIMESTAMPTZ NOT NULL,
-    symbol VARCHAR(10) NOT NULL, -- code name of company
-    transaction_type TRANSACTION_TYPE NOT NULL, -- purchase/sale
-    quantity NUMERIC NOT NULL -- amount of shares
+    symbol VARCHAR(10) NOT NULL,
+    price DOUBLE PRECISION NOT NULL,
+    transaction_type TRANSACTION_TYPE NOT NULL,
+    quantity NUMERIC NOT NULL
 );
 
 CREATE TABLE Holdings (
     user_id UUID NOT NULL REFERENCES Users(user_id),
-    symbol VARCHAR(10) NOT NULL, -- company code name or 'cash'
+    symbol VARCHAR(10) NOT NULL,
     quantity NUMERIC NOT NULL,
     last_updated TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (user_id, symbol) -- composite key since user + symbol should be unique
