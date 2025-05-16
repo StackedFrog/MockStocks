@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/public/Landing.jsx';
 import TradingPage from './pages/logged-in/TradingPage.jsx';
 import DashboardPage from "./pages/logged-in/Dashboard.jsx";
