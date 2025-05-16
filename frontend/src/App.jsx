@@ -95,7 +95,7 @@ function AppLayout({userInfo, setUserInfo}) {
                         <Route path="/trade" element={<TradingPage hideChart={isMobile && sidebarOpen}/>} />
                         <Route path="/dashboard" element={<DashboardPage />} />
                         <Route path="/recent" element={<RecentTrades />} />
-                        <Route path="/account" element={<DisplayProfile />} />
+                        <Route path="/account" element={<DisplayProfile user={userInfo}/>} />
                         <Route path="/admin" element={<AdminPage />} />
                         <Route path="/about" element={<About />} />
                         <Route path="*" element={<NotFound />} />

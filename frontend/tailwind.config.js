@@ -25,6 +25,7 @@ module.exports = {
 				'accent': '#77a282',
                                 "stock-positive": "#4d7d2d",
                                 "stock-negative": "#691919",
+				'accent2': '#9D4141'
 			},
 			fontFamily: {
 				text: ['"JetBrains Mono"', 'monospace'],
