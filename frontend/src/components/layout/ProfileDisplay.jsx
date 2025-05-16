@@ -30,8 +30,8 @@ function DisplayName(){
     }
     return(
         <>
-            <div>
-                    <div>Welcome, {name}</div>
+            <div className="text-text bg-primary p-2 rounded-lg ">
+                    <div>Welcome, Long ass name {name}</div>
             </div>
         </>
     )
