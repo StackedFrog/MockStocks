@@ -35,7 +35,17 @@ function AppLayout({userInfo, setUserInfo}) {
         const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
         const [sidebarOpen, setSidebarOpen] = useState(false);
 
+        useEffect(() => {
+                if (isMobile && sidebarOpen) {
+                        document.body.classList.add('overflow-hidden');
+                } else {
+                        document.body.classList.remove('overflow-hidden');
+                }
 
+                return () => {
+                        document.body.classList.remove('overflow-hidden');
+                };
+        }, [isMobile, sidebarOpen]);
 
         const fetchUserInfo = async () => {
                 console.log("fetching")
@@ -82,7 +92,7 @@ function AppLayout({userInfo, setUserInfo}) {
                         )}
                         <main className="flex-1 p-6 bg-background text-gray-900 dark:text-white transition-colors">
                         <Routes>
-                        <Route path="/trade" element={<TradingPage />} />
+                        <Route path="/trade" element={<TradingPage hideChart={isMobile && sidebarOpen}/>} />
                         <Route path="/dashboard" element={<DashboardPage />} />
                         <Route path="/recent" element={<RecentTrades />} />
                         <Route path="/account" element={<DisplayProfile />} />
