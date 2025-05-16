@@ -1,53 +1,58 @@
-import { NavLink } from "react-router-dom";
-
 // Sidebar.tsx
 import { FiLogOut, FiUser } from "react-icons/fi";
 import { AiOutlinePieChart, AiOutlineStock } from "react-icons/ai";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { BsInfoCircle } from "react-icons/bs";
 import { LuClock } from "react-icons/lu";
-import { useNavigate } from 'react-router-dom'
-import { useApi } from "../../hooks/useApi.jsx"
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useApi } from "../../hooks/useApi.jsx";
 
 const navItems = [
   { name: "Account", icon: FiUser, href: "/account" },
-  { name: "Dashboard", icon:AiOutlinePieChart ,href: "/dashboard" },
+  { name: "Dashboard", icon: AiOutlinePieChart, href: "/dashboard" },
   { name: "Trade", icon: AiOutlineStock, href: "/trade" },
   { name: "Recent", icon: LuClock, href: "/recent" },
-  // { name: "Admin", icon:MdOutlineAdminPanelSettings, href: "/admin" },
 ];
 
-function SideNav( {userInfo} ) {
-	const { apiUnAuth } = useApi()
+function SideNav({ userInfo }) {
+  const { apiUnAuth } = useApi();
+  const navigate = useNavigate();
 
-	const navigate = useNavigate()
-	const onLogout = async () => {
-		await apiUnAuth("/auth/user/logout")
-		navigate("/")
-	}
+  const onLogout = async () => {
+    await apiUnAuth("/auth/user/logout");
+    navigate("/");
+  };
 
-	return (<aside className="h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+  return (
+    <aside className="w-64 bg-background text-text border-r border-gray-300 dark:border-gray-700 flex flex-col font-text">
       {/* Header */}
-      <div className="p-4 text-2xl font-bold text-gray-800 dark:text-white">{userInfo.username}</div>
+      <div className="p-6 text-xl font-heading text-primary border-b border-gray-200 dark:border-gray-700">
+        {userInfo.username}
+      </div>
 
       {/* Top nav links */}
-      <nav className="px-2 space-y-1 flex-1">
+      <nav className="flex-1 p-4 space-y-2">
         {navItems.map((item) => (
           <NavItem key={item.name} to={item.href} icon={item.icon} label={item.name} />
         ))}
+        {userInfo.role === "Admin" && (
+          <NavItem to="/admin" icon={MdOutlineAdminPanelSettings} label="Admin" />
+        )}
       </nav>
-	{userInfo.role === "admin"? <NavItem key={"Admin"} to={"/admin"} icon={ MdOutlineAdminPanelSettings} label={"Admin"} />
-		:null}
 
       {/* Bottom nav and logout */}
-      <div className="px-2 space-y-3">
+      <div className="p-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
         <NavItem to="/about" icon={BsInfoCircle} label="About us" />
-        <button onClick={onLogout} className="w-full mb-4 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-500 hover:bg-red-600">
-          <FiLogOut className="w-4 h-4"  />
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition"
+        >
+          <FiLogOut className="w-4 h-4" />
           Logout
         </button>
       </div>
-    </aside>)
+    </aside>
+  );
 }
 
 function NavItem({ to, icon: Icon, label }) {
@@ -55,31 +60,17 @@ function NavItem({ to, icon: Icon, label }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
+        `flex items-center gap-3 px-4 py-2 rounded-xl font-medium transition-colors ${
           isActive
-            ? "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white"
+            ? "bg-gray-200 dark:bg-gray-700 text-primary"
             : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
         }`
       }
     >
-      <Icon className="w-5 h-5" />
+      <Icon className="w-5 h-5 text-accent" />
       {label}
     </NavLink>
   );
 }
 
-export default SideNav
-
- // return(
- //        <>
- //            <div class="flex">
- //                <nav class = "flex flex-col justify-around items-end bg-dark_green">
- //                    <Link class = "flex p-2 m-1 rounded bg-transparent text-stone_ish hover:text-sand_stone" to = "/account">Account</Link>
- //                    <Link class = "flex p-2 m-1 rounded bg-transparent text-stone_ish hover:text-sand_stone" to = "/dashboard">Dashboard</Link>
- //                    <Link class = "flex p-2 m-1 rounded bg-transparent text-stone_ish hover:text-sand_stone" to = "/trade">Trading</Link>
- //                    <Link class = "flex p-2 m-1 rounded bg-transparent text-stone_ish hover:text-sand_stone" to = "/recent">Recent Trades</Link>
- //                    <Link class = "flex p-2 m-1 rounded bg-transparent text-stone_ish hover:text-sand_stone" to = "/admin">Admin</Link>
- //                </nav>
- //            </div>
- //        </>
- //    )
+export default SideNav;

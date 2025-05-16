@@ -23,7 +23,7 @@ impl MetricsLayer {
             .f64_histogram("request_timer")
             .with_unit("s")
             .with_description("http quest duration")
-            .with_boundaries(vec![0.0, 0.5, 1.0, 1.5, 2.0])
+            .with_boundaries(vec![0.0, 0.3, 0.6, 0.9, 1.2])
             .build();
 
         Arc::new(Self {

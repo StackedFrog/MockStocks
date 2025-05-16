@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { TradingChart } from '../../components/trading/TradingChart.jsx';
 import BuyingAndSelling from '../../components/trading/BuyingAndSelling.jsx';
 import { useApi } from "../../hooks/useApi.jsx";

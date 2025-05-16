@@ -2,6 +2,7 @@ use crate::{
     AppState,
     proxy_client::proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
     token::token::validate_dash_token,
+    utils::url_format::target_url,
 };
 use axum::{
     Router,
@@ -31,9 +32,12 @@ pub async fn auth_proxy_grafana(
     validate_cookie(cookies)?;
 
     let client = state.http_client.clone();
-    let target_url = format!("http://lgtm:3000/auth/grafana/{}", path);
+    let service_url = "http://lgtm:3000/auth/grafana/";
 
-    let res = ServiceRequestBuilder::new(req, target_url, &client)
+    let url = target_url(service_url, path, req.uri());
+
+    info!("{:?}", url);
+    let res = ServiceRequestBuilder::new(req, url, &client)
         .with_content_type()
         .build()
         .send()

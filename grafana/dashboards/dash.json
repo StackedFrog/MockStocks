@@ -1,5 +1,4 @@
 {
-
   "annotations": {
     "list": [
       {
@@ -1144,8 +1143,8 @@
     "list": [
       {
         "current": {
-          "text": "otelcol-contrib",
-          "value": "otelcol-contrib"
+          "text": "Gateway",
+          "value": "Gateway"
         },
         "datasource": {
           "type": "prometheus",
@@ -1190,12 +1189,12 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "uid": "gateway-metrics",
   "title": "Telemetry",
-  "version": 1
+  "uid": "gateway-metrics",
+  "version": 2
 }
