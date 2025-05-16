@@ -23,7 +23,6 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Authentication />} />
                 {userInfo ? <></> : <Route path="/about" element={<About />}/>}
-
                 {/* Authenticated Routes with layout */}
                 <Route path="/*" element={<AppLayout userInfo={userInfo} setUserInfo={setUserInfo} />} />
                 </Routes>
