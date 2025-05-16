@@ -36,7 +36,7 @@ MockStocks is a hands-on platform where you can practice trading stocks with rea
 )](https://github.com/StackedFrog/StackedStocks/blob/main/LICENSE)
 
 
-MOCK STOCKS is a hands-on platform where you can practice trading stocks with real-time market data — no real money involved. It’s built to help you learn how the stock market works, experiment with strategies, and get comfortable before jumping into actual trading. Whether you’re new or just want to sharpen your skills, our website makes it simple and risk-free.
+MockStocks is a hands-on platform where you can practice trading stocks with real-time market data — no real money involved. It’s built to help you learn how the stock market works, experiment with strategies, and get comfortable before jumping into actual trading. Whether you’re new or just want to sharpen your skills, our website makes it simple and risk-free.
 
 <!-- <p align="center"> -->
 <!-- <img src = "overwiew image" width=350> -->
