@@ -24,7 +24,7 @@ function SideNav({ userInfo }) {
   };
 
   return (
-    <aside className="w-64 bg-background text-text border-r border-gray-300 dark:border-gray-700 flex flex-col font-text">
+    <aside className="w-64 bg-background text-text border-r border-gray-300 dark:border-gray-700 flex flex-col font-text sticky top-0 h-screen">
       {/* Header */}
       <div className="p-6 text-xl font-heading text-primary border-b border-gray-200 dark:border-gray-700">
         {userInfo.username}
