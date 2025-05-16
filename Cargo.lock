@@ -3076,8 +3076,19 @@ dependencies = [
  "num-traits",
  "rand 0.8.5",
  "rkyv",
+ "rust_decimal_macros",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "rust_decimal_macros"
+version = "1.37.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6268b74858287e1a062271b988a0c534bf85bbeb567fe09331bf40ed78113d5"
+dependencies = [
+ "quote",
+ "syn 2.0.101",
 ]
 
 [[package]]
@@ -3764,6 +3775,7 @@ dependencies = [
  "axum",
  "chrono",
  "futures",
+ "hyper",
  "serde",
  "serde_json",
  "surf",
@@ -4461,11 +4473,19 @@ dependencies = [
 name = "user_service"
 version = "0.1.0"
 dependencies = [
+ "_dev_utils",
  "axum",
  "chrono",
+ "config",
+ "reqwest",
  "rust_decimal",
+ "serde",
  "shared_utils",
  "sqlx",
+ "telemetry",
+ "tokio",
+ "tower-http",
+ "tracing",
  "uuid",
 ]
 
