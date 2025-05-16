@@ -29,9 +29,7 @@ function DisplayBalance(){
     }
     return(
         <>
-            <div className = "text-text bg-primary">
-                <span className = "absolute h-24">Balance: ${cash}SEK</span>
-            </div>
+            <div>Balance: ${cash}SEK</div>
         </>
     )
 }

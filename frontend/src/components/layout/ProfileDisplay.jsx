@@ -6,7 +6,6 @@ function DisplayName(){
     const {apiFetch} = useApi()
     const name = ""
 
-
     const handleProfile = async (e) =>{
         e.preventDefault()
         try{
@@ -30,9 +29,7 @@ function DisplayName(){
     }
     return(
         <>
-            <div>
-                    <div>Welcome, ${name}</div>
-            </div>
+            <div>Welcome, ${name}</div>
         </>
     )
 }
