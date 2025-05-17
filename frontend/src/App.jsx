@@ -48,14 +48,16 @@ function AppLayout({userInfo, setUserInfo}) {
 		};
 	}, [isMobile, sidebarOpen]);
 
-	const fetchUserInfo = async () => {
-		console.log("fetching")
-		const res = await apiFetch("api/user/info", { method: "GET" }, false);
-		if (res) {
-			const data = await res.json();
-			setUserInfo(data);
+        const fetchUserInfo = async () => {
+                console.log("fetching")
+                const res = await apiFetch("api/user/info", { method: "GET" });
+                if (res) {
+                        const data = await res.json();
+                        setUserInfo(data);
+                }else {
+			setUserInfo(null);
 		}
-	};
+        };
 
 	useEffect(() => {
 		fetchUserInfo();

@@ -20,6 +20,7 @@ function LoginForm({ setLogin }) {
 		try {
 			const res = await apiAuth("/auth/login", JSON.stringify({ email, pwd }));
 			if (res.ok) {
+
 				navigate("/dashboard");
 			} else {
 				setLoginFailed(true);

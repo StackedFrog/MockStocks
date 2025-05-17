@@ -141,11 +141,12 @@ pub async fn get_users_role(pool: &Pool, user_id: &Uuid) -> Result<UserType> {
 //add user
 pub async fn add_oauth_user(pool: &Pool, user: UserData) -> Result<UserTokenData> {
     let query =
-        "INSERT INTO Users (username, oauth_id, role) VALUES ($1, $2, $3) RETURNING user_id, role";
+        "INSERT INTO Users (username, oauth_id, role, email) VALUES ($1, $2, $3, $4) RETURNING user_id, role";
     let user_id: UserTokenData = sqlx::query_as(query)
         .bind(user.name)
         .bind(user.id)
         .bind(UserType::User)
+        .bind(user.email)
         .fetch_one(pool)
         .await
         .map_err(|_e| Error::UserNotAdded)?;
