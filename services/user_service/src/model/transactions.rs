@@ -14,8 +14,8 @@ use super::user::update_balance;
 pub struct Transaction {
     transaction_id: Uuid,
     user_id: Uuid,
-    date: DateTime<Utc>,
-    symbol: String,
+    pub date: DateTime<Utc>,
+    pub symbol: String,
     pub price: f64,
     pub transaction_type: TransactionType,
     pub quantity: Decimal,

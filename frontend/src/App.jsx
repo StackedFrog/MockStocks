@@ -3,7 +3,7 @@ import LandingPage from './pages/public/Landing.jsx';
 import TradingPage from './pages/logged-in/TradingPage.jsx';
 import DashboardPage from "./pages/logged-in/Dashboard.jsx";
 import NotFound from './pages/public/NotFound.jsx';
-import RecentTrades from './components/trading/RecentTrades.jsx';
+import RecentTrades from './pages/logged-in/RecentTrades.jsx';
 import Authentication from './pages/public/Authentication.jsx';
 import SideNav from './components/layout/SideNav.jsx';
 import DisplayProfile from './pages/logged-in/Account.jsx';
