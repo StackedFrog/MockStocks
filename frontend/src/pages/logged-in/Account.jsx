@@ -5,13 +5,14 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { useState } from "react";
 import LogoutEveryWhere from "../../components/auth/LogoutEveryWhere.jsx"
 import Modal from "../../components/ui/Modal.jsx"
+import ChangePasswordForm from "../../components/auth/ChangePassowrdForm.jsx";
 import { useNavigate } from 'react-router-dom'
 
 
 function DisplayProfile({user}){
     const {apiFetch, apiUnAuth} = useApi();
     const navigate = useNavigate()
-    let [name, setName] = useState(user.username) ?? "";
+    const name = user.username ?? "";
     const cash = user.balance ?? "";
     const email = user.email;
     const [isEdit, setEdit] = useState(false);
@@ -27,36 +28,9 @@ function DisplayProfile({user}){
         setModalOpen(false)
     }
     const editClick = () => {
-        setEdit(true)
-    }
-    const save = (e) => {
-        e.preventDefault();
-        setEdit(false)
+        setEdit(!isEdit)
     }
 
-    const handleAccount = async (e) =>{
-        e.preventDefault()
-        try{
-            const response = await apiFetch("",{
-                method: "GET",
-                body: JSON.stringify(name, email, cash)
-            })
-            if (response.ok){
-                const data = await response.json();
-                console.log(data)
-            }
-            else{
-                console.error(err)
-                alert("Something went wrong.")
-            }
-        }
-        catch(err){
-            console.error(err)
-            alert("Something went wrong.")
-        }
-    }
-
-                            // <form onSubmit={save}><div>Name: {isEdit ? (<input className="underline" type = "text" onChange={(e) => setName(e.target.value)}value = {name}></input>): (<span>{name}</span>)}</div></form>
     return(
         <>
                 <div className="px-4 py-6 bg-background flex justify-center flex-col">
@@ -69,7 +43,8 @@ function DisplayProfile({user}){
                             { email && (<> <div className="font-heading text-secondary">Email </div><div>{email}</div></>)}
                             <div className="font-heading text-secondary">Balance </div>
                             <div>{cash} USD</div>
-                            <Button text={"Edit Password"} icon={<BiSolidEditAlt/>} onClick={editClick} className="text-sm lg:w-auto"/>
+                            {isEdit ? (<><ChangePasswordForm editClick={editClick}/> </>
+                            ):(<Button text={"Edit Password"} icon={<BiSolidEditAlt/>} onClick={editClick} className="text-sm lg:w-auto"/>) }
                         </div>
                     </div>
                 </div>

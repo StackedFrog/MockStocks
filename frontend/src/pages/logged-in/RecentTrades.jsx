@@ -10,7 +10,6 @@ function RecentTrades () {
 		const fetchTransactions = async () => {
 			const response = await apiFetch("/api/user/transactions");
 			const data = await response.json();
-                        console.log(data)
 			const parsedData = data.map(t => ({
 				date: new Date(t.date).toLocaleString('en-GB', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).replace(',', ''),
 				symbol: t.symbol,
