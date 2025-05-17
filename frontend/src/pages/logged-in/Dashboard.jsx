@@ -5,15 +5,24 @@ import HoldingsTable from "../../components/trading/HoldingsTable.jsx"
 
 function DashboardPage () {
         const {apiFetch} = useApi();
-        const [trendingData, setTrendingData] = useState(null);
+        const [trendingData, setTrendingData] = useState([]);
         const [userHoldings, setUserHoldings] = useState(null);
+        const [validStocks, setValidStocks] = useState(new Set());
+
+        const handleValidStock = (symbol) => {
+                setValidStocks(prev => {
+                        const updated = new Set(prev);
+                        updated.add(symbol);
+                        return updated.size <= 12 ? updated : prev;
+                });
+        };
 
         useEffect(() => {
                 const fetchTrending = async () => {
                         try {
                                 const response = await apiFetch("/api/stocks_api/trending");
                                 const data = await response.json();
-                                setTrendingData(data.slice(0, 12));
+                                setTrendingData(data);
                         } catch (error){
                                 console.error("Could not fetch trending stocks.", error);
                         }
@@ -36,18 +45,17 @@ function DashboardPage () {
         }, [])
 
         return (
-
                 <div className="px-4 py-6 bg-background">
                 <h2 className="font-heading text-secondary text-3xl mb-6">Your Holdings</h2>
                 <HoldingsTable data={userHoldings}/>
 
                 <h2 className="font-heading text-secondary text-3xl my-6 mt-12">Trending Stocks</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {trendingData && trendingData.map((stock) => (
-                        <div key={stock} className="col-span-1">
-                        <StockCard symbol={stock} />
-                        </div>
-                ))}
+                {trendingData.map(symbol =>
+                        validStocks.size < 12 || validStocks.has(symbol) ? (
+                                <StockCard key={symbol} symbol={symbol} onValid={handleValidStock} />
+                        ) : null
+                )}
                 </div>
                 </div>
 

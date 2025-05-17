@@ -35,13 +35,13 @@ const apiCall = async (url, options = {}, token) => {
 
 export const useApi = () => {
 
-	const { accessToken, refreshAccessToken, setAccessToken} = useAuth()
+	const {tokenRef, accessToken, refreshAccessToken, setAccessToken} = useAuth()
 	const navigate = useNavigate()
 
 
 
 	const getToken = async () => {
-		let token = accessToken
+		let token = tokenRef.current
 
 		if (!token){
 			token = await refreshAccessToken()
@@ -57,11 +57,12 @@ export const useApi = () => {
 		let token = await getToken()
 
 		if (!token){
+			console.log("could not get token")
 			redirect && navigate("/")
 			return
 		}
 
-		const res = await apiCall(url, options, token)
+		let res = await apiCall(url, options, token)
 
 
 		if (res.status === 403){
@@ -71,15 +72,19 @@ export const useApi = () => {
 		}
 
 		if (res.status === 401){
+			console.log("stail token")
+
 			token = await refreshAccessToken()
+
 			if (!token){
 				redirect && navigate("/")
 				return
 			}
 
-			const res = await apiCall(url, options, token)
+			res = await apiCall(url, options, token)
 
 			if(res.status === 401){
+				console.log("un auth")
 			        redirect && navigate("/")
 				return
 			}

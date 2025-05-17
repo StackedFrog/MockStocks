@@ -8,6 +8,8 @@ import Authentication from './pages/public/Authentication.jsx';
 import SideNav from './components/layout/SideNav.jsx';
 import DisplayProfile from './pages/logged-in/Account.jsx';
 import AdminPage from './pages/logged-in/admin/AdminPage.jsx';
+import DisplayName from "./components/layout/ProfileDisplay.jsx"
+import DisplayBalance from "./components/layout/DisplayBalance.jsx";
 import { useEffect, useState } from "react";
 import { useApi } from './hooks/useApi.jsx';
 import About from './pages/public/About.jsx';
@@ -48,8 +50,8 @@ function AppLayout({userInfo, setUserInfo}) {
 
 	const fetchUserInfo = async () => {
 		console.log("fetching")
-		const res = await apiFetch("api/user/info", { method: "GET" });
-		if (res.ok) {
+		const res = await apiFetch("api/user/info", { method: "GET" }, false);
+		if (res) {
 			const data = await res.json();
 			setUserInfo(data);
 		}
@@ -67,34 +69,40 @@ function AppLayout({userInfo, setUserInfo}) {
 			{userInfo ? (
 				<>
 					{isMobile && (
-						<div className="h-16 flex sticky top-0 w-full items-center bg-background border-b border-gray-200 dark:border-gray-700">
-							<button onClick={() => setSidebarOpen(true)} className="text-primary text-2xl ml-2 mb-1">
-								<FiMenu/>
-							</button>
-							<div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-1">
-								<h1 className="text-primary text-3xl font-heading">Mock</h1>
-								<h1 className="text-secondary text-3xl font-heading">Stocks</h1>
+						<>
+							<div className="h-16 flex sticky top-0 w-full items-center bg-background border-b border-gray-200 dark:border-gray-700">
+								<button onClick={() => setSidebarOpen(true)} className="text-primary text-2xl ml-2 mb-1">
+									<FiMenu/>
+								</button>
+								<div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-1">
+									<h1 className="text-primary text-3xl font-heading">Mock</h1>
+									<h1 className="text-secondary text-3xl font-heading">Stocks</h1>
+								</div>
+								{sidebarOpen && (
+									<>
+										<div className="fixed inset-0 z-100 bg-opacity-0" onClick={() => setSidebarOpen(false)}/>
+										<div className="fixed inset-y-0 left-0 z-150 w-64 bg-background border-r border-gray-700 flex flex-col">
+											<SideNav userInfo={userInfo} onLogoutInfo={setUserInfo} setSidebarOpen={setSidebarOpen} />
+										</div>
+									</>
+								)}
 							</div>
-							{sidebarOpen && (
-								<>
-									<div className="fixed inset-0 z-100 bg-opacity-0" onClick={() => setSidebarOpen(false)}/>
-									<div className="fixed inset-y-0 left-0 z-150 w-64 bg-background border-r border-gray-700 flex flex-col">
-										<SideNav userInfo={userInfo} setSidebarOpen={setSidebarOpen} />
-									</div>
-								</>
-							)}
-						</div>
+							<div className="flex my-4 items-center justify-center gap-4" style={{margin: "10px"}}>
+								<DisplayName name={userInfo.username}/>
+								<DisplayBalance cash={userInfo.balance}/> 
+							</div>
+						</>
 					)}
 					<div className="flex ">
 						{!isMobile && (
-							<SideNav userInfo={userInfo} setSidebarOpen={setSidebarOpen} />
+							<SideNav userInfo={userInfo} onLogoutInfo={setUserInfo} setSidebarOpen={setSidebarOpen} />
 						)}
 						<main className="flex-1 p-6 bg-background text-gray-900 dark:text-white transition-colors">
 							<Routes>
 								<Route path="/trade" element={<TradingPage hideChart={isMobile && sidebarOpen}/>} />
 								<Route path="/dashboard" element={<DashboardPage />} />
 								<Route path="/recent" element={<RecentTrades />} />
-								<Route path="/account" element={<DisplayProfile />} />
+								<Route path="/account" element={<DisplayProfile user={userInfo}/>} />
 								<Route path="/admin" element={<AdminPage />} />
 								<Route path="/about" element={<About />} />
 								<Route path="*" element={<NotFound />} />

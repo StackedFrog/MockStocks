@@ -14,12 +14,13 @@ const navItems = [
   { name: "Recent", icon: LuClock, href: "/recent" },
 ];
 
-function SideNav({ userInfo, setSidebarOpen }) {
+function SideNav({ userInfo, onLogoutInfo ,setSidebarOpen }) {
   const { apiUnAuth } = useApi();
   const navigate = useNavigate();
 
   const onLogout = async () => {
     await apiUnAuth("/auth/user/logout");
+    onLogoutInfo(null)
     navigate("/");
   };
 
@@ -40,7 +41,8 @@ function SideNav({ userInfo, setSidebarOpen }) {
         className="block lg:hidden"
         />
         </>
-        {userInfo.username}
+        <p>{userInfo.username}</p>
+        <p className="font-text">{userInfo.balance} USD</p>
       </div>
 
       {/* Top nav links */}

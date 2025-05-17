@@ -5,7 +5,7 @@ import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
 
 
 
-export const TradingChart = ({ symbol, colors }) => {
+const Chart = ({ symbol, colors }) => {
   const { apiFetch } = useApi();
   const [stockName, setStockName] = useState(null);
   const [stockData, setStockData] = useState([]);
@@ -31,7 +31,7 @@ export const TradingChart = ({ symbol, colors }) => {
         ...stockDataRef.current.slice(0, -1),
         lastTradeAPI
       ]
-      
+
       setStockData(newData)
       stockDataRef.current = newData
     } else {
@@ -48,7 +48,8 @@ export const TradingChart = ({ symbol, colors }) => {
 
   const fetchTrades = async () => {
     try {
-      const response = await apiFetch(
+      	console.log("geting data")
+	const response = await apiFetch(
         `/api/stocks_api/range?symbol=${encodeURIComponent(searchParams.get('symbol'))}&range=12h&interval=15m`
       )
       if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
@@ -76,7 +77,7 @@ export const TradingChart = ({ symbol, colors }) => {
     const data = await fetchTrades();
     setStockData(data);
     stockDataRef.current = data
-    
+
   })();
 
     // fetches trading data every 300ms
@@ -94,8 +95,8 @@ export const TradingChart = ({ symbol, colors }) => {
 
 const TradingviewApiChart = ({ data, colors = {} }) => {
   const {
-    backgroundColor = 'rgb(15,15,15)',
-    textColor       = 'white',
+    backgroundColor = '#0b0d0b',
+    textColor       = '#eaecea',
   } = colors;
 
   const chartContainerRef = useRef(null);
@@ -110,17 +111,18 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
         textColor,
       },
       width: chartContainerRef.current.clientWidth,
-      height: 300,
+      height: 400,
+    
     });
 
     // 2. Add candlestick series
     const series = chart.addSeries(CandlestickSeries, {
-      upColor:         '#4fff44',
-      borderUpColor:   '#4fff44',
-      wickUpColor:     '#4fff44',
-      downColor:       '#ff4976',
-      borderDownColor: '#ff4976',
-      wickDownColor:   '#ff4976',
+      upColor:         '#4d7d2d',
+      borderUpColor:   '#4d7d2d',
+      wickUpColor:     '#4d7d2d',
+      downColor:       '#691919',
+      borderDownColor: '#691919',
+      wickDownColor:   '#691919',
     });
 
     // 3. Save refs
@@ -133,6 +135,8 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
     // 5. Resize handler
     const handleResize = () => {
       chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+                chart.timeScale().fitContent();
+
     };
     window.addEventListener('resize', handleResize);
 
@@ -147,9 +151,16 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
   useEffect(() => {
     if (seriesRef.current && data?.length) {
       seriesRef.current.setData(data);
+            chartRef.current?.timeScale().fitContent();
     }
   }, [data]);
 
   return <div ref={chartContainerRef} />;
 };
 
+export const TradingChart = ({ symbol, colors, hideChart}) => {
+        if (hideChart) return null;
+        return <Chart symbol={symbol} colors={colors} />;
+};
+
+export default TradingChart;
