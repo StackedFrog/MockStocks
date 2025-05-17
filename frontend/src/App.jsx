@@ -48,15 +48,11 @@ function AppLayout({userInfo, setUserInfo}) {
         }, [isMobile, sidebarOpen]);
 
         const fetchUserInfo = async () => {
-                try{
                 console.log("fetching")
-                const res = await apiFetch("api/user/info", { method: "GET" });
-                if (res.ok) {
+                const res = await apiFetch("api/user/info", { method: "GET" }, false);
+                if (res) {
                         const data = await res.json();
                         setUserInfo(data);
-                }
-                } catch (error) {
-                        console.error("No user information.")
                 }
         };
 
@@ -84,7 +80,7 @@ function AppLayout({userInfo, setUserInfo}) {
                                         <>
                                         <div className="fixed inset-0 z-100 bg-opacity-0" onClick={() => setSidebarOpen(false)}/>
                                         <div className="fixed inset-y-0 left-0 z-150 w-64 bg-background border-r border-gray-700 flex flex-col">
-                                        <SideNav userInfo={userInfo} setSidebarOpen={setSidebarOpen} />
+                                        <SideNav userInfo={userInfo} onLogoutInfo={setUserInfo} setSidebarOpen={setSidebarOpen} />
                                         </div>
                                         </>
                                 )}
@@ -92,7 +88,7 @@ function AppLayout({userInfo, setUserInfo}) {
                         )}
                         <div className="flex ">
                         {!isMobile && (
-                                <SideNav userInfo={userInfo} setSidebarOpen={setSidebarOpen} />
+                                <SideNav userInfo={userInfo} onLogoutInfo={setUserInfo} setSidebarOpen={setSidebarOpen} />
                         )}
                         <main className="flex-1 p-6 bg-background text-gray-900 dark:text-white transition-colors">
                         <Routes>
