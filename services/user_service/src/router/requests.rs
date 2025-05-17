@@ -6,13 +6,13 @@ use tracing::info;
 
 #[derive(Deserialize, Clone)]
 pub struct LatestQuote {
-    _symbol: String,
-    _date: String,
+    symbol: String,
+    date: String,
     pub close: f64,
-    _open: f64,
-    _high: f64,
-    _low: f64,
-    _volume: u64,
+    open: f64,
+    high: f64,
+    low: f64,
+    volume: u64,
 }
 
 pub async fn get_stock(client: Client, symbol: &String) -> Result<LatestQuote> {
