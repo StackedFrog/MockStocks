@@ -14,12 +14,13 @@ const navItems = [
   { name: "Recent", icon: LuClock, href: "/recent" },
 ];
 
-function SideNav({ userInfo, setSidebarOpen }) {
+function SideNav({ userInfo, onLogoutInfo ,setSidebarOpen }) {
   const { apiUnAuth } = useApi();
   const navigate = useNavigate();
 
   const onLogout = async () => {
     await apiUnAuth("/auth/user/logout");
+    onLogoutInfo(null)
     navigate("/");
   };
 
