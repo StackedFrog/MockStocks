@@ -16,6 +16,7 @@ CREATE TABLE Transactions (
     user_id UUID NOT NULL REFERENCES Users(user_id),
     date TIMESTAMPTZ NOT NULL,
     symbol VARCHAR(10) NOT NULL,
+    amount DOUBLE PRECISION NOT NULL,
     price DOUBLE PRECISION NOT NULL,
     transaction_type TRANSACTION_TYPE NOT NULL,
     quantity NUMERIC NOT NULL

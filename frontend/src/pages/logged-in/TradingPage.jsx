@@ -5,7 +5,7 @@ import BuyingAndSelling from '../../components/trading/BuyingAndSelling.jsx';
 import { StocksSearchBar } from '../../components/trading/StocksSearchBar.jsx';
 import { useApi } from '../../hooks/useApi.jsx';
 
-function TradingPage() {
+function TradingPage( {hideChart} ) {
   const { apiFetch } = useApi();
   const [stockSymbol, setStockSymbol] = useState(null);
   const [stockName, setStockName] = useState(null);
@@ -19,15 +19,39 @@ function TradingPage() {
     setSearchParams({ symbol });
   }
 
+        useEffect(() => {
+		const symbol = searchParams.get("symbol");
+		if (symbol && (symbol !== stockSymbol)) {
+
+			const fetchStockInfoAndSelect = async () => {
+				try {
+					const response = await apiFetch(`/api/stocks_api/ticker?symbol=${encodeURIComponent(symbol)}`);
+					if (!response.ok) throw new Error('Stock not found');
+					const results = await response.json();
+
+					const stock = results.find(s => s.symbol === symbol);
+					if (stock) {
+						handleSelectStock(stock.symbol, stock.name);
+					}
+				} catch (err) {
+					console.error('Error fetching stock info from symbol param:', err);
+				}
+			};
+
+			fetchStockInfoAndSelect();
+		}
+	}, [searchParams]);
+
+
   return (
-    <div className="bg-background min-h-screen p-4">
+    <div className="bg-background min-h-screen w-full">
+    <h1 className="flex justify-start text-secondary text-3xl font-heading my-4" >Trading Overview</h1>
       
       {searchParams?.size === 0 ? (
         
         // DISPLAY ONLY SERACH BAR
 
-        <div className="">
-          <h1 className="flex justify-start text-secondary text-3xl font-heading m-3" >Trading Overview</h1>
+        <div className="flex w-full justify-start">
           <StocksSearchBar onSelect={handleSelectStock} />
         </div>
 
@@ -36,16 +60,17 @@ function TradingPage() {
         // DISPLAY SEARCH BAR AND GRAPH
 
           <div>
-            <div className="z-20 top-1 left-1 w-[50%]">
+            <div className="w-full">
               <StocksSearchBar onSelect={handleSelectStock} />
             </div>
 
-            <h2 className="text-3xl text-secondary font-heading p-5">
+            <h2 className="text-3xl text-secondary font-heading my-4">
               {stockName}
             </h2>
             <TradingChart
               symbol={stockSymbol}
               colors={{ backgroundColor: '#0b0d0b', textColor: '#eaecea' }}
+              hideChart={hideChart}
             />
             <BuyingAndSelling />
           </div>

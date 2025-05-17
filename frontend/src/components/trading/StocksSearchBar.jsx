@@ -57,14 +57,14 @@ export function StocksSearchBar({ onSelect, initialSymbol }) {
   };
 
   return (
-    <div ref={divRef} className="flex justify-center items-center flex-col mt-4 p-4 text-white"
+    <div ref={divRef} className="flex justify-center items-center flex-col text-white w-full"
     >
       <input
         type="text"
         placeholder="Search for symbols or companies..."
         value={searchTerm}
         onChange={handleChange}
-        className="z-1 w-full p-3 bg-[#1a1a1a] text-text border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+        className="w-full p-3 bg-[#1a1a1a] text-xs sm:text-base text-text border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
       />
       {searchResults.length > 0 && (
         <section className="z-10 w-full bg-[#1f1f1f] mt-1 border border-gray-700 rounded-md">

@@ -41,7 +41,8 @@ function SideNav({ userInfo, onLogoutInfo ,setSidebarOpen }) {
         className="block lg:hidden"
         />
         </>
-        {userInfo.username}
+        <p>{userInfo.username}</p>
+        <p className="font-text">{userInfo.balance} USD</p>
       </div>
 
       {/* Top nav links */}

@@ -13,6 +13,7 @@ use super::transactions::delete_all_transactions;
 pub struct User {
     pub user_id: Uuid,
     pub username: String,
+    pub email: String,
     pub role: UserType,
     pub balance: Decimal,
 }
