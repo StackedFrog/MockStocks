@@ -81,8 +81,8 @@ function RecentTrades () {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-background flex flex-col items-center gap-5 py-15 lg:py-20'>
-			<h1 className="font-heading text-secondary text-3xl">Recent Transactions</h1>
+		<div className='px-4 py-6 bg-background'>
+			<h1 className="font-heading text-secondary text-3xl mb-6">Recent Transactions</h1>
 			<RecentsTable data={userTransactions}/>
 		</div>
 	);

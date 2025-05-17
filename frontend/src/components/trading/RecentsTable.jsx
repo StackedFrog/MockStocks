@@ -54,7 +54,7 @@ const Table = ({ data }) => {
 			</div>
 
 			{/* Desktop layout */}
-			<div className="hidden sm:block overflow-x-auto">
+			<div className="hidden sm:block">
 				<table className="min-w-full rounded-lg overflow-hidden">
 					<thead>
 						<tr className="bg-secondary text-text font-heading">
