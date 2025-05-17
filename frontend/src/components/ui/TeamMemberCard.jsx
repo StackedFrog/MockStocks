@@ -8,12 +8,12 @@ const TeamMemberCard = ({ avatarUrl, githubUrl, displayName, linkedinUrl }) => {
 			<div className="flex gap-5">
 				<a href={githubUrl} target="_blank" className="text-accent text-5xl hover:text-secondary
                  active:text-secondary transition-colors duration:200">
-					<i class="devicon-github-original"></i>
+					<i className="devicon-github-original"></i>
 				</a>
 				{linkedinUrl && (
 					<a href={linkedinUrl} target="_blank" className="text-accent text-5xl hover:text-secondary
                      active:text-secondary transition-colors duration:200">
-						<i class="devicon-linkedin-plain"></i>
+						<i className="devicon-linkedin-plain"></i>
 					</a>
 				)}
 			</div>
