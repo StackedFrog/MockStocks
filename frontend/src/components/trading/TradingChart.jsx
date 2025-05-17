@@ -102,6 +102,7 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
   const seriesRef = useRef(null);
+        const hasFitRef = useRef(false);
 
   useEffect(() => {
     // 1. Create chart instance
@@ -151,7 +152,10 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
   useEffect(() => {
     if (seriesRef.current && data?.length) {
       seriesRef.current.setData(data);
-            chartRef.current?.timeScale().fitContent();
+            if (!hasFitRef.current) {
+        chartRef.current?.timeScale().fitContent();
+        hasFitRef.current = true;
+      }
     }
   }, [data]);
 
