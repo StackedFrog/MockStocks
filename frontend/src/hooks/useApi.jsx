@@ -108,7 +108,8 @@ export const useApi = () => {
 			if(data.url){
 				window.location.href = data.url
 			}else{
-				setAccessToken(data.token)
+				setAccessToken(data.token);
+				tokenRef.current = data.token;
 			}
 		}
 		return res
