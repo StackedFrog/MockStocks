@@ -22,7 +22,7 @@ function UserManagement() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background py-10 flex flex-col items-center">
+    <div className="bg-background py-10 flex flex-col items-center">
       <h1 className="text-3xl font-heading text-secondary mb-8">User Management</h1>
       <div className="flex flex-wrap justify-center gap-6 w-full max-w-6xl px-4">
         {users.map((user) => (
@@ -65,7 +65,7 @@ function UserCard({ user, fetchUsers }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-heading text-secondary">{user.username}</h2>
-          <p className="text-secondary text-sm">Balance: ${user.balance}</p>
+          <p className="text-secondary text-sm">Balance:{user.balance}</p>
           <p className="text-sm text-secondary ">Role: {user.role}</p>
         </div>
         <div className="ml-2">

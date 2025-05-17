@@ -43,19 +43,19 @@ function About() {
 						<h3 className='font-heading text-primary text-2xl'>FRONTEND</h3>
 						<div className='flex flex-wrap gap-3 py-5 sm:w-[70%] sm:justify-center'>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-html5-plain"></i>
+								<i className="devicon-html5-plain"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-tailwindcss-original"></i>
+								<i className="devicon-tailwindcss-original"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-react-original"></i>
+								<i className="devicon-react-original"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-vitejs-plain"></i>
+								<i className="devicon-vitejs-plain"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-javascript-plain"></i>
+								<i className="devicon-javascript-plain"></i>
 							</div>
 						</div>
 					</div>
@@ -64,22 +64,22 @@ function About() {
 						<h3 className='font-heading text-primary text-2xl'>BACKEND</h3>
 						<div className='flex flex-wrap gap-3 w-[60%] py-5'>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-rust-original"></i>
+								<i className="devicon-rust-original"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-redis-plain"></i>
+								<i className="devicon-redis-plain"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-oauth-plain"></i>
+								<i className="devicon-oauth-plain"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-opentelemetry-plain"></i>
+								<i className="devicon-opentelemetry-plain"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-postgresql-plain"></i>
+								<i className="devicon-postgresql-plain"></i>
 							</div>
 							<div className='text-6xl text-accent'>
-								<i class="devicon-docker-plain"></i>
+								<i className="devicon-docker-plain"></i>
 							</div>
 						</div>
 					</div>
