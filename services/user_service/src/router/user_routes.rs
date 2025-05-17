@@ -50,7 +50,7 @@ pub struct TransactionPayload {
 pub struct HoldingInfo {
     pub holding: Holding,
     pub performance: Decimal,
-    pub price: Decimal,
+    pub value: Decimal,
 }
 
 async fn purchase_handler(
@@ -189,7 +189,7 @@ async fn holdings_handler(
         let h_info = HoldingInfo {
             holding: h,
             performance,
-            price,
+            value: current_value,
         };
 
         // add to vec of HoldingInfo structs
