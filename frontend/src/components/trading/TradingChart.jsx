@@ -94,8 +94,8 @@ export const TradingChart = ({ symbol, colors }) => {
 
 const TradingviewApiChart = ({ data, colors = {} }) => {
   const {
-    backgroundColor = 'rgb(15,15,15)',
-    textColor       = 'white',
+    backgroundColor = '#0b0d0b',
+    textColor       = '#eaecea',
   } = colors;
 
   const chartContainerRef = useRef(null);
@@ -110,17 +110,18 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
         textColor,
       },
       width: chartContainerRef.current.clientWidth,
-      height: 300,
+      height: 600,
+    
     });
 
     // 2. Add candlestick series
     const series = chart.addSeries(CandlestickSeries, {
-      upColor:         '#4fff44',
-      borderUpColor:   '#4fff44',
-      wickUpColor:     '#4fff44',
-      downColor:       '#ff4976',
-      borderDownColor: '#ff4976',
-      wickDownColor:   '#ff4976',
+      upColor:         '#4d7d2d',
+      borderUpColor:   '#4d7d2d',
+      wickUpColor:     '#4d7d2d',
+      downColor:       '#691919',
+      borderDownColor: '#691919',
+      wickDownColor:   '#691919',
     });
 
     // 3. Save refs
