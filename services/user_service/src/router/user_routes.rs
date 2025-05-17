@@ -19,8 +19,7 @@ use axum::{
     extract::State,
     routing::{get, post},
 };
-use rust_decimal::dec;
-use rust_decimal::{Decimal, prelude::FromPrimitive};
+use rust_decimal::{dec, Decimal, prelude::FromPrimitive, prelude::ToPrimitive};
 use serde::Deserialize;
 use serde::Serialize;
 use shared_utils::ctx::Ctx;
@@ -43,7 +42,7 @@ pub fn routes(mm: ModelManager) -> Router {
 #[derive(Deserialize)]
 pub struct TransactionPayload {
     pub symbol: String,
-    pub balance: Decimal,
+    pub amount: Decimal,
 }
 
 #[derive(Serialize)]
@@ -61,7 +60,7 @@ async fn purchase_handler(
     // get user info
     let user_id = ctx.user_id();
     let user = get_user_by_id(&mm.pool, user_id).await?;
-    let new_balance = user.balance - body.balance;
+    let new_balance = user.balance - body.amount;
     if new_balance < dec!(0.0) {
         Err(Error::InsufficientBalance)?
     }
@@ -70,14 +69,18 @@ async fn purchase_handler(
     let latest_quote = get_stock(mm.client, &body.symbol).await?;
     let price = Decimal::from_f64(latest_quote.close).ok_or(Error::FailedToParsePrice)?;
     info!("{}", price);
-    let quantity = body.balance / price;
+    let quantity = body.amount / price;
     info!("{}", quantity);
     // check if holding already exists
     let holding = get_holding_by_symbol(&mm.pool, user_id, &body.symbol).await;
 
+    //parse amount
+    let amount = body.amount.to_f64().ok_or(Error::FailedToParseAmount)?;
+
     let new_transaction = NewTransaction::new(
         user_id,
         body.symbol.clone(),
+        amount,
         latest_quote.close,
         TransactionType::Purchase,
         quantity,
@@ -113,7 +116,7 @@ async fn sale_handler(
     let latest_quote = get_stock(mm.client, &body.symbol).await?;
     let price = Decimal::from_f64(latest_quote.close).ok_or(Error::FailedToParsePrice)?;
     info!("{}", price);
-    let quantity = body.balance / price;
+    let quantity = body.amount / price;
     info!("{}", quantity);
     // check the holding exists for the user
     let holding = get_holding_by_symbol(&mm.pool, user_id, &body.symbol).await?;
@@ -123,12 +126,16 @@ async fn sale_handler(
         Err(Error::InsufficientStockQuantity)?
     }
 
-    let new_balance = user.balance + body.balance;
+    let new_balance = user.balance + body.amount;
+
+    //parse amount
+    let amount = body.amount.to_f64().ok_or(Error::FailedToParseAmount)?;
 
     // create transaction and holding
     let new_transaction = NewTransaction::new(
         user_id,
         body.symbol.clone(),
+        amount,
         latest_quote.close,
         TransactionType::Sale,
         quantity,

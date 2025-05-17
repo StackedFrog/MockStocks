@@ -11,6 +11,7 @@ pub enum Error {
     FailedToFetchStock,
     FailedToParseLatestQuote,
     FailedToParsePrice,
+    FailedToParseAmount,
     NotAuthorized,
 }
 

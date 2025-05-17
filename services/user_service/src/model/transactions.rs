@@ -16,6 +16,7 @@ pub struct Transaction {
     user_id: Uuid,
     pub date: DateTime<Utc>,
     pub symbol: String,
+    pub amount: f64,
     pub price: f64,
     pub transaction_type: TransactionType,
     pub quantity: Decimal,
@@ -25,6 +26,7 @@ pub struct Transaction {
 pub struct NewTransaction {
     pub user_id: Uuid,
     pub symbol: String,
+    pub amount: f64,
     pub price: f64,
     pub transaction_type: TransactionType,
     pub quantity: Decimal,
@@ -43,6 +45,7 @@ impl NewTransaction {
     pub fn new(
         user_id: &Uuid,
         symbol: String,
+        amount: f64,
         price: f64,
         transaction_type: TransactionType,
         quantity: Decimal,
@@ -50,6 +53,7 @@ impl NewTransaction {
         Self {
             user_id: user_id.clone(),
             symbol,
+            amount,
             price,
             transaction_type,
             quantity,
@@ -85,11 +89,12 @@ pub async fn get_transactions_by_symbol(
 }
 
 pub async fn add_transaction(pool: &mut PgConnection, transaction: NewTransaction) -> Result<()> {
-    let query = "INSERT INTO Transactions (user_id, date, symbol, price, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5, $6)";
+    let query = "INSERT INTO Transactions (user_id, date, symbol, amount, price, transaction_type, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)";
     sqlx::query(query)
         .bind(transaction.user_id)
         .bind(Utc::now())
         .bind(transaction.symbol)
+        .bind(transaction.amount)
         .bind(transaction.price)
         .bind(transaction.transaction_type)
         .bind(transaction.quantity)
