@@ -20,8 +20,10 @@ pub struct UserData {
     pub given_name: String,
     pub family_name: String,
     picture: String,
+    pub email: String,
     pub id: String,
     pub name: String,
+    verified_email:bool
 }
 
 pub async fn google_autherized(auth_request: AuthRequest, mm: ModelManager) -> Result<UserData> {

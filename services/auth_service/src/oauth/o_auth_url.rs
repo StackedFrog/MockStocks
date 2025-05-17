@@ -16,6 +16,7 @@ pub async fn oauth_url(mm: ModelManager) -> Result<Url> {
         .add_scope(Scope::new(
             "https://www.googleapis.com/auth/userinfo.profile".to_string(),
         ))
+        .add_scope("https://www.googleapis.com/auth/userinfo.email".to_string())
         .set_pkce_challenge(pkce_challenge)
         .url();
 
