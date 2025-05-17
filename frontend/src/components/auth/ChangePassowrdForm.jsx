@@ -42,6 +42,7 @@ function ChangePasswordForm( {editClick} ) {
                                 setOldPassword("");
                                 setNewPassword("");
                                 setConfirmNewPassword("");
+                                editClick();
                         } else {
                                 setError("Make sure your current password is correct.");
                         }
@@ -80,8 +81,8 @@ function ChangePasswordForm( {editClick} ) {
                 required
                 />
 
-                {error && <p className="text-red-500 text-sm animate-pulse">{error}</p>}
-                {success && <p className="text-green-500 text-sm">{success}</p>}
+                {error && <p className="text-stock-negative text-sm animate-pulse">{error}</p>}
+                {success && <p className="text-stock-positive text-sm">{success}</p>}
                 <Button type="submit" text="Update Password" className="text-sm w-[75%] lg:w-[55%]" />
                 <Button text="Cancel"  onClick={editClick} className="text-sm w-[75%] lg:w-[55%]"/>
                 </form>
