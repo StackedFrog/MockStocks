@@ -20,27 +20,14 @@ function TradingPage() {
   }
 
   return (
-    <div className="bg-[#141414] min-h-screen p-4">
-
-      // NAV
-      <nav className="flex justify-end gap-4 font-bold">
-        <Link className="text-text underline hover:no-underline" to="/">
-          Home
-        </Link>
-        <button
-          className="text-text underline hover:no-underline hover:cursor-pointer"
-          onClick={() => setSearchParams()}
-        >
-          Search
-        </button>
-      </nav>
-
+    <div className="bg-background min-h-screen p-4">
+      
       {searchParams?.size === 0 ? (
         
         // DISPLAY ONLY SERACH BAR
 
         <div className="">
-          <h1 className="flex justify-center text-text text-6xl font-bold m-3" >Search for a stock</h1>
+          <h1 className="flex justify-start text-secondary text-3xl font-heading m-3" >Trading Overview</h1>
           <StocksSearchBar onSelect={handleSelectStock} />
         </div>
 
@@ -53,12 +40,12 @@ function TradingPage() {
               <StocksSearchBar onSelect={handleSelectStock} />
             </div>
 
-            <h2 className="text-center text-xl text-white font-bold">
+            <h2 className="text-3xl text-secondary font-heading p-5">
               {stockName}
             </h2>
             <TradingChart
               symbol={stockSymbol}
-              colors={{ backgroundColor: '#141414', textColor: '#fff' }}
+              colors={{ backgroundColor: '#0b0d0b', textColor: '#eaecea' }}
             />
             <BuyingAndSelling />
           </div>
@@ -68,5 +55,18 @@ function TradingPage() {
 
   );
 }
+
+// <nav className="flex justify-end gap-4 font-bold">
+//   <Link className="font-heading text-secondary underline hover:no-underline" to="/">
+//     Home
+//   </Link>
+//   <button
+//     className="underline hover:no-underline hover:cursor-pointer"
+//     onClick={() => setSearchParams()}
+//   >
+//     Search
+//   </button>
+// </nav>
+
 
 export default TradingPage;

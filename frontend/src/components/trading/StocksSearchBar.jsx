@@ -61,10 +61,10 @@ export function StocksSearchBar({ onSelect, initialSymbol }) {
     >
       <input
         type="text"
-        placeholder="Apple..."
+        placeholder="Search for symbols or companies..."
         value={searchTerm}
         onChange={handleChange}
-        className="z-1 w-full p-3 bg-[#1a1a1a] text-white border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+        className="z-1 w-full p-3 bg-[#1a1a1a] text-text border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
       />
       {searchResults.length > 0 && (
         <section className="z-10 w-full bg-[#1f1f1f] mt-1 border border-gray-700 rounded-md">
@@ -73,7 +73,7 @@ export function StocksSearchBar({ onSelect, initialSymbol }) {
               key={stock.symbol}
               onClick={() => handleSelect(stock.symbol, stock.name)}
               onBlur={() => {setSearchTerm("")}}
-              className="w-full text-left p-2 hover:bg-gray-600 text-white"
+              className="w-full text-left p-2 hover:bg-gray-600 text-text"
             >
               {stock.name} ({stock.symbol})
             </button>
