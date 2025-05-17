@@ -8,7 +8,6 @@ pub enum Error {
     HoldingNotDeleted,
     HoldingNotAdded,
     TransactionNotAdded,
-    PasswordNotUpdated,
     BalanceNotUpdated,
     UserNotDeleted,
     TxNotCreated,

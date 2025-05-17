@@ -5,7 +5,6 @@ use std::sync::OnceLock;
 #[derive(Deserialize, Clone)]
 pub struct Settings {
     pub redis_password: String,
-    pub cargo_pkg_name: String,
     pub client_id: String,
     pub client_secret: String,
     pub redirect_url: String,

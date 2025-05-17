@@ -1,6 +1,5 @@
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
-use crate::router::user_routes::TransactionPayload;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
 use serde::Serialize;
@@ -9,7 +8,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use super::holdings::{NewHolding, add_holding, update_quantity};
-use super::user::{self, update_balance};
+use super::user::update_balance;
 
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct Transaction {

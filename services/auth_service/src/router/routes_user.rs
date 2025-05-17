@@ -1,12 +1,4 @@
-use axum::{Json, Router, extract::State, routing::post};
-use serde::Deserialize;
-use shared_utils::ctx::Ctx;
-use telemetry::tracing_propegation::inject_tracing_context;
-use tower_cookies::{Cookie, Cookies};
-use tracing::info;
-
 use crate::{
-    config::Settings,
     crypt::{
         self,
         token::{self},
@@ -17,6 +9,11 @@ use crate::{
     },
     utils::cookie_util::{remove_all_cookies, remove_refresh_token_cookie},
 };
+use axum::{Json, Router, extract::State, routing::post};
+use serde::Deserialize;
+use shared_utils::ctx::Ctx;
+use telemetry::tracing_propegation::inject_tracing_context;
+use tower_cookies::Cookies;
 
 use super::{Error, Result};
 
@@ -83,11 +80,7 @@ async fn logout_all_handler(State(mm): State<ModelManager>, cookies: Cookies) ->
     Ok(())
 }
 
-async fn delete_user_handler(
-    State(mm): State<ModelManager>,
-    cookies: Cookies,
-    ctx: Ctx,
-) -> Result<()> {
+async fn delete_user_handler(State(mm): State<ModelManager>, cookies: Cookies) -> Result<()> {
     let refresh_token_cookie = cookies
         .get("refreshToken")
         .ok_or(Error::MissingRefreshToken)?;

@@ -1,12 +1,10 @@
 use crate::{
-    config::Settings,
-    crypt::token::{self, Claims, create_token},
     jwt::token_util,
     model::{
         ModelManager, redis_token,
         users_model::{UserType, get_users_role, update_role},
     },
-    utils::cookie_util::{remove_refresh_token_cookie, set_dash_token_cookie},
+    utils::cookie_util::set_dash_token_cookie,
 };
 use axum::{
     Json, Router,
@@ -17,7 +15,6 @@ use serde::{Deserialize, Serialize};
 use shared_utils::ctx::Ctx;
 use telemetry::tracing_propegation::inject_tracing_context;
 use tower_cookies::Cookies;
-use tracing::info;
 use uuid::Uuid;
 
 use super::{Error, Result, routes_user::logout_handler};
