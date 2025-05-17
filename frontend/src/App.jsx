@@ -48,15 +48,11 @@ function AppLayout({userInfo, setUserInfo}) {
         }, [isMobile, sidebarOpen]);
 
         const fetchUserInfo = async () => {
-                try{
                 console.log("fetching")
                 const res = await apiFetch("api/user/info", { method: "GET" }, false);
                 if (res) {
                         const data = await res.json();
                         setUserInfo(data);
-                }
-                } catch (error) {
-                        console.error("No user information.")
                 }
         };
 
