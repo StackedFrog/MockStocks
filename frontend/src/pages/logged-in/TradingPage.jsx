@@ -19,6 +19,30 @@ function TradingPage() {
     setSearchParams({ symbol });
   }
 
+        useEffect(() => {
+		const symbol = searchParams.get("symbol");
+		if (symbol && (symbol !== stockSymbol)) {
+
+			const fetchStockInfoAndSelect = async () => {
+				try {
+					const response = await apiFetch(`/api/stocks_api/ticker?symbol=${encodeURIComponent(symbol)}`);
+					if (!response.ok) throw new Error('Stock not found');
+					const results = await response.json();
+
+					const stock = results.find(s => s.symbol === symbol);
+					if (stock) {
+						handleSelectStock(stock.symbol, stock.name);
+					}
+				} catch (err) {
+					console.error('Error fetching stock info from symbol param:', err);
+				}
+			};
+
+			fetchStockInfoAndSelect();
+		}
+	}, [searchParams]);
+
+
   return (
     <div className="bg-background min-h-screen p-4">
       
