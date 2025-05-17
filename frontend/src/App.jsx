@@ -54,6 +54,8 @@ function AppLayout({userInfo, setUserInfo}) {
 		if (res) {
 			const data = await res.json();
 			setUserInfo(data);
+		}else {
+			setUserInfo(null);
 		}
 	};
 
