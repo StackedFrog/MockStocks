@@ -9,7 +9,6 @@ import LogoutEveryWhere from "../../components/auth/LogoutEveryWhere.jsx"
 import Modal from "../../components/ui/Modal.jsx"
 import { useNavigate } from 'react-router-dom'
 
-// import { LogoutEveryWhere } from "../../components/auth/LogoutEveryWhere.jsx"
 
 function DisplayProfile({user}){
     const {apiFetch, apiUnAuth} = useApi();
@@ -67,8 +66,8 @@ function DisplayProfile({user}){
                     <DisplayBalance cash = {user.balance}/>
                     <DisplayName name = {user.username}/>
                 </div>
-                <div className="flex justify-start p-4 font-heading">
-                    <h2>Account</h2>
+                <div className="flex justify-start p-4 font-heading text-3xl">
+                    <h2 className="text-secondary">Account</h2>
                 </div>
                 <div className="bg-primary rounded-lg p-8 sm:flex-col ">
                     <div className="flex justify-between">                
