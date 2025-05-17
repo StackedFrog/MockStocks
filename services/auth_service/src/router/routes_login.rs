@@ -128,7 +128,7 @@ async fn login_autherized(
 
     login_user(user, cookies, mm).await?;
 
-    Ok(Redirect::to("/"))
+    Ok(Redirect::to("/dashboard"))
 }
 
 async fn login_user(

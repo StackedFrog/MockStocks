@@ -1,5 +1,6 @@
 use oauth2::{AuthorizationCode, PkceCodeVerifier, TokenResponse};
 use serde::{Deserialize, Serialize};
+use tracing::info;
 
 use crate::{
     model::{ModelManager, redis_csrf},
@@ -37,7 +38,10 @@ pub async fn google_autherized(auth_request: AuthRequest, mm: ModelManager) -> R
         .set_pkce_verifier(PkceCodeVerifier::new(pkce_verifier))
         .request_async(&http_client)
         .await
-        .map_err(|_| Error::FailedToFetchToken)?;
+        .map_err(|_e| {
+            info!("---{:?}", _e);
+            Error::FailedToFetchToken
+        })?;
 
     let client = mm.oauth_manager.api_client;
 
