@@ -31,7 +31,7 @@ export const TradingChart = ({ symbol, colors }) => {
         ...stockDataRef.current.slice(0, -1),
         lastTradeAPI
       ]
-      
+
       setStockData(newData)
       stockDataRef.current = newData
     } else {
@@ -48,7 +48,8 @@ export const TradingChart = ({ symbol, colors }) => {
 
   const fetchTrades = async () => {
     try {
-      const response = await apiFetch(
+      	console.log("geting data")
+	const response = await apiFetch(
         `/api/stocks_api/range?symbol=${encodeURIComponent(searchParams.get('symbol'))}&range=12h&interval=15m`
       )
       if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
@@ -76,7 +77,7 @@ export const TradingChart = ({ symbol, colors }) => {
     const data = await fetchTrades();
     setStockData(data);
     stockDataRef.current = data
-    
+
   })();
 
     // fetches trading data every 300ms
@@ -153,4 +154,3 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
 
   return <div ref={chartContainerRef} />;
 };
-
