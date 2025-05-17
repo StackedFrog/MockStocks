@@ -1,4 +1,4 @@
-use super::{ClientManager, Error, Result};
+use super::{Error, Result};
 use chrono::{DateTime, Local};
 use futures::future::try_join_all;
 use serde::Serialize;

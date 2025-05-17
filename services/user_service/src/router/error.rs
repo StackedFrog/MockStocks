@@ -1,13 +1,11 @@
 use crate::model;
 use axum::{http::StatusCode, response::IntoResponse};
-use tracing::{error, info};
+use tracing::info;
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Clone)]
 pub enum Error {
-    MissingRefreshToken,
     Model(model::Error),
-    UuidNotParsed,
     InsufficientStockQuantity,
     InsufficientBalance,
     FailedToFetchStock,

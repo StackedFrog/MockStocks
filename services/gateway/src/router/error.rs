@@ -39,7 +39,7 @@ impl IntoResponse for Error {
                 token::Error::NotAuthorized => StatusCode::FORBIDDEN,
                 _ => StatusCode::UNAUTHORIZED,
             },
-            _ => StatusCode::INTERNAL_SERVER_ERROR,
+            // _ => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         code.into_response()

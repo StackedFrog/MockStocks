@@ -8,7 +8,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use super::holdings::{NewHolding, add_holding, update_quantity};
-use super::user::{self, update_balance};
+use super::user::update_balance;
 
 #[derive(sqlx::FromRow, Debug, Serialize)]
 pub struct Transaction {
@@ -68,7 +68,11 @@ pub async fn get_all_transactions_by_user(pool: &Pool, user_id: &Uuid) -> Result
     return Ok(transactions);
 }
 
-pub async fn get_transactions_by_symbol(pool: &Pool, user_id: &Uuid, symbol: &String) -> Result<Vec<Transaction>> {
+pub async fn get_transactions_by_symbol(
+    pool: &Pool,
+    user_id: &Uuid,
+    symbol: &String,
+) -> Result<Vec<Transaction>> {
     let query = "SELECT * FROM Transactions WHERE user_id = $1 AND symbol = $2";
     let transactions = sqlx::query_as(query)
         .bind(user_id)

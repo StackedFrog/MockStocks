@@ -4,13 +4,15 @@ use axum::{
     extract::{Request, State},
     handler::HandlerWithoutStateExt,
     http::StatusCode,
-    response::Response,
-    routing::any,
+    response::{Html, IntoResponse, Response},
+    routing::{any, get},
 };
+use tokio::fs::read_to_string;
 use tower_http::services::ServeDir;
 use tracing::info;
 
 use crate::{
+    config::Settings,
     proxy_client::{
         AppState,
         proxy_utils::{ServiceRequestBuilder, ServiceResponseBuilder},
@@ -20,18 +22,33 @@ use crate::{
 
 use super::{Error, Result};
 
-pub fn serve_static() -> Router {
-    async fn handle_404() -> (StatusCode, &'static str) {
-        (StatusCode::NOT_FOUND, "Not Found")
-    }
-    let service_404 = handle_404.into_service();
+pub fn serve_static(mm: AppState) -> Router {
+    let dev = Settings::get().dev;
 
-    // get static route from config
-    let serve_dir = ServeDir::new("view").not_found_service(service_404);
-    Router::new().fallback_service(serve_dir)
+    if dev {
+        serve_static_dev(mm)
+    } else {
+        async fn handle_404() -> (StatusCode, &'static str) {
+            (StatusCode::NOT_FOUND, "Not Found")
+        }
+
+        async fn index_fallback() -> Response {
+            match read_to_string("/app/view/index.html").await {
+                Ok(html) => Html(html).into_response(),
+                Err(_) => {
+                    (StatusCode::INTERNAL_SERVER_ERROR, "index.html not found").into_response()
+                }
+            }
+        }
+
+        let service_404 = handle_404.into_service();
+        // get static route from config
+        let serve_dir = ServeDir::new("/app/view/").fallback(get(index_fallback)); //.not_found_service(service_404);
+        Router::new().fallback_service(serve_dir)
+    }
 }
 
-pub fn serve_static_dev(mm: AppState) -> Router {
+fn serve_static_dev(mm: AppState) -> Router {
     let frontend = Router::new()
         .route("/{*path}", any(frontend_proxy))
         .route("/", any(frontend_proxy))
@@ -40,7 +57,7 @@ pub fn serve_static_dev(mm: AppState) -> Router {
     Router::new().fallback_service(frontend)
 }
 
-pub async fn frontend_proxy(state: State<AppState>, req: Request<Body>) -> Result<Response> {
+async fn frontend_proxy(state: State<AppState>, req: Request<Body>) -> Result<Response> {
     let client = state.http_client.clone();
 
     let auth_url = "http://frontend:5173";

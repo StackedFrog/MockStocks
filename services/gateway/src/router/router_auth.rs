@@ -12,7 +12,6 @@ use axum::{
     routing::any,
 };
 use reqwest::RequestBuilder;
-use tracing::info;
 
 use super::{
     Error, Result,
@@ -42,7 +41,6 @@ async fn auth_proxy_admin(
 ) -> Result<Response> {
     let client = state.http_client.clone();
 
-    info!("{:?}", req);
     let auth_url = "http://auth:4002/admin/";
 
     let target_url = target_url(auth_url, path, req.uri());
@@ -104,8 +102,6 @@ async fn auth_proxy(
         .with_body()
         .await
         .build();
-
-    info!("{:?}", service_request);
 
     let response = call_proxy(service_request).await?;
 

@@ -4,7 +4,6 @@ use std::sync::OnceLock;
 
 #[derive(Deserialize, Clone)]
 pub struct Settings {
-    pub cargo_pkg_name: String,
     pub postgres_password: String,
     pub postgres_db: String,
 }

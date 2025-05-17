@@ -18,7 +18,7 @@ mod utils;
 
 #[tokio::main]
 async fn main() {
-    telemetry::init_telemetry(&config::Settings::get().cargo_pkg_name);
+    telemetry::init_telemetry("Auth");
 
     let mm = ModelManager::new().await;
 
