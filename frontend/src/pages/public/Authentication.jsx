@@ -7,9 +7,9 @@ function Authentication() {
 	const [login, setLogin] = useState(true);
 
 	return (
-		<div className="min-h-screen flex flex-col items-center justify-center bg-background text-text font-text">
-			<Button text="Back to Home" to="/" className='sm:w-[40%] fixed top-0 left-2 max-w-[300px]'></Button>
+		<div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-background text-text font-text">
 			{login ? <LoginForm setLogin={setLogin} /> : <RegisterForm setLogin={setLogin} />}
+			<Button text="Back to Home" to="/" className='sm:w-[40%] max-w-[300px]'></Button>
 		</div>
 	);
 }
