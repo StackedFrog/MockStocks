@@ -117,7 +117,7 @@ export const useApi = () => {
 
 	const apiUnAuth = async (url) => {
 		try {
-			await apiFetch( url, {
+			 await apiFetch( url, {
 				method: "POST",
 				credentials: "include"
 			})
