@@ -69,7 +69,7 @@ function TradingPage( hideChart ) {
 
 	useEffect(() => {
 		const symbol = searchParams.get("symbol");
-		if (symbol && symbol !== stockSymbol) {
+		if (symbol && (symbol !== stockSymbol)) {
 
 			const fetchStockInfoAndSelect = async () => {
 				try {
@@ -88,7 +88,7 @@ function TradingPage( hideChart ) {
 
 			fetchStockInfoAndSelect();
 		}
-	}, [searchParams, stockSymbol]);
+	}, [searchParams]);
 
 	return (
 
