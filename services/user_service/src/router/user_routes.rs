@@ -50,7 +50,7 @@ pub struct TransactionPayload {
 pub struct HoldingInfo {
     pub holding: Holding,
     pub performance: Decimal,
-    pub price: Decimal,
+    pub value: Decimal,
 }
 
 async fn purchase_handler(
@@ -183,7 +183,7 @@ async fn holdings_handler(ctx: Ctx, State(mm): State<ModelManager>) -> Result<Js
         let performance = ((total_spent - current_value) / current_value) * dec!(100.00);
 
         // create new struct with info
-        let h_info = HoldingInfo { holding: h, performance, price };
+        let h_info = HoldingInfo { holding: h, performance, value: current_value };
 
         // add to vec of HoldingInfo structs
         holdings_info.push(h_info);

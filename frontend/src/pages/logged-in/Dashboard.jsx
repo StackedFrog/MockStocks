@@ -22,12 +22,12 @@ function DashboardPage () {
                 const fetchHoldings = async () => {
                         const response = await apiFetch("/api/user/holdings");
                         const data = await response.json();
-                        const processedData = data.map(({ holding, performance, price }) => ({
+                        const processedData = data.map(({ holding, performance, value }) => ({
                                 symbol: holding.symbol,
                                 quantity: parseFloat(holding.quantity).toFixed(5),
                                 updated: new Date(holding.last_updated).toLocaleString('en-GB', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).replace(',', ''),
                                 performance: (parseFloat(performance) >= 0 ? "+" : "") + parseFloat(performance).toFixed(5) + "%",
-                                value: parseFloat(price).toFixed(2) + " USD",
+                                value: parseFloat(value).toFixed(2) + " USD",
                         }));
                         setUserHoldings(processedData);
                 }
