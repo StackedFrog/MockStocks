@@ -55,7 +55,7 @@ function SideNav({ userInfo, setSidebarOpen }) {
 
       {/* Bottom nav and logout */}
       <div className="p-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
-        <NavItem to="/about" icon={BsInfoCircle} label="About us" />
+        <NavItem to="/about" icon={BsInfoCircle} label="About us" setSidebarOpen={setSidebarOpen} />
         <button
           onClick={onLogout}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition"
@@ -72,7 +72,7 @@ function NavItem({ to, icon: Icon, label, setSidebarOpen }) {
   return (
     <NavLink
       to={to}
-      onClick={() => setSidebarOpen(false)}
+      onClick={() => {setSidebarOpen(false)}}
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-2 rounded-xl font-medium transition-colors ${
           isActive

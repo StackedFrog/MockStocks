@@ -28,11 +28,15 @@ prod_build:
 prod_build_no_cach:
 	sudo docker compose build --no-cache
 
-bl_pipe: build-frontend prod_build
-
+build_pipe: build-frontend prod_build
 
 prune:
 	sudo docker system prune -a --volumes
+
+
+data:
+	cat ./sql/populate_db.sql | docker exec -i dev-db-1 psql -U postgres -d dev_db
+
 
 # Dev
 dev_up: decrypt

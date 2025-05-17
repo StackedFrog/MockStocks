@@ -80,13 +80,13 @@ function AppLayout({userInfo, setUserInfo}) {
                                         <>
                                         <div className="fixed inset-0 z-100 bg-opacity-0" onClick={() => setSidebarOpen(false)}/>
                                         <div className="fixed inset-y-0 left-0 z-150 w-64 bg-background border-r border-gray-700 flex flex-col">
-                                        <SideNav userInfo={userInfo} onClose={() => setSidebarOpen(false)} />
+                                        <SideNav userInfo={userInfo} setSidebarOpen={setSidebarOpen} />
                                         </div>
                                         </>
                                 )}
                                 </div>
                         )}
-                        <div className="flex min-h-screen">
+                        <div className="flex ">
                         {!isMobile && (
                                 <SideNav userInfo={userInfo} setSidebarOpen={setSidebarOpen} />
                         )}
