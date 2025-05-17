@@ -4,7 +4,7 @@ import BuyingAndSelling from '../../components/trading/BuyingAndSelling.jsx';
 import { useApi } from "../../hooks/useApi.jsx";
 import { useSearchParams } from 'react-router-dom';
 
-function TradingPage() {
+function TradingPage( hideChart ) {
 	// TRADING PAGE LOGIC
 
 	const {apiFetch} = useApi()
@@ -69,7 +69,7 @@ function TradingPage() {
 
 	useEffect(() => {
 		const symbol = searchParams.get("symbol");
-		if (symbol && symbol !== stockSymbol) {
+		if (symbol && (symbol !== stockSymbol)) {
 
 			const fetchStockInfoAndSelect = async () => {
 				try {
@@ -88,7 +88,7 @@ function TradingPage() {
 
 			fetchStockInfoAndSelect();
 		}
-	}, [searchParams, stockSymbol]);
+	}, [searchParams]);
 
 	return (
 
@@ -101,11 +101,9 @@ function TradingPage() {
 			// STOCK CHART
 					<>
 
-          // SEARCH BAR
-						<div className="absolute flex justify-center top-4 left-4 items-start flex-col p-4 text-white">
+						<div className="flex justify-center top-4 left-4 items-start flex-col p-4 text-white">
 							<h1
-								className="relative align-left mb-3 text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white transition-all duration-500 hover:from-pink-500 hover:via-yellow-500 hover:to-blue-500 before:absolute before:inset-0 before:rounded before:content-[''] before:opacity-0 before:filter before:blur-2xl before:bg-gradient-to-r before:from-pink-500 before:via-yellow-500 before:to-blue-500 before:transition-opacity before:duration-500 hover:before:opacity-60"
-							>
+								className="inline-block mb-3 text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white transition-all duration-500 hover:from-pink-500 hover:via-yellow-500 hover:to-blue-500">
               Search for a stock
 							</h1>
 
@@ -114,7 +112,7 @@ function TradingPage() {
 								placeholder="Apple..."
 								value={searchTerm}
 								onChange={handleSearchChange}
-								className="z-1 w-[90%] p-3 bg-[#1a1a1a] text-white border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+								className="w-[90%] p-3 bg-[#1a1a1a] text-white border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
 								//              className="w-full p-2 bg-[#141414] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 							/>
 
@@ -141,6 +139,7 @@ function TradingPage() {
 								backgroundColor: '#141414',
 								textColor:       '#fff',
 							}}
+                                                        hideChart={hideChart}
 						/>
 						<BuyingAndSelling />
 					</>
@@ -150,7 +149,7 @@ function TradingPage() {
 			// SEARCH BAR
 					<div className="flex justify-center items-center flex-col mt-4 p-4 text-white">
 						<h1
-							className="relative mb-4 text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white transition-all duration-500 hover:from-pink-500 hover:via-yellow-500 hover:to-blue-500 before:absolute before:inset-0 before:rounded before:content-[''] before:opacity-0 before:filter before:blur-2xl before:bg-gradient-to-r before:from-pink-500 before:via-yellow-500 before:to-blue-500 before:transition-opacity before:duration-500 hover:before:opacity-60"
+							className="mb-4 text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white transition-all duration-500 hover:from-pink-500 hover:via-yellow-500 hover:to-blue-500"
 						>
               Search for a stock
 						</h1>
@@ -160,7 +159,7 @@ function TradingPage() {
 							placeholder="Apple..."
 							value={searchTerm}
 							onChange={handleSearchChange}
-							className="z-1 w-full p-3 bg-[#1a1a1a] text-white border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+							className="w-full p-3 bg-[#1a1a1a] text-white border border-gray-700 rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
 							//              className="w-full p-2 bg-[#141414] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 

@@ -14,7 +14,7 @@ const navItems = [
   { name: "Recent", icon: LuClock, href: "/recent" },
 ];
 
-function SideNav({ userInfo }) {
+function SideNav({ userInfo, setSidebarOpen }) {
   const { apiUnAuth } = useApi();
   const navigate = useNavigate();
 
@@ -24,21 +24,32 @@ function SideNav({ userInfo }) {
   };
 
   return (
-    <aside className="w-64 bg-background text-text border-r border-gray-300 dark:border-gray-700 flex flex-col font-text">
+    <aside className="z-50 w-64 bg-background text-text border-r border-gray-300 dark:border-gray-700 flex flex-col font-text sticky top-0 h-screen">
       {/* Header */}
 
-	<div className="p-6 text-xl font-heading text-primary border-b border-gray-200 dark:border-gray-700">
-    	<img src="/mockstocks-round.png" />
+	<div className="p-6 text-xl font-heading text-primary border-b border-gray-200 dark:border-gray-700 items-center flex flex-col">
+        <>
+        <img
+        src="/mockstocks-round.png"
+        alt="Mockstocks logo"
+        className="hidden lg:block"
+        />
+        <img
+        src="/mockstocks-round-mobile.png"
+        alt="Mockstocks logo"
+        className="block lg:hidden"
+        />
+        </>
         {userInfo.username}
       </div>
 
       {/* Top nav links */}
       <nav className="flex-1 p-4 space-y-2">
         {navItems.map((item) => (
-          <NavItem key={item.name} to={item.href} icon={item.icon} label={item.name} />
+          <NavItem key={item.name} to={item.href} icon={item.icon} label={item.name} setSidebarOpen={setSidebarOpen} />
         ))}
         {userInfo.role === "Admin" && (
-          <NavItem to="/admin" icon={MdOutlineAdminPanelSettings} label="Admin" />
+          <NavItem to="/admin" icon={MdOutlineAdminPanelSettings} label="Admin" setSidebarOpen={setSidebarOpen}/>
         )}
       </nav>
 
@@ -57,10 +68,11 @@ function SideNav({ userInfo }) {
   );
 }
 
-function NavItem({ to, icon: Icon, label }) {
+function NavItem({ to, icon: Icon, label, setSidebarOpen }) {
   return (
     <NavLink
       to={to}
+      onClick={() => setSidebarOpen(false)}
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-2 rounded-xl font-medium transition-colors ${
           isActive
