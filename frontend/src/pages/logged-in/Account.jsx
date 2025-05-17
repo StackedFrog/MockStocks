@@ -6,16 +6,30 @@ import DisplayName from "../../components/layout/ProfileDisplay.jsx";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { useState } from "react";
 import LogoutEveryWhere from "../../components/auth/LogoutEveryWhere.jsx"
+import Modal from "../../components/ui/Modal.jsx"
+import { useNavigate } from 'react-router-dom'
+
 // import { LogoutEveryWhere } from "../../components/auth/LogoutEveryWhere.jsx"
 
 function DisplayProfile({user}){
-    console.log();
-    
-    const {apiFetch} = useApi();
+    const {apiFetch, apiUnAuth} = useApi();
+    const navigate = useNavigate()
     let [name, setName] = useState(user.username) ?? "";
     const cash = user.balance ?? "";
     const [isEdit, setEdit] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
 
+    console.log(modalOpen);
+    
+
+    const deleteAccount = async () => {
+        await apiFetch("/api/user/delete_account", {
+            method: "DELETE"
+        })
+        await apiUnAuth("/auth/user/logout_all")
+		navigate("/")
+        setModalOpen(false)
+    }
     const editClick = () => {
         setEdit(true)
     }
@@ -74,13 +88,24 @@ function DisplayProfile({user}){
                 </div>
                 <div className = "flex flex-col py-3 bg-background">
                         <LogoutEveryWhere/>
-                        <Button className="bg-accent2"text = "Delete account"></Button>
+                        <Button onClick={()=> setModalOpen(true)}className="bg-accent2"text = "Delete account"></Button>
                 </div>
+
+                <Modal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    onConfirm={deleteAccount}
+                    title="Are you sure you want to delete your account?"
+                    message="Your data will be permenently deleted. This action cannot be undone."/>
             </div>
         </>
     )
 }
 
-
+// <div className="bg-accent flex flex-col justify-center tracking-tighter rounded-lg p-4 w-[80%] sm:w-[80%] lg:w-[40%] text-text font-heading">
+//     <h2>Are you sure you want to delete your account?</h2>
+//     <p>Your data will be permenently deleted.</p>
+//     <Button className="bg-accent2" text ="confirm"></Button>
+// </div>
 
 export default DisplayProfile;
