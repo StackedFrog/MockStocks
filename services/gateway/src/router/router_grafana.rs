@@ -12,7 +12,6 @@ use axum::{
     routing::any,
 };
 use tower_cookies::{CookieManagerLayer, Cookies};
-use tracing::info;
 
 use super::{Error, Result};
 
