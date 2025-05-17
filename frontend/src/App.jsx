@@ -106,7 +106,7 @@ function AppLayout({userInfo, setUserInfo}) {
 								<Route path="/recent" element={<RecentTrades />} />
 								<Route path="/account" element={<DisplayProfile user={userInfo}/>} />
 								<Route path="/admin" element={<AdminPage />} />
-								<Route path="/about" element={<About />} />
+								<Route path="/about" element={<About userInfo={userInfo}/>} />
 								<Route path="*" element={<NotFound />} />
 							</Routes>
 						</main>
