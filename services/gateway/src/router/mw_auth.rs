@@ -5,10 +5,8 @@ use crate::token::{
 };
 use axum::{extract::Request, middleware::Next, response::Response};
 use hyper::HeaderMap;
-use tracing::info;
 
 pub async fn mw_ctx_resolver(mut req: Request, next: Next) -> Result<Response> {
-    info!("{:?}", req);
     let ctx = ctx_resolver(req.headers()).await?;
     req.extensions_mut().insert(ctx);
     Ok(next.run(req).await)

@@ -48,3 +48,11 @@ start_windows: create_env
 
 stop_windows:
 	docker compose -f docker-compose.dev.yaml down
+
+format_frontend:
+	cd frontend && npm run lint
+
+format_backend:
+	cargo fmt
+
+fmt: format_backend format_frontend
