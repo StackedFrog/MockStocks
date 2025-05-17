@@ -4,7 +4,7 @@ services:
     environment:
       - GF_SECURITY_ALLOW_EMBEDDING=true
       - GF_SECURITY_COOKIE_SAMESITE=none
-      - GF_SERVER_ROOT_URL=http://localhost:4001/auth/grafana/
+      - GF_SERVER_ROOT_URL=/auth/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     expose:
       - "4317"
@@ -82,6 +82,7 @@ services:
       - "4001:4001"
     networks:
       - backend
+
   user:
     build:
       context: .

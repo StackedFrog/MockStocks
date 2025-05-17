@@ -61,19 +61,19 @@ function UserCard({ user, fetchUsers }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md p-6 w-full sm:w-72">
+    <div className="border border-black px-3 py-2 rounded outline-none focus:ring-0 flex flex-col items-center bg-primary rounded-lg">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{user.username}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Balance: ${user.balance}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">Role: {user.role}</p>
+          <h2 className="font-heading text-secondary">{user.username}</h2>
+          <p className="text-secondary text-sm">Balance: ${user.balance}</p>
+          <p className="text-sm text-secondary ">Role: {user.role}</p>
         </div>
         <div className="ml-2">
-          <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-              <EllipsisVerticalIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+          <Menu as="div" className="relative inline-block text-top">
+            <Menu.Button className="p-1 rounded-full hover:bg-accent cursor-pointer transition-colors focus:outline-none">
+              <EllipsisVerticalIcon className="h-5 w-5 text-secondary" />
             </Menu.Button>
-            <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black/10 focus:outline-none z-50">
+            <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-background border shadow-lg ring-1 focus:outline-none z-50">
               <div className="py-1">
                 {user.role !== "Admin" ? (
                   <Menu.Item>
@@ -81,7 +81,7 @@ function UserCard({ user, fetchUsers }) {
                       <button
                         onClick={onPromote}
                         className={`${
-                          active ? "bg-gray-100 dark:bg-gray-700" : ""
+                          active ? "bg-secondary" : ""
                         } block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200`}
                       >
                         Promote to Admin
@@ -94,7 +94,7 @@ function UserCard({ user, fetchUsers }) {
                       <button
                         onClick={onDemote}
                         className={`${
-                          active ? "bg-gray-100 dark:bg-gray-700" : ""
+                          active ? "bg-secondary " : ""
                         } block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200`}
                       >
                         Demote to User
@@ -124,5 +124,3 @@ function UserCard({ user, fetchUsers }) {
 }
 
 export default UserManagement;
-
-

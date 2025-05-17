@@ -64,17 +64,6 @@ pub async fn remove_refresh_token(
     Ok(())
 }
 
-pub async fn get_refresh_token(
-    token_claims: &Claims,
-    mut con: MultiplexedConnection,
-) -> Result<String> {
-    let token: String = con
-        .get(token_claims.to_redis_key())
-        .await
-        .map_err(|_| Error::TokenNotFound)?;
-    Ok(token)
-}
-
 pub async fn rotate_token(
     old_refresh_claims: &Claims,
     new_refresh_claims: &Claims,

@@ -56,7 +56,6 @@ impl IntoResponse for Error {
             Error::Model(err) => match err {
                 model::Error::UsernameNotFound => StatusCode::UNAUTHORIZED,
                 model::Error::UserNotAdded => StatusCode::BAD_REQUEST,
-                model::Error::TokenNotFound => StatusCode::UNAUTHORIZED,
                 model::Error::TokenRotationFailed => StatusCode::UNAUTHORIZED,
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             },

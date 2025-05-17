@@ -10,7 +10,6 @@ use axum::{
     response::Response,
     routing::any,
 };
-use tracing::info;
 
 use super::{Error, Result};
 

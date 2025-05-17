@@ -4,7 +4,7 @@ pub mod transactions;
 pub mod user;
 use crate::config::Settings;
 
-pub use self::error::{Error, Result};
+pub use self::error::Error;
 use reqwest::Client;
 use sqlx::{Postgres, postgres::PgPoolOptions};
 pub type Pool = sqlx::Pool<Postgres>;

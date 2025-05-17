@@ -81,7 +81,7 @@ async fn get_tickers(
     Ok(Json(data))
 }
 
-async fn get_trending_quotes(State(cm): State<ClientManager>) -> Result<Json<Vec<String>>> {
+async fn get_trending_quotes() -> Result<Json<Vec<String>>> {
     let service = YahooService::new();
     let data = service.get_trending_symbols().await?;
     Ok(Json(data))

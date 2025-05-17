@@ -3,7 +3,6 @@ use jsonwebtoken::{
     get_current_timestamp,
 };
 use serde::{Deserialize, Serialize};
-use tracing::info;
 use uuid::Uuid;
 
 use crate::{config::Settings, model::users_model::UserType};

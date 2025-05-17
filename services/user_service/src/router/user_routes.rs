@@ -1,10 +1,10 @@
 use crate::model::holdings::Holding;
 use crate::model::holdings::get_all_holdings_by_id;
 use crate::model::holdings::get_holding_by_symbol;
-use crate::model::transactions::get_transactions_by_symbol;
 use crate::model::transactions::Transaction;
 use crate::model::transactions::add_complete_transaction;
 use crate::model::transactions::get_all_transactions_by_user;
+use crate::model::transactions::get_transactions_by_symbol;
 use crate::model::user::User;
 use crate::model::user::delete_user_completely;
 use crate::model::{
@@ -49,7 +49,8 @@ pub struct TransactionPayload {
 #[derive(Serialize)]
 pub struct HoldingInfo {
     pub holding: Holding,
-    pub performance: Decimal
+    pub performance: Decimal,
+    pub value: Decimal,
 }
 
 async fn purchase_handler(
@@ -148,17 +149,20 @@ async fn user_info_handler(ctx: Ctx, State(mm): State<ModelManager>) -> Result<J
     Ok(Json(user))
 }
 
-async fn holdings_handler(ctx: Ctx, State(mm): State<ModelManager>) -> Result<Json<Vec<HoldingInfo>>> {
+async fn holdings_handler(
+    ctx: Ctx,
+    State(mm): State<ModelManager>,
+) -> Result<Json<Vec<HoldingInfo>>> {
     let user_id = ctx.user_id();
     let holdings = get_all_holdings_by_id(&mm.pool, user_id).await?;
 
-    let mut holdings_info : Vec<HoldingInfo> = vec![];
+    let mut holdings_info: Vec<HoldingInfo> = vec![];
 
     // iterate holdings and get all transactions for that symbol
     for h in holdings {
         let transactions = get_transactions_by_symbol(&mm.pool, user_id, &h.symbol).await?;
         // calculate total money spent
-        let mut total_spent : Decimal = dec!(0.0);
+        let mut total_spent: Decimal = dec!(0.0);
 
         for t in transactions {
             let price = Decimal::from_f64(t.price).ok_or(Error::FailedToParsePrice)?;
@@ -177,12 +181,16 @@ async fn holdings_handler(ctx: Ctx, State(mm): State<ModelManager>) -> Result<Js
         let latest_quote = get_stock(mm.client.clone(), &h.symbol).await?;
         let price = Decimal::from_f64(latest_quote.close).ok_or(Error::FailedToParsePrice)?;
         let current_value = h.quantity * price;
-        
+
         // compare investment vs current value and get profit/loss %
         let performance = ((total_spent - current_value) / current_value) * dec!(100.00);
 
         // create new struct with info
-        let h_info = HoldingInfo { holding: h, performance };
+        let h_info = HoldingInfo {
+            holding: h,
+            performance,
+            value: current_value,
+        };
 
         // add to vec of HoldingInfo structs
         holdings_info.push(h_info);

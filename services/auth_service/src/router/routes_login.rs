@@ -1,7 +1,6 @@
 use super::{Error, Result};
 use crate::{
     ModelManager,
-    config::Settings,
     crypt::{self, token},
     jwt::{self, token_util::TokenData},
     model::users_model::{
@@ -127,9 +126,9 @@ async fn login_autherized(
         None => add_oauth_user(&mm.pool, user_data).await?,
     };
 
-    let payload = login_user(user, cookies, mm).await?;
+    login_user(user, cookies, mm).await?;
 
-    Ok(Redirect::to("/"))
+    Ok(Redirect::to("/dashboard"))
 }
 
 async fn login_user(

@@ -1,18 +1,18 @@
 use super::{Error, Result};
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use telemetry::tracing_propegation::inject_tracing_context;
 use tracing::info;
 
 #[derive(Deserialize, Clone)]
 pub struct LatestQuote {
-    pub symbol: String,
-    pub date: String,
+    _symbol: String,
+    _date: String,
     pub close: f64,
-    pub open: f64,
-    pub high: f64,
-    pub low: f64,
-    pub volume: u64,
+    _open: f64,
+    _high: f64,
+    _low: f64,
+    _volume: u64,
 }
 
 pub async fn get_stock(client: Client, symbol: &String) -> Result<LatestQuote> {

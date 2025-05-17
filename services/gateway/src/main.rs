@@ -33,7 +33,7 @@ async fn main() {
 
     let app = router_grafana::routes(state.clone())
         .merge(traced_routes)
-        .fallback_service(router_static::serve_static_dev(state));
+        .fallback_service(router_static::serve_static(state));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4001").await.unwrap();
 
