@@ -62,21 +62,14 @@ function DisplayProfile({user}){
                 <div className="px-4 py-6 bg-background flex justify-center flex-col">
                     <h2 className="font-heading text-secondary text-3xl mb-6">Account</h2>
                 <div className="bg-primary rounded-lg p-4 sm:flex-col lg:w-[20vw]">
-                    <div className="flex justify-between">                
-                        <div className = "flex flex-col justify-start text-background bg-primary sm:text-lg font-text">
+                    <div className="flex">                
+                        <div className = "flex flex-col text-background bg-primary sm:text-lg font-text">
                             <div className="font-heading text-secondary">Name </div>
                             <div>{name}</div>
                             { email && (<> <div className="font-heading text-secondary">Email </div><div>{email}</div></>)}
                             <div className="font-heading text-secondary">Balance </div>
                             <div>{cash} USD</div>
-                        </div>
-                        <div className="flex flex-col justify-start text-text gap-1">
-                            <BiSolidEditAlt onClick={editClick}
-                            style={{
-                                color: "#0b0d0b",
-                                height: "1.2em",
-                                width: "1.2em"
-                            }}/>
+                            <Button text={"Edit Password"} icon={<BiSolidEditAlt/>} onClick={editClick} className="text-sm lg:w-auto"/>
                         </div>
                     </div>
                 </div>
