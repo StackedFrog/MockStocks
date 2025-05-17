@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApi } from "../../hooks/useApi.jsx";
-import HoldingsTable from '../../components/trading/HoldingsTable.jsx';
+import RecentsTable from '../../components/trading/RecentsTable.jsx';
+import { parsePath } from "react-router-dom";
 
 function RecentTrades () {
 	const {apiFetch} = useApi();
@@ -62,12 +63,16 @@ function RecentTrades () {
 		const fetchTransactions = async () => {
 			//const response = await apiFetch("/api/user/transactions");
 			//const data = await response.json();
+            
+			// sort by date (latest to oldest)
+			mockTransactions.sort((a, b) => new Date(a.date) + new Date(b.date));
+
 			const parsedData = mockTransactions.map(t => ({
-				date: t.date,
+				date: new Date(t.date).toLocaleString('en-GB', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).replace(',', ''),
 				symbol: t.symbol,
-				amount: t.amount,
-				price: t.price,
-				quantity: t.quantity,
+				amount: new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD'}).format(t.amount),
+				price: new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD'}).format(t.price),
+				quantity: t.quantity.toFixed(5),
 				transaction_type: t.transaction_type
 			}));
 			setUserTransactions(parsedData);
@@ -75,10 +80,10 @@ function RecentTrades () {
 		fetchTransactions();
 	}, []);
 
-
 	return (
-		<div>
-			<HoldingsTable data={userTransactions}/>
+		<div className='min-h-screen bg-background flex flex-col items-center gap-5 py-15 lg:py-20'>
+			<h1 className="font-heading text-secondary text-3xl">Recent Transactions</h1>
+			<RecentsTable data={userTransactions}/>
 		</div>
 	);
 }
