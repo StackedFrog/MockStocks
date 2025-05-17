@@ -8,6 +8,8 @@ import Authentication from './pages/public/Authentication.jsx';
 import SideNav from './components/layout/SideNav.jsx';
 import DisplayProfile from './pages/logged-in/Account.jsx';
 import AdminPage from './pages/logged-in/admin/AdminPage.jsx';
+import DisplayName from "./components/layout/ProfileDisplay.jsx"
+import DisplayBalance from "./components/layout/DisplayBalance.jsx";
 import { useEffect, useState } from "react";
 import { useApi } from './hooks/useApi.jsx';
 import About from './pages/public/About.jsx';
@@ -68,6 +70,7 @@ function AppLayout({userInfo, setUserInfo}) {
                 {userInfo ? (
                         <>
                         {isMobile && (
+                                <>
                                 <div className="h-16 flex sticky top-0 w-full items-center bg-background border-b border-gray-200 dark:border-gray-700">
                                 <button onClick={() => setSidebarOpen(true)} className="text-primary text-2xl ml-2 mb-1">
                                 <FiMenu/>
@@ -85,6 +88,11 @@ function AppLayout({userInfo, setUserInfo}) {
                                         </>
                                 )}
                                 </div>
+                                <div className="flex my-4 items-center justify-center gap-4" style={{margin: "10px"}}>
+                                <DisplayName name={userInfo.username}/>
+                                <DisplayBalance cash={userInfo.balance}/> 
+                                </div>
+                                </>
                         )}
                         <div className="flex ">
                         {!isMobile && (

@@ -61,15 +61,9 @@ function DisplayProfile({user}){
 
     return(
         <>
-            <div className = "flex flex-col justify-center align-center bg-background ">
-                <div className="flex justify-end-safe gap-2">
-                    <DisplayBalance cash = {user.balance}/>
-                    <DisplayName name = {user.username}/>
-                </div>
-                <div className="flex justify-start p-4 font-heading text-3xl">
-                    <h2 className="text-secondary">Account</h2>
-                </div>
-                <div className="bg-primary rounded-lg p-8 sm:flex-col ">
+                <div className="px-4 py-6 bg-background">
+                    <h2 className="font-heading text-secondary text-3xl mb-6">Account</h2>
+                <div className="bg-primary rounded-lg p-4 sm:flex-col ">
                     <div className="flex justify-between">                
                         <div className = "flex flex-col justify-start text-background bg-primary">
                             <form onSubmit={save}><div>Name: {isEdit ? (<input className="underline" type = "text" onChange={(e) => setName(e.target.value)}value = {name}></input>): (<span>{name}</span>)}</div></form>
