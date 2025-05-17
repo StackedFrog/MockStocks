@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
 
-const Table = ({ data }) => {
+const RecentsTable = ({ data }) => {
 	const navigate = useNavigate();
 
 	if (!data || data.length === 0) {
@@ -108,4 +108,4 @@ const Table = ({ data }) => {
 	);
 };
 
-export default Table;
+export default RecentsTable;

@@ -62,7 +62,7 @@ impl NewTransaction {
 }
 
 pub async fn get_all_transactions_by_user(pool: &Pool, user_id: &Uuid) -> Result<Vec<Transaction>> {
-    let query = "SELECT * FROM Transactions WHERE user_id = $1";
+    let query = "SELECT * FROM Transactions WHERE user_id = $1 ORDER BY date DESC";
     let transactions = sqlx::query_as(query)
         .bind(user_id)
         .fetch_all(pool)
