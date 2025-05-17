@@ -5,7 +5,7 @@ function DisplayBalance({cash}){
     return(
         <>
             <div className = "text-background bg-primary p-2 rounded-lg ">
-                <span>Balance: {cash}USD</span>
+                <span>Balance: {cash} USD</span>
             </div>
         </>
     )
