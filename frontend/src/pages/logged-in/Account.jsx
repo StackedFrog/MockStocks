@@ -64,8 +64,8 @@ function DisplayProfile({user}){
         <>
             <div className = "flex flex-col justify-center align-center bg-background ">
                 <div className="flex justify-end-safe gap-2">
-                    <DisplayBalance></DisplayBalance>
-                    <DisplayName></DisplayName>
+                    <DisplayBalance cash = {user.balance}/>
+                    <DisplayName name = {user.username}/>
                 </div>
                 <div className="flex justify-start p-4 font-heading">
                     <h2>Account</h2>
@@ -101,11 +101,5 @@ function DisplayProfile({user}){
         </>
     )
 }
-
-// <div className="bg-accent flex flex-col justify-center tracking-tighter rounded-lg p-4 w-[80%] sm:w-[80%] lg:w-[40%] text-text font-heading">
-//     <h2>Are you sure you want to delete your account?</h2>
-//     <p>Your data will be permenently deleted.</p>
-//     <Button className="bg-accent2" text ="confirm"></Button>
-// </div>
 
 export default DisplayProfile;
