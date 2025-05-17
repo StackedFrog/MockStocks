@@ -49,11 +49,13 @@ function AppLayout({userInfo, setUserInfo}) {
 
         const fetchUserInfo = async () => {
                 console.log("fetching")
-                const res = await apiFetch("api/user/info", { method: "GET" }, false);
+                const res = await apiFetch("api/user/info", { method: "GET" });
                 if (res) {
                         const data = await res.json();
                         setUserInfo(data);
-                }
+                }else {
+			setUserInfo(null);
+		}
         };
 
         useEffect(() => {
