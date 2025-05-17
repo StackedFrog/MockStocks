@@ -50,7 +50,7 @@ function AppLayout({userInfo, setUserInfo}) {
 
 	const fetchUserInfo = async () => {
 		console.log("fetching")
-		const res = await apiFetch("api/user/info", { method: "GET" }, false);
+		const res = await apiFetch("api/user/info", { method: "GET" });
 		if (res) {
 			const data = await res.json();
 			setUserInfo(data);
@@ -104,7 +104,7 @@ function AppLayout({userInfo, setUserInfo}) {
 								<Route path="/recent" element={<RecentTrades />} />
 								<Route path="/account" element={<DisplayProfile user={userInfo}/>} />
 								<Route path="/admin" element={<AdminPage />} />
-								<Route path="/about" element={<About />} />
+								<Route path="/about" element={<About userInfo={userInfo}/>} />
 								<Route path="*" element={<NotFound />} />
 							</Routes>
 						</main>

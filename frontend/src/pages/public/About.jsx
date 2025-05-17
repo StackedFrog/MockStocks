@@ -11,7 +11,8 @@ const linkedins = {
 	"StackedFrog" : "https://www.linkedin.com/in/isaac-prins-a9b61330a"
 }
 
-function About() {
+function About({userInfo}) {
+	console.log(userInfo);
 	const [users, setUsers] = useState([]);
 
 	useEffect(() => {
@@ -34,7 +35,8 @@ function About() {
 					taught during the 2025 Spring semester at Kristianstad University for the Software Development
 					Bachelor's programme.
 				</p>
-				<Button text="Back to Home" to="/" className='sm:w-[40%]'></Button>
+				{!userInfo && <Button text="Back to Home" to="/" className='sm:w-[40%]'/>}
+				
 			</div>
 			<div className='flex flex-col items-center'>
 				<h2 className='font-heading text-secondary text-3xl py-5'>OUR STACK</h2>
