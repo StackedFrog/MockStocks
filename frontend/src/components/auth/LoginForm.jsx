@@ -41,7 +41,7 @@ function LoginForm({ setLogin }) {
 	};
 
 	return (
-		<div className="flex items-center justify-center bg-background text-text font-text">
+		<div className="flex items-center justify-center bg-background text-text font-text px-4 sm:px-0">
 			<div className="w-full max-w-sm p-6 rounded-2xl bg-secondary">
 				<h1 className="text-2xl font-heading text-center mb-6 text-text">Login</h1>
 				<form id="login-form" className="space-y-4" onSubmit={handleLogin}>
