@@ -54,7 +54,7 @@ function RegisterForm({ setLogin }) {
 				<form className="space-y-4" onSubmit={handleRegister}>
 					<input
 						type="text"
-						placeholder="Username"
+						placeholder="Name"
 						onChange={(e) => setName(e.target.value)}
 						className="w-full px-3 py-2 rounded outline-none focus:ring-4 focus:ring-accent bg-text text-gray-700"
 						required
@@ -84,12 +84,6 @@ function RegisterForm({ setLogin }) {
 					{error && <p className="text-red-500 text-sm animate-pulse">{error}</p>}
 
 					<Button type="submit" text="Register" className="w-full lg:w-full"></Button>
-					{/* <button
-						type="submit"
-						className="w-full bg-primary text-white py-2 rounded hover:bg-secondary transition-colors"
-					>
-            Register
-					</button> */}
 				</form>
 				<p className="text-sm text-center mt-4">
           Already have an account?{" "}
