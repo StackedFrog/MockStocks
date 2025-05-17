@@ -5,7 +5,7 @@ import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
 
 
 
-export const TradingChart = ({ symbol, colors }) => {
+const Chart = ({ symbol, colors }) => {
   const { apiFetch } = useApi();
   const [stockName, setStockName] = useState(null);
   const [stockData, setStockData] = useState([]);
@@ -111,7 +111,7 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
         textColor,
       },
       width: chartContainerRef.current.clientWidth,
-      height: 600,
+      height: 400,
     
     });
 
@@ -135,6 +135,8 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
     // 5. Resize handler
     const handleResize = () => {
       chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+                chart.timeScale().fitContent();
+
     };
     window.addEventListener('resize', handleResize);
 
@@ -149,8 +151,16 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
   useEffect(() => {
     if (seriesRef.current && data?.length) {
       seriesRef.current.setData(data);
+            chartRef.current?.timeScale().fitContent();
     }
   }, [data]);
 
   return <div ref={chartContainerRef} />;
 };
+
+export const TradingChart = ({ symbol, colors, hideChart}) => {
+        if (hideChart) return null;
+        return <Chart symbol={symbol} colors={colors} />;
+};
+
+export default TradingChart;
