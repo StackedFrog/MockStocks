@@ -48,11 +48,15 @@ function AppLayout({userInfo, setUserInfo}) {
         }, [isMobile, sidebarOpen]);
 
         const fetchUserInfo = async () => {
+                try{
                 console.log("fetching")
                 const res = await apiFetch("api/user/info", { method: "GET" }, false);
                 if (res) {
                         const data = await res.json();
                         setUserInfo(data);
+                }
+                } catch (error) {
+                        console.error("No user information.")
                 }
         };
 
@@ -95,7 +99,7 @@ function AppLayout({userInfo, setUserInfo}) {
                         <Route path="/trade" element={<TradingPage hideChart={isMobile && sidebarOpen}/>} />
                         <Route path="/dashboard" element={<DashboardPage />} />
                         <Route path="/recent" element={<RecentTrades />} />
-                        <Route path="/account" element={<DisplayProfile />} />
+                        <Route path="/account" element={<DisplayProfile user={userInfo}/>} />
                         <Route path="/admin" element={<AdminPage />} />
                         <Route path="/about" element={<About />} />
                         <Route path="*" element={<NotFound />} />
