@@ -34,7 +34,7 @@ function AdminPage() {
 
       </div>
 	{/* Panel */}
-	<div className="w-full bg-background border border-border shadow-lg rounded-2xl p-4 sm:p-6 transition-all">
+	<div className="w-full bg-background border border-border border-primary shadow-lg rounded-2xl p-4 sm:p-6 transition-all">
 	  {activeTab === 'userManagement' && <UserManagment />}
 	  {activeTab === 'stats' && (
 	    <>
