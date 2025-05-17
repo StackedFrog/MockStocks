@@ -1,8 +1,6 @@
 import React from "react";
 import { useApi } from "../../hooks/useApi.jsx";
 import Button from "../../components/ui/Button.jsx";
-import DisplayBalance from "../../components/layout/DisplayBalance.jsx";
-import DisplayName from "../../components/layout/ProfileDisplay.jsx";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { useState } from "react";
 import LogoutEveryWhere from "../../components/auth/LogoutEveryWhere.jsx"
@@ -15,11 +13,10 @@ function DisplayProfile({user}){
     const navigate = useNavigate()
     let [name, setName] = useState(user.username) ?? "";
     const cash = user.balance ?? "";
+    const email = user.email;
     const [isEdit, setEdit] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
 
-    console.log(modalOpen);
-    
 
     const deleteAccount = async () => {
         await apiFetch("/api/user/delete_account", {
@@ -59,15 +56,19 @@ function DisplayProfile({user}){
         }
     }
 
+                            // <form onSubmit={save}><div>Name: {isEdit ? (<input className="underline" type = "text" onChange={(e) => setName(e.target.value)}value = {name}></input>): (<span>{name}</span>)}</div></form>
     return(
         <>
-                <div className="px-4 py-6 bg-background">
+                <div className="px-4 py-6 bg-background flex justify-center flex-col">
                     <h2 className="font-heading text-secondary text-3xl mb-6">Account</h2>
-                <div className="bg-primary rounded-lg p-4 sm:flex-col ">
+                <div className="bg-primary rounded-lg p-4 sm:flex-col lg:w-[20vw]">
                     <div className="flex justify-between">                
-                        <div className = "flex flex-col justify-start text-background bg-primary">
-                            <form onSubmit={save}><div>Name: {isEdit ? (<input className="underline" type = "text" onChange={(e) => setName(e.target.value)}value = {name}></input>): (<span>{name}</span>)}</div></form>
-                            <div>Balance: {cash}</div>
+                        <div className = "flex flex-col justify-start text-background bg-primary sm:text-lg font-text">
+                            <div className="font-heading text-secondary">Name </div>
+                            <div>{name}</div>
+                            { email && (<> <div className="font-heading text-secondary">Email </div><div>{email}</div></>)}
+                            <div className="font-heading text-secondary">Balance </div>
+                            <div>{cash} USD</div>
                         </div>
                         <div className="flex flex-col justify-start text-text gap-1">
                             <BiSolidEditAlt onClick={editClick}
