@@ -52,7 +52,10 @@ impl IntoResponse for Error {
                 | oauth::Error::FailedRedirectUrl
                 | oauth::Error::FailedTokenUrl => StatusCode::INTERNAL_SERVER_ERROR,
             },
-            Error::Crypt(_) => StatusCode::UNAUTHORIZED,
+            Error::Crypt(err) => match err {
+                crypt::Error::FailedToValidateToken => StatusCode::UNAUTHORIZED,
+                _ => StatusCode::BAD_REQUEST,
+            }
             Error::Model(err) => match err {
                 model::Error::UsernameNotFound => StatusCode::UNAUTHORIZED,
                 model::Error::UserNotAdded => StatusCode::BAD_REQUEST,
