@@ -101,7 +101,7 @@ function AppLayout({userInfo, setUserInfo}) {
 						)}
 						<main className="flex-1 p-6 bg-background text-gray-900 dark:text-white transition-colors">
 							<Routes>
-								<Route path="/trade" element={<TradingPage hideChart={isMobile && sidebarOpen}/>} />
+								<Route path="/trade" element={<TradingPage userInfo={userInfo} fetchUserInfo ={fetchUserInfo} hideChart={isMobile && sidebarOpen}/>} />
 								<Route path="/dashboard" element={<DashboardPage />} />
 								<Route path="/recent" element={<RecentTrades />} />
 								<Route path="/account" element={<DisplayProfile user={userInfo}/>} />
