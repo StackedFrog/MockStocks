@@ -1,15 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
 
-const Table = ({ data }) => {
+const Table = ({ data, hidden = false }) => {
         const navigate = useNavigate();
 
         if (!data || data.length === 0) {
                 return (
                         <div className='flex flex-col items-center'>
                         <p className="text-text font-text">You have no holdings to display</p>
-                        <Button text="Start trading" to="/trade"></Button>
-                        </div>
+
+			{hidden? <></> :<Button text="Start trading" to="/trade"></Button>}
+
+			</div>
                 );
         }
 

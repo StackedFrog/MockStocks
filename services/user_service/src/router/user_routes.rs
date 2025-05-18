@@ -156,7 +156,7 @@ async fn user_info_handler(ctx: Ctx, State(mm): State<ModelManager>) -> Result<J
     Ok(Json(user))
 }
 
-async fn holdings_handler(
+pub async fn holdings_handler(
     ctx: Ctx,
     State(mm): State<ModelManager>,
 ) -> Result<Json<Vec<HoldingInfo>>> {
@@ -206,7 +206,7 @@ async fn holdings_handler(
     Ok(Json(holdings_info))
 }
 
-async fn transactions_handler(
+pub async fn transactions_handler(
     ctx: Ctx,
     State(mm): State<ModelManager>,
 ) -> Result<Json<Vec<Transaction>>> {
