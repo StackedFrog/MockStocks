@@ -1,5 +1,7 @@
-import React from 'react';
 import TradeForm from '../../components/trading/TradeForm.jsx';
+import { useEffect, useState } from 'react';
+import { useApi } from '../../hooks/useApi.jsx';
+import { useSearchParams } from 'react-router-dom';
 
 function TradingPage({userInfo, fetchUserInfo, hiddenChart}) {
 	return (

@@ -1,27 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import Button from '../../components/ui/Button.jsx';
-import TeamMemberCard from '../../components/ui/TeamMemberCard.jsx';
+import Button from '../../components/general/Button.jsx';
+import TeamMemberCard from '../../components/general/TeamMemberCard.jsx';
 
-const usernames = ["biancacasetta", "SvenLindstrom", "SchwarzNikolas", "tableba", "StackedFrog"];
-const linkedins = {
-	"biancacasetta" : "https://www.linkedin.com/in/bianca-casetta/",
-	"SvenLindstrom" : "",
-	"SchwarzNikolas" : "https://www.linkedin.com/in/nikolas-schwarz-a32a48309",
-	"tableba" : "https://www.linkedin.com/in/antoine-geiger-384538311",
-	"StackedFrog" : "https://www.linkedin.com/in/isaac-prins-a9b61330a"
+const users = {
+	"biancacasetta": {
+		linkedin: "https://www.linkedin.com/in/bianca-casetta/",
+		role: "Database, User API & Recent Trades"
+	},
+	"SvenLindstrom": {
+		linkedin: "",
+		role: "Auth API, Architecture & Admin Panel"
+	},
+	"SchwarzNikolas": {
+		linkedin: "https://www.linkedin.com/in/nikolas-schwarz-a32a48309",
+		role: "Stocks API, Responsive Design & Dashboard"
+	},
+	"tableba": {
+		linkedin: "https://www.linkedin.com/in/antoine-geiger-384538311",
+		role: "Frontend Structure & Trading Page"
+	},
+	"StackedFrog": {
+		linkedin: "https://www.linkedin.com/in/isaac-prins-a9b61330a/",
+		role: "Design, Cookie Auth & Account Page"
+	}
 }
 
 function About({userInfo}) {
-	const [users, setUsers] = useState([]);
+	const [githubUsers, setGithubUsers] = useState([]);
 
 	useEffect(() => {
 		async function fetchUsers() {
 			const fetchedUsers = await Promise.all(
-				usernames.map(u =>
+				Object.keys(users).map(u =>
 					fetch(`https://api.github.com/users/${u}`).then(res => res.json())
 				)
 			);
-			setUsers(fetchedUsers);
+			setGithubUsers(fetchedUsers);
 		}
 		fetchUsers();
 	}, []);
@@ -89,12 +103,13 @@ function About({userInfo}) {
 			<div className='flex flex-col items-center'>
 				<h1 className='font-heading text-secondary text-center text-3xl my-10'>MEET THE TEAM</h1>
 				<div className='flex flex-col max-w-[1200px] sm:flex-row sm:w-[80%] sm:flex-wrap sm:justify-center items-center gap-7'>
-					{users.map(u => (
+					{githubUsers.map(u => (
 						<TeamMemberCard
 							avatarUrl={u.avatar_url}
 							githubUrl={u.html_url}
 							displayName={u.name || u.login}
-							linkedinUrl={linkedins[u.login]}
+							linkedinUrl={users[u.login].linkedin}
+							role={users[u.login].role}
 						></TeamMemberCard>
 					))}
 				</div>

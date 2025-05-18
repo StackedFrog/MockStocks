@@ -1,4 +1,4 @@
-import Button from "../ui/Button";
+import Button from "../general/Button";
 
 const SummaryModal = ({ trade, onConfirm, onCancel }) => {
 	if (!trade) return null;

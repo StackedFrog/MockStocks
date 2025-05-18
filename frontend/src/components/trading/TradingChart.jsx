@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useApi } from "../../hooks/useApi.jsx";
 import CandleChart from "./CandleChart.jsx";
 import AreaChart from "./AreaChart.jsx";
-import Button from "../ui/Button.jsx";
+import Button from "../general/Button.jsx";
 
 
 const Chart = () => {

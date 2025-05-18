@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
-import Button from '../../components/ui/Button.jsx';
+import Button from '../../components/general/Button.jsx';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 
 
 function Landing() {
-	// const [login, setLogin] = useState(true);
-
 	const { accessToken } = useAuth()
 	return (
-	// <div className="flex flex-col items-center gap-3 p-4">
-	// 	<h1 className="text-pastel_red text-xl font-bold">Welcome to StackedStocks!</h1>
-	// 	<p className="">Trade stocks with real time stock graphs and don't loose real money!</p>
-	// 	<Link className="mt-4 p-2 border rounded underline hover:bg-black hover:text-white hover:no-underline" to="/trade">Start Trading!</Link>
-	// 	{/* {login ? <Login setLogin={setLogin}/> : <Register setLogin={setLogin}/>} */}
-	// </div>
 
 		<div className='min-h-screen bg-background flex flex-col items-center gap-5 py-10 lg:py-20'>
 			<div className='py-0 lg:py-17 w-[70%] px-0 lg:px-[7vw]'>

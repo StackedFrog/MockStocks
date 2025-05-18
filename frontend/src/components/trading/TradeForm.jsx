@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StocksSearchBar } from './StocksSearchBar.jsx';
 import { TradingChart } from './TradingChart.jsx';
-import Button from '../ui/Button.jsx';
+import Button from '../general/Button.jsx';
 import { useApi } from '../../hooks/useApi.jsx';
 import SummaryModal from './SummaryModal.jsx';
 
