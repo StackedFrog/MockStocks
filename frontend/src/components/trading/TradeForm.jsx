@@ -100,7 +100,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 		<div>
 
 			<form onSubmit={handleSubmit} className="space-y-4 w-full flex flex-col">
-				<label htmlFor="">Symbol
+				<label>Symbol
 					<StocksSearchBar onSelect={handleStockSelect} />
 				</label>
 				
@@ -119,7 +119,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 				)}
 
 				<div className={`mt-4 grid gap-4 ${!selectedStock ? 'opacity-100 pointer-events-none' : ''}`}>
-					<label htmlFor="" className='flex flex-col gap-2'>Amount ($)
+					<label className='flex flex-col gap-2'>Amount ($)
 						<input
 							type="number"
 							placeholder="0"
@@ -137,7 +137,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 						)}
 					</label>
 					
-					<label htmlFor="" className='flex flex-col gap-2'>Action
+					<label className='flex flex-col gap-2'>Action
 						<select
 							value={action}
 							onChange={(e) => setAction(e.target.value)}
