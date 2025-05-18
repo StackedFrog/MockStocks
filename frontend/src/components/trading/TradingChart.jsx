@@ -1,14 +1,22 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { useApi } from '../../hooks/useApi.jsx';
-import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useApi } from "../../hooks/useApi.jsx";
+import CandleChart from "./CandleChart.jsx";
+import AreaChart from "./AreaChart.jsx";
+import Button from "../ui/Button.jsx";
 
-const Chart = ({ symbol, colors }) => {
+
+const Chart = () => {
 	const { apiFetch } = useApi();
 	const [stockData, setStockData] = useState([]);
 	const stockDataRef = useRef([]);
+	const [searchParams] = useSearchParams();
+	const [chartType, setChartType] = useState("area");
 
-	const updateTrades = useCallback(async () => {
-		const data = await fetchTrades()
+	const symbol = searchParams.get("symbol");
+
+	const updateTrades = useCallback(async (symbol) => {
+		const data = await fetchTrades(symbol)
 
 		const lastTradeAPI = data.slice(-1)[0]
 		const lastTradeData = stockDataRef.current.slice(-1)[0]
@@ -41,23 +49,21 @@ const Chart = ({ symbol, colors }) => {
 
 	}, [stockData])
 
-	const fetchTrades = async () => {
+	const fetchTrades = async (symbol) => {
 		try {
-      	console.log("geting data")
 			const response = await apiFetch(
 				`/api/stocks_api/range?symbol=${encodeURIComponent(symbol)}&range=12h&interval=15m`
 			)
 			if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
 
+
 			const data = await response.json()
-			const formatted = data.quotes.map(q => ({
-				time: q.timestamp,
-				open: q.open,
-				high: q.high,
-				low: q.low,
-				close: q.close
-			}))
-			return formatted
+			if (data){
+				return data.quotes.map(q => ({
+					x: new Date(q.timestamp * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year:"numeric",  hour: "2-digit", minute: "2-digit", hour12: false }).replace(",", "").toString(),
+					y: [q.open, q.high, q.low, q.close]
+				}));
+			}
 		} catch (err) {
 			console.error(`Fetch error in TradingChart component: ${err}`)
 		}
@@ -65,94 +71,49 @@ const Chart = ({ symbol, colors }) => {
 	}
 
 	useEffect(() => {
+		if (!symbol) return;
 		// initial fetch
 		(async () => {
-			const data = await fetchTrades();
+			const data = await fetchTrades(symbol);
 			setStockData(data);
 			stockDataRef.current = data
-
 		})();
 
 		// fetches trading data every 300ms
 		const fetchLoop = setInterval(() => {
-			updateTrades()
+			updateTrades(symbol)
 		}, 10000);
 
 		// cleanUp fetchLoop on unmount
 		return () => clearInterval(fetchLoop)
-	}, [])
+	}, [searchParams])
 
-	return <TradingviewApiChart data={stockData} colors={colors} />;
+	return (
+
+		<div>
+			<div className="flex items-center mb-2 gap-4">
+				<Button
+					text="Area Chart"
+					onClick={() => setChartType("area")}
+					className="lg:w-auto"
+				/>
+				<Button
+					text="Candlestick"
+					onClick={() => setChartType("candle")}
+					className="lg:w-auto"                />
+			</div>
+			{chartType === "area" ? (
+				<AreaChart key="area" data={stockData} />
+			) : (
+				<CandleChart key="candle" data={stockData} />
+			)}
+		</div>
+	);
 };
 
-const TradingviewApiChart = ({ data, colors = {} }) => {
-	const {
-		backgroundColor = '#0b0d0b',
-		textColor       = '#eaecea',
-	} = colors;
-
-	const chartContainerRef = useRef(null);
-	const chartRef = useRef(null);
-	const seriesRef = useRef(null);
-
-	useEffect(() => {
-		// 1. Create chart instance
-		const chart = createChart(chartContainerRef.current, {
-			layout: {
-				background: { type: ColorType.Solid, color: backgroundColor },
-				textColor,
-			},
-			width: chartContainerRef.current.clientWidth,
-			height: 400,
-    
-		});
-
-		// 2. Add candlestick series
-		const series = chart.addSeries(CandlestickSeries, {
-			upColor:         '#4d7d2d',
-			borderUpColor:   '#4d7d2d',
-			wickUpColor:     '#4d7d2d',
-			downColor:       '#691919',
-			borderDownColor: '#691919',
-			wickDownColor:   '#691919',
-		});
-
-		// 3. Save refs
-		chartRef.current = chart;
-		seriesRef.current = series;
-
-		// 4. Initial fitContent once
-		chart.timeScale().fitContent();
-
-		// 5. Resize handler
-		const handleResize = () => {
-			chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-			chart.timeScale().fitContent();
-
-		};
-		window.addEventListener('resize', handleResize);
-
-		// 6. Cleanup
-		return () => {
-			window.removeEventListener('resize', handleResize);
-			chart.remove();
-		};
-	}, [backgroundColor, textColor]);
-
-	// Update only series data — does not affect chart scroll/center
-	useEffect(() => {
-		if (seriesRef.current && data?.length) {
-			seriesRef.current.setData(data);
-			chartRef.current?.timeScale().fitContent();
-		}
-	}, [data]);
-
-	return <div className="pb-5" ref={chartContainerRef} />;
-};
-
-export const TradingChart = ({ symbol, colors, hideChart}) => {
+export const TradingChart = ({hideChart}) => {
 	if (hideChart) return null;
-	return <Chart symbol={symbol} colors={colors} />;
+	return <Chart/>;
 };
 
 export default TradingChart;

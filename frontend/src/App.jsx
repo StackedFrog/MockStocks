@@ -72,7 +72,7 @@ function AppLayout({userInfo, setUserInfo}) {
 				<>
 					{isMobile && (
 						<>
-							<div className="h-16 flex sticky top-0 w-full items-center bg-background border-b border-gray-200 dark:border-gray-700">
+							<div className="h-16 flex sticky z-90 top-0 w-full items-center bg-background border-b border-gray-200 dark:border-gray-700">
 								<button onClick={() => setSidebarOpen(true)} className="text-primary text-2xl ml-2 mb-1">
 									<FiMenu/>
 								</button>
@@ -80,18 +80,20 @@ function AppLayout({userInfo, setUserInfo}) {
 									<h1 className="text-primary text-3xl font-heading">Mock</h1>
 									<h1 className="text-secondary text-3xl font-heading">Stocks</h1>
 								</div>
-								{sidebarOpen && (
-									<>
-										<div className="fixed inset-0 z-100 bg-opacity-0" onClick={() => setSidebarOpen(false)}/>
-										<div className="fixed inset-y-0 left-0 z-150 w-64 bg-background border-r border-gray-700 flex flex-col">
-											<SideNav userInfo={userInfo} onLogoutInfo={setUserInfo} setSidebarOpen={setSidebarOpen} />
-										</div>
-									</>
-								)}
+
 							</div>
+							{sidebarOpen && (
+								<>
+									<div className="fixed inset-0 z-100 bg-opacity-0" onClick={() => setSidebarOpen(false)}/>
+									<div className="fixed inset-y-0 left-0 z-150 w-64 bg-background border-r border-gray-700 flex flex-col">
+										<SideNav userInfo={userInfo} onLogoutInfo={setUserInfo} setSidebarOpen={setSidebarOpen} />
+									</div>
+								</>
+							)}
+
 							<div className="flex my-4 items-center justify-center gap-4" style={{margin: "10px"}}>
 								<DisplayName name={userInfo.username}/>
-								<DisplayBalance cash={userInfo.balance}/> 
+								<DisplayBalance cash={userInfo.balance}/>
 							</div>
 						</>
 					)}

@@ -108,8 +108,8 @@ export const useApi = () => {
 			if(data.url){
 				window.location.href = data.url
 			}else{
-				tokenRef.current = data.token
-				setAccessToken(data.token)
+				tokenRef.current = data.token;
+				setAccessToken(data.token);
 			}
 		}
 		return res
@@ -117,7 +117,7 @@ export const useApi = () => {
 
 	const apiUnAuth = async (url) => {
 		try {
-			await apiFetch( url, {
+			 await apiFetch( url, {
 				method: "POST",
 				credentials: "include"
 			})

@@ -14,6 +14,7 @@ function ChangePwd(){
 	    if(new_pwd === new_pwd_repeat){
 	    	try {
 			await apiFetch("/auth/user/change_pwd", JSON.stringify({ old_pwd, new_pwd }))
+			
 
 		} catch(err) {
 		      console.error(err)

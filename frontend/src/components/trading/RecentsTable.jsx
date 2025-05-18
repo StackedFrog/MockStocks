@@ -1,14 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
 
-const RecentsTable = ({ data }) => {
+const RecentsTable = ({ data, hidden = false}) => {
 	const navigate = useNavigate();
 
 	if (!data || data.length === 0) {
 		return (
 			<div className='flex flex-col items-center'>
 				<p className="text-text font-text">You have no transactions to display</p>
-				<Button text="Start trading" to="/trade"></Button>
+
+				{hidden? <></> :<Button text="Start trading" to="/trade"></Button>}
 			</div>
 		);
 	}
@@ -32,17 +33,17 @@ const RecentsTable = ({ data }) => {
 									<span className="font-heading text-xs text-secondary capitalize">{header}</span>
 									<span className={`font-text text-sm ${
 										header === 'amount'
-											? row.transaction_type === 'purchase'
+											? row.transaction_type === 'Purchase'
 												? 'text-stock-positive'
-												: row.transaction_type === 'sale'
+												: row.transaction_type === 'Sale'
 													? 'text-stock-negative'
 									    : 'text-background'
 											: 'text-background'
 									}`}>
 										{header === 'amount'
-											? (row.transaction_type === 'purchase'
+											? (row.transaction_type === 'Purchase'
 										    ? '+'
-										    : row.transaction_type === 'sale'
+										    : row.transaction_type === 'Sale'
 													? '-'
 													: '') + row[header]
 											: row[header]}
@@ -81,18 +82,18 @@ const RecentsTable = ({ data }) => {
 											key={header}
 											className={`px-2 py-2 text-center text-sm ${
 												header === 'amount'
-													? row.transaction_type === 'purchase'
+													? row.transaction_type === 'Purchase'
 														? 'text-stock-positive'
-														: row.transaction_type === 'sale'
+														: row.transaction_type === 'Sale'
 															? 'text-stock-negative'
 									    : 'text-background'
 													: 'text-background'
 											}`}
 										>
 											{header === 'amount'
-												? (row.transaction_type === 'purchase'
+												? (row.transaction_type === 'Purchase'
 										    ? '+'
-										    : row.transaction_type === 'sale'
+										    : row.transaction_type === 'Sale'
 														? '-'
 														: '') + row[header]
 												: row[header]}

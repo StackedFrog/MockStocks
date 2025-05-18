@@ -22,6 +22,7 @@ MockStocks is a hands-on platform where you can practice trading stocks with rea
 - [Features](#features)
 - [Feedback](#feedback)
 - [Installing the application](#install-the-application)
+- [Tech-stack](#tech-stack)
 - [Contributors](#contributors)
 - [Licence](#licence)
 
@@ -38,7 +39,7 @@ MockStocks is a hands-on platform where you can practice trading stocks with rea
 
 MockStocks is a hands-on platform where you can practice trading stocks with real-time market data — no real money involved.    
 It’s built to help you learn how the stock market works, experiment with strategies, and get comfortable before jumping into actual trading.
-Whether you’re new or just want to sharpen your skills, our website makes it simple and risk-free.
+Whether you’re new or just want to sharpen your skills, our website makes it simple and risk-free.    
 
 <!-- <p align="center"> -->
 <!-- <img src = "overwiew image" width=350> -->
@@ -65,7 +66,26 @@ If you have any feedback, issues, or feature requests, please file an [file an i
 ## Install the application
 
 - Clone or download the repo
-- Add more steps 
+- Make sure to have node, make and docker installed
+- Configure the default .env to your liking
+- Run `make build_pipe` and `make prod_up`
+- Afterwards you should be able to see your website in your [browser](http://localhost:4001)
+
+## Tech-stack
+### Frontend
+- React
+- Tailwind CSS
+- Vite
+- JavaScript
+- HTML
+
+### Backend
+- Rust
+- Redis
+- OAuth
+- Docker
+- OpenTelemetry
+- PostgreSQL
 
 ## Contributors
 
