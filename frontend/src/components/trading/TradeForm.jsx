@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { StocksSearchBar } from './StocksSearchBar.jsx';
 import { TradingChart } from './TradingChart.jsx';
 import Button from '../general/Button.jsx';
@@ -12,10 +13,34 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 	const [error, setError] = useState();
 	const { apiFetch } = useApi();
 	const [tradeSummary, setTradeSummary] = useState(null);
+        const [searchParams, setSearchParams] = useSearchParams();
 
+        useEffect(() => {
+		const symbol = searchParams.get("symbol");
+		if (symbol && (symbol !== selectedStock?.symbol)) {
+
+			const fetchStockInfoAndSelect = async () => {
+				try {
+					const response = await apiFetch(`/api/stocks_api/ticker?symbol=${encodeURIComponent(symbol)}`);
+					if (!response.ok) throw new Error('Stock not found');
+					const results = await response.json();
+
+					const stock = results.find(s => s.symbol === symbol);
+					if (stock) {
+						handleStockSelect(stock.symbol, stock.name);
+					}
+				} catch (err) {
+					console.error('Error fetching stock info from symbol param:', err);
+				}
+			};
+
+			fetchStockInfoAndSelect();
+		}
+	}, [searchParams]);
 
 	const handleStockSelect = (symbol, name) => {
 		setSelectedStock({ symbol, name });
+                setSearchParams({ symbol });
 	};
 
 	const handleClear = () => {
@@ -75,7 +100,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 		<div>
 
 			<form onSubmit={handleSubmit} className="space-y-4 w-full flex flex-col">
-				<label htmlFor="">Symbol
+				<label>Symbol
 					<StocksSearchBar onSelect={handleStockSelect} />
 				</label>
 				
@@ -94,7 +119,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 				)}
 
 				<div className={`mt-4 grid gap-4 ${!selectedStock ? 'opacity-100 pointer-events-none' : ''}`}>
-					<label htmlFor="" className='flex flex-col gap-2'>Amount ($)
+					<label className='flex flex-col gap-2'>Amount ($)
 						<input
 							type="number"
 							placeholder="0"
@@ -112,7 +137,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 						)}
 					</label>
 					
-					<label htmlFor="" className='flex flex-col gap-2'>Action
+					<label className='flex flex-col gap-2'>Action
 						<select
 							value={action}
 							onChange={(e) => setAction(e.target.value)}

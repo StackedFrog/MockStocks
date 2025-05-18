@@ -17,9 +17,9 @@ const Chart = () => {
 
 	const updateTrades = useCallback(async (symbol) => {
 		const data = await fetchTrades(symbol)
-
-		const lastTradeAPI = data.slice(-1)[0]
-		const lastTradeData = stockDataRef.current.slice(-1)[0]
+                if (!data) return;
+		const lastTradeAPI = data?.slice(-1)[0]
+		const lastTradeData = stockDataRef?.current?.slice(-1)[0]
 
 		const dataDate = new Date(lastTradeData.time * 1000)
 		const dataMinute = dataDate.getMinutes() % 10
@@ -31,7 +31,7 @@ const Chart = () => {
 		if (dataMinute === apiMinute) {
 			// UPDATE the last trade
 			const newData = [
-				...stockDataRef.current.slice(0, -1),
+				...stockDataRef?.current?.slice(0, -1),
 				lastTradeAPI
 			]
 
@@ -54,8 +54,7 @@ const Chart = () => {
 			const response = await apiFetch(
 				`/api/stocks_api/range?symbol=${encodeURIComponent(symbol)}&range=12h&interval=15m`
 			)
-			if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
-
+			if (!response.ok) return; 
 
 			const data = await response.json()
 			if (data){
