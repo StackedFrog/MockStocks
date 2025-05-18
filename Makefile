@@ -20,7 +20,7 @@ prod_down:
 
 # Produciton build
 build-frontend:
-	cd frontend && npm run build
+	cd frontend && npm install && npm run build
 
 prod_build:
 	sudo docker compose -p prod build
