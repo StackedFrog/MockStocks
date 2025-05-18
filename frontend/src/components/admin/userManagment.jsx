@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useApi } from "../hooks/useApi.jsx";
+import { useApi } from "../../hooks/useApi.jsx";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { Menu } from "@headlessui/react";
-import Button from "./ui/Button.jsx";
-import HoldingsTable from "./trading/HoldingsTable.jsx"
-import RecentsTable from './trading/RecentsTable.jsx';
+import Button from "../general/Button.jsx";
+import HoldingsTable from "../trading/HoldingsTable.jsx"
+import RecentsTable from '../trading/RecentsTable.jsx';
 
 
 function UserManagement() {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Telemetry from '../../../components/telemetry.jsx';
-import UserManagment from '../../../components/userManagment.jsx';
+import Telemetry from '../../../components/admin/telemetry.jsx';
+import UserManagment from '../../../components/admin/userManagment.jsx';
 
 function AdminPage() {
   const [activeTab, setActiveTab] = useState('userManagement');

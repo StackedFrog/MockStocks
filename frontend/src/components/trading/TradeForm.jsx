@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { StocksSearchBar } from './StocksSearchBar.jsx';
 import { TradingChart } from './TradingChart.jsx';
-import Button from '../ui/Button.jsx';
+import Button from '../general/Button.jsx';
 import { useApi } from '../../hooks/useApi.jsx';
 import SummaryModal from './SummaryModal.jsx';
 
@@ -40,7 +40,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 
 	const handleStockSelect = (symbol, name) => {
 		setSelectedStock({ symbol, name });
-                setSearchParams({ symbol });
+        setSearchParams({ symbol });
 	};
 
 	const handleClear = () => {
@@ -97,7 +97,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 	};
 
 	return (
-		<div>
+		<div className='relative min-h-screen w-full'>
 
 			<form onSubmit={handleSubmit} className="space-y-4 w-full flex flex-col">
 				<label>Symbol
@@ -149,7 +149,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 						</select>
 					</label>
 
-					<div className='flex justify-between'>
+					<div className='flex justify-between lg:justify-center lg:gap-10'>
 						<Button text='Clear' onClick={handleClear} disabled={!selectedStock} className='w-[45%] disabled:opacity-50'></Button>
 						<Button text='Continue' type='submit' disabled={!selectedStock} className='w-[45%] disabled:opacity-50'></Button>
 					</div>
@@ -175,7 +175,6 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 
 					if (response.ok) {
 						fetchUserInfo(); // refresh balance
-						//resetForm(); // optional: reset fields
 					} else {
 						setError("Something went wrong while processing your trade.");
 					}

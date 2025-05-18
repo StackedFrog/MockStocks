@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useApi } from "../../hooks/useApi.jsx";
-import Button from "../ui/Button.jsx";
+import Button from "../general/Button.jsx";
 
 function ChangePasswordForm( {editClick} ) {
         const { apiFetch } = useApi();

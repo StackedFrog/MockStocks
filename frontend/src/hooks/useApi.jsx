@@ -16,23 +16,6 @@ const apiCall = async (url, options = {}, token) => {
 	return res
 }
 
-// const apiFetch = async (url, options = {}) => {
-//
-// 	const res = apiCall(url, options)
-//
-// 	if (res.status === 401){
-// 		await refreshAccessToken()
-//
-// 		res = apiCall(url, options)
-// 	}
-// 	return res;
-// }
-//
-//
-//
-
-
-
 export const useApi = () => {
 
 	const {tokenRef, accessToken, refreshAccessToken, setAccessToken} = useAuth()

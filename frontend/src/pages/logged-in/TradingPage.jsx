@@ -1,4 +1,3 @@
-import React from 'react';
 import TradeForm from '../../components/trading/TradeForm.jsx';
 
 function TradingPage({userInfo, fetchUserInfo, hiddenChart}) {

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Button from '../ui/Button';
+import Button from '../general/Button';
 
 const Table = ({ data, hidden = false }) => {
         const navigate = useNavigate();

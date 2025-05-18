@@ -1,10 +1,10 @@
 import React from "react";
 import { useApi } from "../../hooks/useApi.jsx";
-import Button from "../../components/ui/Button.jsx";
+import Button from "../../components/general/Button.jsx";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { useState } from "react";
 import LogoutEveryWhere from "../../components/auth/LogoutEveryWhere.jsx"
-import Modal from "../../components/ui/Modal.jsx"
+import Modal from "../../components/general/Modal.jsx"
 import ChangePasswordForm from "../../components/auth/ChangePassowrdForm.jsx";
 import { useNavigate } from 'react-router-dom'
 

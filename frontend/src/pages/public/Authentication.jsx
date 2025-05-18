@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import RegisterForm from "../../components/auth/RegisterForm.jsx";
 import LoginForm from "../../components/auth/LoginForm.jsx";
-import Button from '../../components/ui/Button.jsx';
+import Button from '../../components/general/Button.jsx';
 
 function Authentication() {
 	const [login, setLogin] = useState(true);
