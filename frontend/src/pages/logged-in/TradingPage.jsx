@@ -74,7 +74,7 @@ function TradingPage( {hideChart} ) {
               hideChart={hideChart}
               onPriceUpdate={setLastPrice}
             />
-            <BuyingAndSelling price={lastPrice}/>
+            <BuyingAndSelling price={lastPrice} symbol={stockSymbol}/>
           </div>
 
         )}
