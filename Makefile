@@ -43,7 +43,7 @@ dev_up: decrypt
 	sudo docker compose -p dev -f docker-compose.dev.yaml up
 
 dev_down:
-	sudo docker compose -f docker-compose.dev.yaml down
+	sudo docker compose -p dev -f docker-compose.dev.yaml down
 
 
 
