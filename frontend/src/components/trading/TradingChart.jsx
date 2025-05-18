@@ -1,144 +1,130 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useApi } from "../../hooks/useApi.jsx";
-import ReactApexChart from "react-apexcharts";
+import CandleChart from "./CandleChart.jsx";
+import AreaChart from "./AreaChart.jsx";
 
 
 const Chart = () => {
-  const { apiFetch } = useApi();
-  const [stockData, setStockData] = useState([]);
-  const stockDataRef = useRef([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+        const { apiFetch } = useApi();
+        const [stockData, setStockData] = useState([]);
+        const stockDataRef = useRef([]);
+        const [searchParams] = useSearchParams();
+        const [chartType, setChartType] = useState("area");
 
-  const updateTrades = useCallback(async () => {
-    const data = await fetchTrades()
+        const symbol = searchParams.get("symbol");
 
-    const lastTradeAPI = data.slice(-1)[0]
-    const lastTradeData = stockDataRef.current.slice(-1)[0]
+        const updateTrades = useCallback(async (symbol) => {
+                const data = await fetchTrades(symbol)
 
-    const dataDate = new Date(lastTradeData.time * 1000)
-    const dataMinute = dataDate.getMinutes() % 10
+                const lastTradeAPI = data.slice(-1)[0]
+                const lastTradeData = stockDataRef.current.slice(-1)[0]
 
-    const apiDate = new Date(lastTradeAPI.time * 1000)
-    const apiMinute = apiDate.getMinutes() % 10
+                const dataDate = new Date(lastTradeData.time * 1000)
+                const dataMinute = dataDate.getMinutes() % 10
 
-    // same minute?
-    if (dataMinute === apiMinute) {
-      // UPDATE the last trade
-      const newData = [
-        ...stockDataRef.current.slice(0, -1),
-        lastTradeAPI
-      ]
+                const apiDate = new Date(lastTradeAPI.time * 1000)
+                const apiMinute = apiDate.getMinutes() % 10
 
-      setStockData(newData)
-      stockDataRef.current = newData
-    } else {
-      // ADD new Trade
-      const newData = [
-        ...stockDataRef.current,
-        lastTradeAPI
-      ]
-      setStockData(newData)
-      stockDataRef.current = newData
-    }
+                // same minute?
+                if (dataMinute === apiMinute) {
+                        // UPDATE the last trade
+                        const newData = [
+                                ...stockDataRef.current.slice(0, -1),
+                                lastTradeAPI
+                        ]
 
-  }, [stockData])
+                        setStockData(newData)
+                        stockDataRef.current = newData
+                } else {
+                        // ADD new Trade
+                        const newData = [
+                                ...stockDataRef.current,
+                                lastTradeAPI
+                        ]
+                        setStockData(newData)
+                        stockDataRef.current = newData
+                }
 
-  const fetchTrades = async () => {
-    try {
-	const response = await apiFetch(
-        `/api/stocks_api/range?symbol=${encodeURIComponent(searchParams.get("symbol"))}&range=12h&interval=15m`
-      )
-      if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
+        }, [stockData])
 
-
-      const data = await response.json()
-return data.quotes.map(q => ({
-        x: new Date(q.timestamp * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year:"numeric",  hour: "2-digit", minute: "2-digit", hour12: false }).replace(",", "").toString(),
-        y: [q.open, q.high, q.low, q.close]
-      }));
-    } catch (err) {
-      console.error(`Fetch error in TradingChart component: ${err}`)
-    }
-    return
-  }
+        const fetchTrades = async (symbol) => {
+                try {
+                        const response = await apiFetch(
+                                `/api/stocks_api/range?symbol=${encodeURIComponent(symbol)}&range=12h&interval=15m`
+                        )
+                        if (!response.ok) throw new Error("Response is not ok: " + response.statusText)
 
 
-  useEffect(() => {
-  // initial fetch
-  (async () => {
-    const data = await fetchTrades();
-    setStockData(data);
-    stockDataRef.current = data
-  })();
+                        const data = await response.json()
+                        console.log(searchParams)
+                        console.log(data)
+                        return data.quotes.map(q => ({
+                                x: new Date(q.timestamp * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year:"numeric",  hour: "2-digit", minute: "2-digit", hour12: false }).replace(",", "").toString(),
+                                y: [q.open, q.high, q.low, q.close]
+                        }));
+                } catch (err) {
+                        console.error(`Fetch error in TradingChart component: ${err}`)
+                }
+                return
+        }
 
-    // fetches trading data every 300ms
-    const fetchLoop = setInterval(() => {
-      updateTrades()
-    }, 10000);
+        useEffect(() => {
+                if (!symbol) return;
+                // initial fetch
+                (async () => {
+                        const data = await fetchTrades(symbol);
+                        setStockData(data);
+                        stockDataRef.current = data
+                })();
 
-    // cleanUp fetchLoop on unmount
-    return () => clearInterval(fetchLoop)
-  }, [])
+                // fetches trading data every 300ms
+                const fetchLoop = setInterval(() => {
+                        updateTrades(symbol)
+                }, 10000);
 
-        return <CandleChart data={stockData} />;
-};
+                // cleanUp fetchLoop on unmount
+                return () => clearInterval(fetchLoop)
+        }, [searchParams])
 
-const CandleChart = ({ data }) => {
-        const [zoomRange, setZoomRange] = useState(null);
-const chartOptions = useMemo(() => ({
-  chart: {
-    type: "candlestick",
-    height: 400,
-    background: "#0b0d0b",
-    toolbar: { show: false },
-    events: {
-      zoomed: (chartContext, { xaxis }) => {
-        setZoomRange({ min: xaxis.min, max: xaxis.max });
-      },
-      scrolled: (chartContext, { xaxis }) => {
-        setZoomRange({ min: xaxis.min, max: xaxis.max });
-      }
-    }
-  },
-  xaxis: {
-    type: "category",
-    min: zoomRange?.min,
-    max: zoomRange?.max,
-    labels: {
-      style: { colors: "#eaecea" },
-      formatter: (text) => text ? text.split(" ")[1] : ""
-    },
-  },
-  yaxis: {
-    tooltip: { enabled: true },
-    labels: {
-      style: { colors: "#eaecea" },
-      formatter: (val) => val.toFixed(2)
-    },
-  },
-  tooltip: {
-    theme: "dark",
-    custom: ({ seriesIndex, dataPointIndex, w }) => {
-      const dataPoint = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
-      return `<div style="padding:5px; color:#eaecea;">
-        <div><strong>Open:</strong> ${dataPoint.y[0]}</div>
-        <div><strong>High:</strong> ${dataPoint.y[1]}</div>
-        <div><strong>Low:</strong> ${dataPoint.y[2]}</div>
-        <div><strong>Close:</strong> ${dataPoint.y[3]}</div>
-        <div><strong>Date:</strong> ${dataPoint.x}</div>
-      </div>`;
-    }
-  }
-}), [zoomRange]);
-
-  const series = [{ data }];
-
-  return (
-    <div id="chart">
-      <ReactApexChart options={chartOptions} series={series} type="candlestick" height={400} />
-    </div>
-  );
+        return (
+                <div>
+                <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                <button
+                onClick={() => setChartType("area")}
+                style={{
+                        marginRight: "8px",
+                                padding: "6px 12px",
+                                background: chartType === "area" ? "#00BFFF" : "#222",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                }}
+                >
+                Area Chart
+                </button>
+                <button
+                onClick={() => setChartType("candle")}
+                style={{
+                        padding: "6px 12px",
+                                background: chartType === "candle" ? "#00BFFF" : "#222",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                }}
+                >
+                Candlestick
+                </button>
+                </div>
+                {chartType === "area" ? (
+                        <AreaChart key="area" data={stockData} />
+                ) : (
+                        <CandleChart key="candle" data={stockData} />
+                )}
+                </div>
+        );
 };
 
 export const TradingChart = ({hideChart}) => {
