@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { StocksSearchBar } from './StocksSearchBar.jsx';
 import { TradingChart } from './TradingChart.jsx';
 import Button from '../ui/Button.jsx';
@@ -12,10 +13,34 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 	const [error, setError] = useState();
 	const { apiFetch } = useApi();
 	const [tradeSummary, setTradeSummary] = useState(null);
+        const [searchParams, setSearchParams] = useSearchParams();
 
+        useEffect(() => {
+		const symbol = searchParams.get("symbol");
+		if (symbol && (symbol !== selectedStock?.symbol)) {
+
+			const fetchStockInfoAndSelect = async () => {
+				try {
+					const response = await apiFetch(`/api/stocks_api/ticker?symbol=${encodeURIComponent(symbol)}`);
+					if (!response.ok) throw new Error('Stock not found');
+					const results = await response.json();
+
+					const stock = results.find(s => s.symbol === symbol);
+					if (stock) {
+						handleStockSelect(stock.symbol, stock.name);
+					}
+				} catch (err) {
+					console.error('Error fetching stock info from symbol param:', err);
+				}
+			};
+
+			fetchStockInfoAndSelect();
+		}
+	}, [searchParams]);
 
 	const handleStockSelect = (symbol, name) => {
 		setSelectedStock({ symbol, name });
+                setSearchParams({ symbol });
 	};
 
 	const handleClear = () => {
