@@ -65,7 +65,10 @@ If you have any feedback, issues, or feature requests, please file an [file an i
 ## Install the application
 
 - Clone or download the repo
-- Add more steps 
+- Make sure to have node, make and docker installed
+- configure the default .env to your liking
+- then run `make build_pipe` and `make prod_up`
+- Afterwards you should be able to see your website in your [browser](http://localhost:4001)
 
 ## Contributors
 
