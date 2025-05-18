@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { TradingChart } from '../../components/trading/TradingChart.jsx';
 import BuyingAndSelling from '../../components/trading/BuyingAndSelling.jsx';
 import { StocksSearchBar } from '../../components/trading/StocksSearchBar.jsx';
@@ -9,7 +9,6 @@ function TradingPage( {hideChart} ) {
   const { apiFetch } = useApi();
   const [stockSymbol, setStockSymbol] = useState(null);
   const [stockName, setStockName] = useState(null);
-  const [stockData, setStockData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // FETCH STOCK DATA
@@ -68,8 +67,6 @@ function TradingPage( {hideChart} ) {
               {stockName}
             </h2>
             <TradingChart
-              symbol={stockSymbol}
-              colors={{ backgroundColor: '#0b0d0b', textColor: '#eaecea' }}
               hideChart={hideChart}
             />
             <BuyingAndSelling />
