@@ -56,7 +56,7 @@ function About({userInfo}) {
 				<div className='flex flex-col sm:flex-row items-center w-[90%]'>
 					<div className='flex flex-col items-center w-full'>
 						<h3 className='font-heading text-primary text-2xl'>FRONTEND</h3>
-						<div className='flex flex-wrap gap-3 py-5 sm:w-[70%] sm:justify-center'>
+						<div className='w-[75%] flex justify-center flex-wrap gap-3 py-5 sm:w-[70%] sm:justify-center'>
 							<div className='text-6xl text-accent'>
 								<i className="devicon-html5-plain"></i>
 							</div>
@@ -77,7 +77,7 @@ function About({userInfo}) {
 
 					<div className='flex flex-col items-center w-full'>
 						<h3 className='font-heading text-primary text-2xl'>BACKEND</h3>
-						<div className='flex flex-wrap gap-3 w-[60%] py-5'>
+						<div className='flex flex-wrap justify-center gap-3 w-[75%] py-5'>
 							<div className='text-6xl text-accent'>
 								<i className="devicon-rust-original"></i>
 							</div>
