@@ -34,7 +34,7 @@ pub fn routes(mm: ModelManager) -> Router {
         .route("/sale", post(sale_handler))
         .route("/info", get(user_info_handler))
         .route("/holdings", get(holdings_handler))
-        .route("/holdings/:symbol", get(holding_by_symbol_handler))
+        .route("/holdings/{:symbol}", get(holding_by_symbol_handler))
         .route("/transactions", get(transactions_handler))
         .route("/delete_account", delete(delete_account_handler))
         .with_state(mm)

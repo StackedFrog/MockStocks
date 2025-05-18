@@ -101,7 +101,7 @@ pub async fn update_quantity(pool: &mut PgConnection, updated: NewHolding) -> Re
     return Ok(());
 }
 
-pub async fn delete_holding(pool: &Pool, id: Uuid, symbol: String) -> Result<()> {
+pub async fn delete_holding(pool: &mut PgConnection, id: &Uuid, symbol: &String) -> Result<()> {
     let query = "DELETE FROM Holdings WHERE user_id = $1 AND symbol = $2";
     sqlx::query(query)
         .bind(id)
