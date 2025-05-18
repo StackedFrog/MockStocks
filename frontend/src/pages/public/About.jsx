@@ -12,7 +12,6 @@ const linkedins = {
 }
 
 function About({userInfo}) {
-	console.log(userInfo);
 	const [users, setUsers] = useState([]);
 
 	useEffect(() => {

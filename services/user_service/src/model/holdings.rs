@@ -47,14 +47,14 @@ impl NewHolding {
 
 pub async fn get_holding_by_symbol(pool: &Pool, id: &Uuid, symbol: &String) -> Result<Holding> {
     let query = "SELECT * FROM Holdings WHERE user_id = $1 AND symbol = $2";
-    let holdings = sqlx::query_as(query)
+    let holding = sqlx::query_as(query)
         .bind(id)
         .bind(symbol)
         .fetch_one(pool)
         .await
         .map_err(|_e| Error::UserIDNotFound)?;
 
-    return Ok(holdings);
+    return Ok(holding);
 }
 
 pub async fn get_all_holdings_by_id(pool: &Pool, id: &Uuid) -> Result<Vec<Holding>> {
@@ -101,7 +101,7 @@ pub async fn update_quantity(pool: &mut PgConnection, updated: NewHolding) -> Re
     return Ok(());
 }
 
-pub async fn delete_holding(pool: &Pool, id: Uuid, symbol: String) -> Result<()> {
+pub async fn delete_holding(pool: &mut PgConnection, id: &Uuid, symbol: &String) -> Result<()> {
     let query = "DELETE FROM Holdings WHERE user_id = $1 AND symbol = $2";
     sqlx::query(query)
         .bind(id)

@@ -1,13 +1,13 @@
 use crate::model::Pool;
 use crate::model::error::{Error, Result};
 use chrono::{DateTime, Utc};
-use rust_decimal::Decimal;
+use rust_decimal::{dec, Decimal};
 use serde::Serialize;
 use sqlx::PgConnection;
 use tracing::info;
 use uuid::Uuid;
 
-use super::holdings::{NewHolding, add_holding, update_quantity};
+use super::holdings::{add_holding, delete_holding, update_quantity, NewHolding};
 use super::user::update_balance;
 
 #[derive(sqlx::FromRow, Debug, Serialize)]
@@ -122,7 +122,11 @@ pub async fn add_complete_transaction(
     add_transaction(&mut *tx, new_transaction).await?;
 
     if new_holding.update {
-        update_quantity(&mut *tx, new_holding).await?;
+        if new_holding.quantity == dec!(0.0) {
+            delete_holding(&mut *tx, user_id, &new_holding.symbol).await?;
+        } else {
+            update_quantity(&mut *tx, new_holding).await?;
+        }
     } else {
         add_holding(&mut *tx, new_holding).await?;
     }

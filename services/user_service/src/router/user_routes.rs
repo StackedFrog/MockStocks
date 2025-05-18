@@ -16,7 +16,7 @@ use crate::model::{
 use axum::routing::delete;
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{State, Path},
     routing::{get, post},
 };
 use rust_decimal::{dec, Decimal, prelude::FromPrimitive, prelude::ToPrimitive};
@@ -34,6 +34,7 @@ pub fn routes(mm: ModelManager) -> Router {
         .route("/sale", post(sale_handler))
         .route("/info", get(user_info_handler))
         .route("/holdings", get(holdings_handler))
+        .route("/holdings/{:symbol}", get(holding_by_symbol_handler))
         .route("/transactions", get(transactions_handler))
         .route("/delete_account", delete(delete_account_handler))
         .with_state(mm)
@@ -204,6 +205,29 @@ pub async fn holdings_handler(
     }
 
     Ok(Json(holdings_info))
+}
+
+async fn holding_by_symbol_handler(
+    Path(symbol): Path<String>,
+    State(mm): State<ModelManager>,
+    ctx: Ctx,
+) -> Result<Json<HoldingInfo>> {
+    let user_id = ctx.user_id();
+    let holding = get_holding_by_symbol(&mm.pool, &user_id, &symbol).await?;
+    
+    // calculate current value of holding
+    let latest_quote = get_stock(mm.client.clone(), &holding.symbol).await?;
+    let price = Decimal::from_f64(latest_quote.close).ok_or(Error::FailedToParsePrice)?;
+    let current_value = holding.quantity * price;
+
+    // create new struct with info
+    let h_info = HoldingInfo {
+        holding,
+        performance: dec!(0.0),
+        value: current_value,
+    };
+
+    Ok(Json(h_info))
 }
 
 pub async fn transactions_handler(

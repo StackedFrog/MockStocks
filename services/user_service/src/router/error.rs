@@ -12,7 +12,7 @@ pub enum Error {
     FailedToParseLatestQuote,
     FailedToParsePrice,
     FailedToParseAmount,
-    NotAuthorized,
+    NotAuthorized
 }
 
 impl From<model::Error> for Error {
