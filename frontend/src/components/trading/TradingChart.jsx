@@ -58,12 +58,12 @@ const Chart = () => {
 
 
                         const data = await response.json()
-                        console.log(searchParams)
-                        console.log(data)
-                        return data.quotes.map(q => ({
-                                x: new Date(q.timestamp * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year:"numeric",  hour: "2-digit", minute: "2-digit", hour12: false }).replace(",", "").toString(),
-                                y: [q.open, q.high, q.low, q.close]
-                        }));
+                        if (data){
+                                return data.quotes.map(q => ({
+                                        x: new Date(q.timestamp * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year:"numeric",  hour: "2-digit", minute: "2-digit", hour12: false }).replace(",", "").toString(),
+                                        y: [q.open, q.high, q.low, q.close]
+                                }));
+                        }
                 } catch (err) {
                         console.error(`Fetch error in TradingChart component: ${err}`)
                 }
