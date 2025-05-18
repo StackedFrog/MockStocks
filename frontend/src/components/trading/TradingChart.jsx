@@ -5,7 +5,7 @@ import { createChart, ColorType, CandlestickSeries } from 'lightweight-charts';
 
 
 
-const Chart = ({ symbol, colors }) => {
+const Chart = ({ symbol, colors, onPriceUpdate }) => {
   const { apiFetch } = useApi();
   const [stockName, setStockName] = useState(null);
   const [stockData, setStockData] = useState([]);
@@ -44,6 +44,9 @@ const Chart = ({ symbol, colors }) => {
       stockDataRef.current = newData
     }
 
+    // update price in the parent component
+    onPriceUpdate?.(lastTradeAPI.close);
+
   }, [stockData])
 
   const fetchTrades = async () => {
@@ -78,9 +81,11 @@ const Chart = ({ symbol, colors }) => {
     setStockData(data);
     stockDataRef.current = data
 
+    // updates trades and initialize onPriceUpdate
+    updateTrades()
   })();
 
-    // fetches trading data every 300ms
+    // fetches trading data every 10s
     const fetchLoop = setInterval(() => {
       updateTrades()
     }, 10000);
@@ -162,9 +167,9 @@ const TradingviewApiChart = ({ data, colors = {} }) => {
   return <div ref={chartContainerRef} />;
 };
 
-export const TradingChart = ({ symbol, colors, hideChart}) => {
+export const TradingChart = ({ symbol, colors, hideChart, onPriceUpdate}) => {
         if (hideChart) return null;
-        return <Chart symbol={symbol} colors={colors} />;
+        return <Chart symbol={symbol} colors={colors} onPriceUpdate={onPriceUpdate} />;
 };
 
 export default TradingChart;

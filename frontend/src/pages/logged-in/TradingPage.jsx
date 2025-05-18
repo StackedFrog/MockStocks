@@ -11,6 +11,7 @@ function TradingPage( {hideChart} ) {
   const [stockName, setStockName] = useState(null);
   const [stockData, setStockData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [lastPrice, setLastPrice] = useState(null)
 
   // FETCH STOCK DATA
   const handleSelectStock = (symbol, name) => {
@@ -71,8 +72,9 @@ function TradingPage( {hideChart} ) {
               symbol={stockSymbol}
               colors={{ backgroundColor: '#0b0d0b', textColor: '#eaecea' }}
               hideChart={hideChart}
+              onPriceUpdate={setLastPrice}
             />
-            <BuyingAndSelling />
+            <BuyingAndSelling price={lastPrice}/>
           </div>
 
         )}
