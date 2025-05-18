@@ -34,17 +34,17 @@ const RecentsTable = ({ data, hidden = false}) => {
 									<span className={`font-text text-sm ${
 										header === 'amount'
 											? row.transaction_type === 'Purchase'
-												? 'text-stock-positive'
+												? 'text-stock-negative'
 												: row.transaction_type === 'Sale'
-													? 'text-stock-negative'
+													? 'text-stock-positive'
 									    : 'text-background'
 											: 'text-background'
 									}`}>
 										{header === 'amount'
 											? (row.transaction_type === 'Purchase'
-										    ? '+'
+										    ? '-'
 										    : row.transaction_type === 'Sale'
-													? '-'
+													? '+'
 													: '') + row[header]
 											: row[header]}
 									</span>
@@ -83,18 +83,18 @@ const RecentsTable = ({ data, hidden = false}) => {
 											className={`px-2 py-2 text-center text-sm ${
 												header === 'amount'
 													? row.transaction_type === 'Purchase'
-														? 'text-stock-positive'
+														? 'text-stock-negative'
 														: row.transaction_type === 'Sale'
-															? 'text-stock-negative'
+															? 'text-stock-positive'
 									    : 'text-background'
 													: 'text-background'
 											}`}
 										>
 											{header === 'amount'
 												? (row.transaction_type === 'Purchase'
-										    ? '+'
+										    ? '-'
 										    : row.transaction_type === 'Sale'
-														? '-'
+														? '+'
 														: '') + row[header]
 												: row[header]}
 										</td>
