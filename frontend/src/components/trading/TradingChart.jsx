@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useApi } from "../../hooks/useApi.jsx";
 import CandleChart from "./CandleChart.jsx";
 import AreaChart from "./AreaChart.jsx";
+import Button from "../ui/Button.jsx";
 
 
 const Chart = () => {
@@ -88,35 +89,18 @@ const Chart = () => {
         }, [searchParams])
 
         return (
+
                 <div>
-                <div style={{ textAlign: "right", marginBottom: "8px" }}>
-                <button
+                <div className="flex items-center mb-2 gap-4">
+                <Button
+                text="Area Chart"
                 onClick={() => setChartType("area")}
-                style={{
-                        marginRight: "8px",
-                                padding: "6px 12px",
-                                background: chartType === "area" ? "#00BFFF" : "#222",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                }}
-                >
-                Area Chart
-                </button>
-                <button
+                className="lg:w-auto"
+                />
+                <Button
+                text="Candlestick"
                 onClick={() => setChartType("candle")}
-                style={{
-                        padding: "6px 12px",
-                                background: chartType === "candle" ? "#00BFFF" : "#222",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                }}
-                >
-                Candlestick
-                </button>
+                className="lg:w-auto"                />
                 </div>
                 {chartType === "area" ? (
                         <AreaChart key="area" data={stockData} />
