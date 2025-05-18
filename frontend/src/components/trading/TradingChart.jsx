@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useApi } from "../../hooks/useApi.jsx";
 import ReactApexChart from "react-apexcharts";
@@ -85,28 +85,39 @@ return data.quotes.map(q => ({
 };
 
 const CandleChart = ({ data }) => {
-  const chartOptions = {
-    chart: {
-      type: "candlestick",
-      height: 400,
-      background: "#0b0d0b",
-      toolbar: { show: false },
-    },
-    xaxis: {
-      type: "category",
-      labels: { 
-              style: { colors: "#eaecea" },
-              formatter: (text) => text ? text.split(" ")[1] : "" 
+        const [zoomRange, setZoomRange] = useState(null);
+const chartOptions = useMemo(() => ({
+  chart: {
+    type: "candlestick",
+    height: 400,
+    background: "#0b0d0b",
+    toolbar: { show: false },
+    events: {
+      zoomed: (chartContext, { xaxis }) => {
+        setZoomRange({ min: xaxis.min, max: xaxis.max });
       },
+      scrolled: (chartContext, { xaxis }) => {
+        setZoomRange({ min: xaxis.min, max: xaxis.max });
+      }
+    }
+  },
+  xaxis: {
+    type: "category",
+    min: zoomRange?.min,
+    max: zoomRange?.max,
+    labels: {
+      style: { colors: "#eaecea" },
+      formatter: (text) => text ? text.split(" ")[1] : ""
     },
-    yaxis: {
-      tooltip: { enabled: true },
-      labels: { 
-              style: { colors: "#eaecea" },
-              formatter: (val) => val.toFixed(2)
-      },
+  },
+  yaxis: {
+    tooltip: { enabled: true },
+    labels: {
+      style: { colors: "#eaecea" },
+      formatter: (val) => val.toFixed(2)
     },
-          tooltip: {
+  },
+  tooltip: {
     theme: "dark",
     custom: ({ seriesIndex, dataPointIndex, w }) => {
       const dataPoint = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
@@ -119,7 +130,7 @@ const CandleChart = ({ data }) => {
       </div>`;
     }
   }
-  };
+}), [zoomRange]);
 
   const series = [{ data }];
 
