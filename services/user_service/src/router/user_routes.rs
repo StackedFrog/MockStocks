@@ -191,7 +191,7 @@ pub async fn holdings_handler(
         let current_value = h.quantity * price;
 
         // compare investment vs current value and get profit/loss %
-        let performance = ((total_spent - current_value) / current_value) * dec!(100.00);
+        let performance = ((current_value - total_spent) / total_spent) * dec!(100.00);
 
         // create new struct with info
         let h_info = HoldingInfo {
