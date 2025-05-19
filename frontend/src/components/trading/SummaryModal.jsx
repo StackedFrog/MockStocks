@@ -2,7 +2,7 @@ import Button from "../general/Button";
 import { useEffect } from "react";
 
 const SummaryModal = ({ trade, onConfirm, onCancel }) => {
-        useEffect(() => {
+	useEffect(() => {
 		if (trade) {
 			document.body.classList.add('overflow-hidden');
 		} else {

@@ -17,7 +17,7 @@ const Chart = () => {
 
 	const updateTrades = useCallback(async (symbol) => {
 		const data = await fetchTrades(symbol)
-                if (!data) return;
+		if (!data) return;
 		const lastTradeAPI = data?.slice(-1)[0]
 		const lastTradeData = stockDataRef?.current?.slice(-1)[0]
 

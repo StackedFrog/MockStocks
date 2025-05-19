@@ -13,9 +13,9 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 	const [error, setError] = useState();
 	const { apiFetch } = useApi();
 	const [tradeSummary, setTradeSummary] = useState(null);
-        const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-        useEffect(() => {
+	useEffect(() => {
 		const symbol = searchParams.get("symbol");
 		if (symbol && (symbol !== selectedStock?.symbol)) {
 
@@ -40,7 +40,7 @@ const TradeForm = ({ userInfo, fetchUserInfo }) => {
 
 	const handleStockSelect = (symbol, name) => {
 		setSelectedStock({ symbol, name });
-        setSearchParams({ symbol });
+		setSearchParams({ symbol });
 	};
 
 	const handleClear = () => {

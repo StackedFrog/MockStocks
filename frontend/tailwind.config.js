@@ -23,14 +23,14 @@ module.exports = {
 				'secondary': '#48614e',
 				'tertiary': '#131613',
 				'accent': '#77a282',
-                                "stock-positive": "#4d7d2d",
-                                "stock-negative": "#691919",
+				"stock-positive": "#4d7d2d",
+				"stock-negative": "#691919",
 				'accent2': '#9D4141'
 			},
 			fontFamily: {
 				text: ['"JetBrains Mono"', 'monospace'],
 				heading: ['"Rubik Mono One"', 'sans-serif'],
-                                sans: ['Inter', 'sans-serif'], // Inter = default sans font
+				sans: ['Inter', 'sans-serif'], // Inter = default sans font
 			},
 		},
 	},

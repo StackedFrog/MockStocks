@@ -10,7 +10,7 @@ function LogoutEveryWhere() {
 		navigate("/")
 	}
 
-        return (
+	return (
 		<button
 			type= "button"
 			onClick={onLogout}

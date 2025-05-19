@@ -20,17 +20,17 @@ function Telemetry() {
 		firstFetch()
 		const interval = setInterval(fetchDashCookie, 60000);
 		return () => clearInterval(interval)
-        }, []);
+	}, []);
 
 
-return (<div>
-{ ready ? <iframe
-	src="/auth/grafana/d/gateway-metrics/telemetry?kiosk"
+	return (<div>
+		{ ready ? <iframe
+			src="/auth/grafana/d/gateway-metrics/telemetry?kiosk"
 			width="100%"
-		height="1200"
-		frameBorder="0">
-	</iframe>
-	: <span> Leading </ span>}
+			height="1200"
+			frameBorder="0">
+		</iframe>
+			: <span> Leading </ span>}
 
 	</div>)
 }
